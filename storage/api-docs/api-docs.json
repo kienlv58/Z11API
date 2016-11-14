@@ -1,0 +1,601 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Main Z11 api",
+        "description": "This is our main Z11 api. It contains all method to handle Z11 project...",
+        "termsOfService": "",
+        "contact": {
+            "email": "kienlv58@gmail.com"
+        },
+        "license": {
+            "name": "Private License",
+            "url": "URL to the license"
+        },
+        "version": "1.0.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/api/v1",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/get_category/{id}": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "get category from id",
+                "description": "return category from id",
+                "operationId": "cateid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "category_id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "cant not find category"
+                    }
+                }
+            }
+        },
+        "/get_all_category/{take}/{skip}": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "get all category",
+                "description": "return category with take and skip",
+                "operationId": "cateid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/admin/add_category": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "add new category",
+                "description": "add new category",
+                "operationId": "categoryadd",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid create",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "category_code",
+                        "in": "formData",
+                        "description": "category code",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "text_value(en)",
+                        "in": "formData",
+                        "description": "english of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "text_value(en)"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "desctiption(en)",
+                        "in": "formData",
+                        "description": "desctiption english of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "desctiption(en)"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "text_value(vi)",
+                        "in": "formData",
+                        "description": "vietnam of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "text_value(vi)"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "desctiption(vi)",
+                        "in": "formData",
+                        "description": "desctiption vietnam of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "desctiption(vi)"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "explain_cost",
+                        "in": "formData",
+                        "description": "cost of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "explain_cost"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/admin/edit_category": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "add new category",
+                "description": "edit category",
+                "operationId": "categoryedit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid create",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "formData",
+                        "description": "category_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "category_code",
+                        "in": "formData",
+                        "description": "category code",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "text_value(en)",
+                        "in": "formData",
+                        "description": "english of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "text_value(en)"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "desctiption(en)",
+                        "in": "formData",
+                        "description": "desctiption english of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "desctiption(en)"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "text_value(vi)",
+                        "in": "formData",
+                        "description": "vietnam of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "text_value(vi)"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "desctiption(vi)",
+                        "in": "formData",
+                        "description": "desctiption vietnam of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "desctiption(vi)"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "explain_cost",
+                        "in": "formData",
+                        "description": "cost of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "explain_cost"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/admin/delete_category": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "delete category ",
+                "description": "delete with category_id",
+                "operationId": "categorydelete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid delete",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "formData",
+                        "description": "category_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "login",
+                "description": "user login",
+                "operationId": "login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "grant_type",
+                        "in": "formData",
+                        "description": "grant_type of user: password,facebook,google",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "grant_type"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "description": "email of user",
+                        "required": false,
+                        "schema": {
+                            "required": [
+                                "email"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "description": "password of user",
+                        "required": false,
+                        "schema": {
+                            "required": [
+                                "password"
+                            ],
+                            "type": "string",
+                            "format": "password"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "token",
+                        "in": "formData",
+                        "description": "token of social network",
+                        "required": false,
+                        "schema": {
+                            "required": [
+                                "token"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "login succes"
+                    },
+                    "400": {
+                        "description": "Invalid email or password"
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "register",
+                "description": "user register",
+                "operationId": "register",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "name of user",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "description": "email of user",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "email"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "description": "password of user",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "password"
+                            ],
+                            "type": "string",
+                            "format": "password"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "password_confirmation",
+                        "in": "formData",
+                        "description": "password_confirmation of user",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "password_confirmation"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "register succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/restricted/profile/{id}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "get user from id",
+                "description": "return user from id",
+                "operationId": "user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "user_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {},
+    "externalDocs": {
+        "description": "Find out more about this in our FAQ",
+        "url": "http://www.google.de"
+    }
+}

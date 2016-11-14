@@ -14,8 +14,8 @@ class ProfilesTableUser extends Migration
     public function up()
     {
        Schema::create('profiles',function (Blueprint $table){
-          $table->increments('id');
-           $table->integer('user_id');
+          $table->increments('id')->index();
+           $table->integer('user_id')->unsigned();
            $table->string('image')->nullable();
            $table->string('gender')->nullable();
            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -31,6 +31,6 @@ class ProfilesTableUser extends Migration
      */
     public function down()
     {
-        Schema::drop('profiles');
+        Schema::dropIfExists('profiles');
     }
 }
