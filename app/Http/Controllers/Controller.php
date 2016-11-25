@@ -169,7 +169,7 @@ class Controller extends BaseController
             return response()->json($this->setArrayData(200,'delete success'),400);
         }
         else{
-            return response()->json($this->setArrayData(200,'delete error'),400);
+            return response()->json($this->setArrayData(400,'delete error'),400);
         }
     }
 

@@ -158,6 +158,7 @@ class QuestionController extends Controller
      *     )
      * )
      */
+//{"answer":[{"answer_item_value":"this is answer number 1","answer_is_correct":1},{"answer_item_value":"this is answer number 2","answer_is_correct":0}]}
     public function addQuestion(Request $request){
         $data_qestion = $request->only(['group_question_id','sub_question_content']);
 
