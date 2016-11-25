@@ -11,7 +11,7 @@ class RestfulController extends Controller
      * @SWG\Get(
      *     path="/restricted/profile/{id}",
      *     summary="get user from id",
-     *     tags={"User"},
+     *     tags={"1.User"},
      *     description="return user from id",
      *     operationId="user",
      *     consumes={"application/json"},

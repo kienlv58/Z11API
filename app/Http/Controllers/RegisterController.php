@@ -71,7 +71,7 @@ class RegisterController extends Controller
      * @SWG\Post(
      *     path="/auth/register",
      *     summary="register",
-     *     tags={"Auth"},
+     *     tags={"0.Auth"},
      *     description="user register",
      *     operationId="register",
      *     consumes={"application/json"},
@@ -165,11 +165,12 @@ class RegisterController extends Controller
             $profile = Profile::create([
                 'user_id' => $id,
             ]);
-                Mail::send('email.verify', ['name' => $data['name'], 'email' => $data['email'], 'link' => url('/user/activation/' . JWTAuth::attempt(['email' => $data['email'], 'password' => $data['password']]) . '/' . $user->id)], function ($message) use ($data) {
-                    $message->from('zone11@api.com', $name = 'zone11');
-                    $message->to($data['email'], $name = null);
-                    $message->subject('Verify Account');
-                });
+//                Mail::send('email.verify', ['name' => $data['name'], 'email' => $data['email'], 'link' => url('/user/activation/' . JWTAuth::attempt(['email' => $data['email'], 'password' => $data['password']]) . '/' . $user->id)], function ($message) use ($data) {
+//                    $message->from('zone11@api.com', $name = 'zone11');
+//                    $message->to($data['email'], $name = null);
+//                    $message->subject('Verify Account');
+//                });
+
 
             return response()->json(
                 [

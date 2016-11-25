@@ -20,5 +20,8 @@ Route::get('user/activation/{token}/{id}',function ($token,$id){
     return view('email.active');
 });
 Route::get('/test',function (){
-    return 'test';
+    dd( json_decode('{"translate":[
+    {"vi":{"text_value":"vidu", "describe_value":"day la vi du"}},
+    {"en":{"text_value":"example", "describe_value":"this is example"}}
+]}',false));
 });

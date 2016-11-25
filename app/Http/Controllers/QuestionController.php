@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Category;
-use App\Folder;
+use App\Explain;
+use App\GroupQuestion;
 use App\Language;
+use App\Question;
 use Illuminate\Http\Request;
 
-class FolderController extends Controller
+class QuestionController extends Controller
 {
-    protected $model ='App\Folder';
+    protected $model ='App\Question';
 
     /**
      * Store a newly created resource in storage.
@@ -19,16 +20,16 @@ class FolderController extends Controller
      */
     /**
      * @SWG\GET(
-     *     path="/folder/get/{id}",
-     *     summary="get folder",
-     *     tags={"3.Folder"},
-     *     description="get folder with folder_id",
-     *     operationId="getfolder",
+     *     path="/question/get/{id}",
+     *     summary="get question",
+     *     tags={"7.Question"},
+     *     description="get group_question with question_id",
+     *     operationId="get question",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "folder_id",
-     *     description = "folder_id",
+     *      name = "question_id",
+     *     description = "question_id",
      *      required = true,
      *      in ="formData",
      *     type = "integer",
@@ -49,17 +50,17 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public  function getFolder($id){
+    public  function getQuestion($id){
         return $this->getDataById($this->model,$id);
 
     }
     /**
      * @SWG\Get(
-     *     path="/folder/get_all/{take}/{skip}",
-     *     summary="get all folder",
-     *     tags={"3.Folder"},
-     *     description="return folder with take and skip",
-     *     operationId="folder",
+     *     path="/question/get_all/{take}/{skip}",
+     *     summary="get all question",
+     *     tags={"7.Question"},
+     *     description="return question with take and skip",
+     *     operationId="question",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
@@ -88,50 +89,39 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public function getAllFolder($take = 'all',$skip = 0){
+    public function getAllQuestion($take = 'all',$skip = 0){
         return $this->getAllData($this->model,$take,$skip);
     }
 
     /**
      * @SWG\Post(
-     *     path="/folder/add",
-     *     summary="add new folder",
-     *     tags={"3.Folder"},
-     *     description="add new folder",
-     *     operationId="folderadd",
+     *     path="/question/add",
+     *     summary="add new question",
+     *     tags={"7.Question"},
+     *     description="add new question",
+     *     operationId="question_add",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "owner_id",
-     *      description = "uid create",
+     *      name = "group_question_id",
+     *      description = "group_question_id",
      *     in ="formData",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
-     *     required={"category_code"},
+     *     required={"group_question_id"},
      *     type = "integer"
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "type_owner",
-     *      description = "type_owner select : admin/mod/user",
+     *      name = "sub_question_content",
+     *      description = "sub_question_content",
      *     in ="formData",
      *     required = true,
      *     type="string",
      *     @SWG\Schema(
-     *     required={"category_code"},
+     *     required={"sub_question_content"},
      *     type = "string"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
-     *      name = "category_id",
-     *      description = "category id",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"category_id"},
-     *     type = "integer"
      *      )
      *           ),
      *     @SWG\Parameter(
@@ -145,6 +135,18 @@ class FolderController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *     @SWG\Parameter(
+     *      name = "explain_cost",
+     *     description = "explain_cost",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"explain_cost"},
+     *     type = "string",
+     *      )
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -156,45 +158,55 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public function addFolder(Request $request){
-        $data_folder = $request->only(['category_id','owner_id','type_owner']);
+    public function addQuestion(Request $request){
+        $data_qestion = $request->only(['group_question_id','sub_question_content']);
 
-        $check_category = Category::find($data_folder['category_id']);
-        if($check_category == null){
-            return response()->json($this->setArrayData(400,'category not exists'),400);
+        $check_group_qs = GroupQuestion::find($data_qestion['group_question_id']);
+        if($check_group_qs == null){
+            return response()->json($this->setArrayData(400,'group question not exists'),400);
         }
-
-
-        $explain_id = $this->addNewDataExplain('folder',0);
+        $explain_id = $this->addNewDataExplain('question',$request->input('explain_cost'));
         $result = $this->addDataTranslate($request->input('translate'),$explain_id);
         $a = \GuzzleHttp\json_decode($result->content(),true);
         $code = $a['code'];
         if ($code === 400)
             return $result;
-        $data_folder['item_code']='folder';
-        $data_folder['explain_id']=$explain_id;
 
-        return $this->addNewData($this->model,$data_folder);
+        $data_qestion['explain_id'] = $explain_id;
+        $data_qestion['item_code'] = 'question';
+
+        return $this->addNewData($this->model,$data_qestion);
     }
 
     /**
      * @SWG\Post(
-     *     path="/folder/edit",
-     *     summary="edit a folder",
-     *     tags={"3.Folder"},
-     *     description="edit folder",
-     *     operationId="folderedit",
+     *     path="/question/edit",
+     *     summary="edit group_question",
+     *     tags={"7.Question"},
+     *     description="edit question",
+     *     operationId="question_edit",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "folder_id",
-     *      description = "folder id",
+     *      name = "question_id",
+     *      description = "question_id",
      *     in ="formData",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
-     *     required={"folder_id"},
+     *     required={"question_id"},
      *     type = "integer"
+     *      )
+     *           ),
+     *     @SWG\Parameter(
+     *      name = "sub_question_content",
+     *      description = "sub_question_content",
+     *     in ="formData",
+     *     required = true,
+     *     type="string",
+     *     @SWG\Schema(
+     *     required={"sub_question_content"},
+     *     type = "string"
      *      )
      *           ),
      *     @SWG\Parameter(
@@ -208,6 +220,18 @@ class FolderController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *      @SWG\Parameter(
+     *      name = "explain_cost",
+     *     description = "explain_cost",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"explain_cost"},
+     *     type = "string",
+     *      )
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -219,33 +243,33 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public function editFolder(Request $request){
+    public function editQuestion(Request $request){
 
         $data = $request->toArray();
-        $folder = Folder::find($data['folder_id']);
-        if ($folder == null) {
-            return response()->json($this->setArrayData(400,'can find folder'),400);
+        $question = Question::find($data['question_id']);
+        if ($question == null) {
+            return response()->json($this->setArrayData(400,'can find group question'),400);
         }
-        $explain_id = $folder->explain_id;
+        $explain_id = $question->explain_id;
+        Explain::where('explain_id',$explain_id)->update(['explain_cost'=>$data['explain_cost']]);
         $this->deleteDataTranslate($explain_id);
         $result = $this->addDataTranslate($data['translate'],$explain_id);
         $a = \GuzzleHttp\json_decode($result->content(),true);
         $code = $a['code'];
         if ($code === 400)
             return $result;
-        else
-            return response()->json($this->setArrayData(200,'edit success'),200);
+        return $this->editData($this->model,$request->only(['sub_question_content']),['question_id'=>$data['question_id']]);
 
 
     }
 
     /**
      * @SWG\Post(
-     *     path="/folder/delete",
-     *     summary="delete folder ",
-     *     tags={"3.Folder"},
-     *     description="delete with folder_id",
-     *     operationId="folderdelete",
+     *     path="/question/delete",
+     *     summary="delete group_question ",
+     *     tags={"7.Question"},
+     *     description="delete with question",
+     *     operationId="questiondelete",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
@@ -255,18 +279,18 @@ class FolderController extends Controller
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
-     *     required={"category_code"},
+     *     required={"uid"},
      *     type = "integer"
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "folder_id",
-     *      description = "folder_id",
+     *      name = "question_id",
+     *      description = "question_id",
      *     in ="formData",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
-     *     required={"category_id"},
+     *     required={"question_id"},
      *     type = "integer"
      *      )
      *           ),
@@ -281,20 +305,13 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public function deleteFolder(Request $request){
+    public function deleteQuestion(Request $request){
         $data = $request->toArray();
-        $folder = Folder::find($data['folder_id']);
-        if ($folder == null) {
-            return response()->json($this->setArrayData(400, 'can not find to folder'), 400);
+        $question = Question::find($data['question_id']);
+        if ($question == null) {
+            return response()->json($this->setArrayData(400, 'can not find to question'), 400);
         }
-        $explain_id = $folder->explain_id;
+        $explain_id = $question->explain_id;
         return $this->deleteDataExplain($explain_id);
     }
-
-
-
-
-
 }
-
-

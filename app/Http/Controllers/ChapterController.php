@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Category;
-use App\Folder;
+use App\Chapter;
 use App\Language;
+use App\Package;
 use Illuminate\Http\Request;
 
-class FolderController extends Controller
+class ChapterController extends Controller
 {
-    protected $model ='App\Folder';
+    protected $model ='App\Chapter';
 
     /**
      * Store a newly created resource in storage.
@@ -19,16 +19,16 @@ class FolderController extends Controller
      */
     /**
      * @SWG\GET(
-     *     path="/folder/get/{id}",
-     *     summary="get folder",
-     *     tags={"3.Folder"},
-     *     description="get folder with folder_id",
-     *     operationId="getfolder",
+     *     path="/chapter/get/{id}",
+     *     summary="get chapter",
+     *     tags={"5.Chapter"},
+     *     description="get chapter with chapter_id",
+     *     operationId="getchapter",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "folder_id",
-     *     description = "folder_id",
+     *      name = "chapter_id",
+     *     description = "chapter_",
      *      required = true,
      *      in ="formData",
      *     type = "integer",
@@ -49,17 +49,17 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public  function getFolder($id){
+    public  function getChapter($id){
         return $this->getDataById($this->model,$id);
 
     }
     /**
      * @SWG\Get(
-     *     path="/folder/get_all/{take}/{skip}",
-     *     summary="get all folder",
-     *     tags={"3.Folder"},
-     *     description="return folder with take and skip",
-     *     operationId="folder",
+     *     path="/chapter/get_all/{take}/{skip}",
+     *     summary="get all Chapter",
+     *     tags={"5.Chapter"},
+     *     description="return chapter with take and skip",
+     *     operationId="Chapter",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
@@ -88,49 +88,27 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public function getAllFolder($take = 'all',$skip = 0){
+    public function getAllChapter($take = 'all',$skip = 0){
         return $this->getAllData($this->model,$take,$skip);
     }
 
     /**
      * @SWG\Post(
-     *     path="/folder/add",
-     *     summary="add new folder",
-     *     tags={"3.Folder"},
-     *     description="add new folder",
-     *     operationId="folderadd",
+     *     path="/chapter/add",
+     *     summary="add new chapter",
+     *     tags={"5.Chapter"},
+     *     description="add new chapter",
+     *     operationId="packageadd",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "owner_id",
-     *      description = "uid create",
+     *      name = "package_id",
+     *      description = "package_id ",
      *     in ="formData",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "integer"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
-     *      name = "type_owner",
-     *      description = "type_owner select : admin/mod/user",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
-     *      name = "category_id",
-     *      description = "category id",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"category_id"},
+     *     required={"package_id"},
      *     type = "integer"
      *      )
      *           ),
@@ -156,47 +134,47 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public function addFolder(Request $request){
-        $data_folder = $request->only(['category_id','owner_id','type_owner']);
+    public function addChapter(Request $request){
+        $data_chapter = $request->only(['package_id']);
 
-        $check_category = Category::find($data_folder['category_id']);
-        if($check_category == null){
-            return response()->json($this->setArrayData(400,'category not exists'),400);
+        $check_package = Package::find($data_chapter['package_id']);
+        if($check_package == null){
+            return response()->json($this->setArrayData(400,'package not exists'),400);
         }
-
-
-        $explain_id = $this->addNewDataExplain('folder',0);
+        $explain_id = $this->addNewDataExplain('chapter',0);
         $result = $this->addDataTranslate($request->input('translate'),$explain_id);
         $a = \GuzzleHttp\json_decode($result->content(),true);
         $code = $a['code'];
         if ($code === 400)
             return $result;
-        $data_folder['item_code']='folder';
-        $data_folder['explain_id']=$explain_id;
 
-        return $this->addNewData($this->model,$data_folder);
+        $data_chapter['explain_id'] = $explain_id;
+        $data_chapter['item_code'] = 'chapter';
+
+        return $this->addNewData($this->model,$data_chapter);
     }
 
     /**
      * @SWG\Post(
-     *     path="/folder/edit",
-     *     summary="edit a folder",
-     *     tags={"3.Folder"},
-     *     description="edit folder",
-     *     operationId="folderedit",
+     *     path="/chapter/edit",
+     *     summary="edit a Chapter",
+     *     tags={"5.Chapter"},
+     *     description="edit Chapter",
+     *     operationId="Chapteredit",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "folder_id",
-     *      description = "folder id",
+     *      name = "chapter_id",
+     *      description = "chapter_id",
      *     in ="formData",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
-     *     required={"folder_id"},
+     *     required={"chapter_id"},
      *     type = "integer"
      *      )
      *           ),
+     *
      *     @SWG\Parameter(
      *      name = "translate",
      *      description = "translate json",
@@ -219,33 +197,32 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public function editFolder(Request $request){
+    public function editChapter(Request $request){
 
         $data = $request->toArray();
-        $folder = Folder::find($data['folder_id']);
-        if ($folder == null) {
+        $chapter = Chapter::find($data['chapter_id']);
+        if ($chapter == null) {
             return response()->json($this->setArrayData(400,'can find folder'),400);
         }
-        $explain_id = $folder->explain_id;
+        $explain_id = $chapter->explain_id;
         $this->deleteDataTranslate($explain_id);
         $result = $this->addDataTranslate($data['translate'],$explain_id);
         $a = \GuzzleHttp\json_decode($result->content(),true);
         $code = $a['code'];
         if ($code === 400)
             return $result;
-        else
-            return response()->json($this->setArrayData(200,'edit success'),200);
+        return response()->json($this->setArrayData(200, 'edit successfull'), 200);
 
 
     }
 
     /**
      * @SWG\Post(
-     *     path="/folder/delete",
-     *     summary="delete folder ",
-     *     tags={"3.Folder"},
-     *     description="delete with folder_id",
-     *     operationId="folderdelete",
+     *     path="/chapter/delete",
+     *     summary="delete chapter ",
+     *     tags={"5.Chapter"},
+     *     description="delete with chapter_id",
+     *     operationId="chapterdelete",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
@@ -255,18 +232,18 @@ class FolderController extends Controller
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
-     *     required={"category_code"},
+     *     required={"uid"},
      *     type = "integer"
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "folder_id",
-     *      description = "folder_id",
+     *      name = "chapter_id",
+     *      description = "chapter_id",
      *     in ="formData",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
-     *     required={"category_id"},
+     *     required={"chapter_id"},
      *     type = "integer"
      *      )
      *           ),
@@ -281,20 +258,13 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public function deleteFolder(Request $request){
+    public function deleteChapter(Request $request){
         $data = $request->toArray();
-        $folder = Folder::find($data['folder_id']);
+        $folder = Chapter::find($data['chapter_id']);
         if ($folder == null) {
-            return response()->json($this->setArrayData(400, 'can not find to folder'), 400);
+            return response()->json($this->setArrayData(400, 'can not find to chapter'), 400);
         }
         $explain_id = $folder->explain_id;
         return $this->deleteDataExplain($explain_id);
     }
-
-
-
-
-
 }
-
-

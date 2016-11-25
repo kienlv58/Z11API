@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Category;
 use App\Explain;
+use App\Language;
 use App\QueryDB;
 use App\Translate;
 use Illuminate\Http\Request;
@@ -12,11 +13,12 @@ class CategoryController extends Controller
 {
 
     protected $model = 'App\Category';
+
     /**
      * @SWG\Get(
-     *     path="/get_category/{id}",
+     *     path="/category/get/{id}",
      *     summary="get category from id",
-     *     tags={"Category"},
+     *     tags={"2.Category"},
      *     description="return category from id",
      *     operationId="cateid",
      *     consumes={"application/json"},
@@ -49,9 +51,9 @@ class CategoryController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/get_all_category/{take}/{skip}",
+     *     path="/category/get_all/{take}/{skip}",
      *     summary="get all category",
-     *     tags={"Category"},
+     *     tags={"2.Category"},
      *     description="return category with take and skip",
      *     operationId="cateid",
      *     consumes={"application/json"},
@@ -100,25 +102,25 @@ class CategoryController extends Controller
      * @SWG\Post(
      *     path="/admin/add_category",
      *     summary="add new category",
-     *     tags={"Category"},
+     *     tags={"2.Category"},
      *     description="add new category",
      *     operationId="categoryadd",
      *     consumes={"application/json"},
      *     produces={"application/json"},
-     *     @SWG\Parameter(
+     *    @SWG\Parameter(
      *      name = "uid",
-     *      description = "uid create",
+     *      description = "uid edit",
      *     in ="formData",
      *     required = true,
-     *     type="string",
+     *     type="integer",
      *     @SWG\Schema(
-     *     required={"category_code"},
+     *     required={"uid_id"},
      *     type = "integer"
      *      )
      *           ),
      *     @SWG\Parameter(
      *      name = "category_code",
-     *      description = "category code",
+     *      description = "category_code",
      *     in ="formData",
      *     required = true,
      *     type="string",
@@ -128,61 +130,15 @@ class CategoryController extends Controller
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "text_value(en)",
-     *     description = "english of value",
+     *      name = "translate",
+     *     description = "translate josn",
      *      required = true,
      *      in ="formData",
      *     type = "string",
      *
      *     @SWG\Schema(
-     *     required={"text_value(en)"},
+     *     required={"translate"},
      *     type = "string",
-     *      )
-     *     ),
-     *      @SWG\Parameter(
-     *      name = "desctiption(en)",
-     *     description = "desctiption english of value",
-     *      required = true,
-     *      in ="formData",
-     *     type = "string",
-     *
-     *     @SWG\Schema(
-     *     required={"desctiption(en)"},
-     *     type = "string",
-     *      )
-     *     ),
-     *     @SWG\Parameter(
-     *      name = "text_value(vi)",
-     *     description = "vietnam of value",
-     *      required = true,
-     *      in ="formData",
-     *     type = "string",
-     *     @SWG\Schema(
-     *     required={"text_value(vi)"},
-     *     type = "string"
-     *      )
-     *     ),
-     *     @SWG\Parameter(
-     *      name = "desctiption(vi)",
-     *     description = "desctiption vietnam of value",
-     *      required = true,
-     *      in ="formData",
-     *     type = "string",
-     *
-     *     @SWG\Schema(
-     *     required={"desctiption(vi)"},
-     *     type = "string",
-     *      )
-     *     ),
-     *     @SWG\Parameter(
-     *      name = "explain_cost",
-     *     description = "cost of value",
-     *      required = true,
-     *      in ="formData",
-     *     type = "string",
-     *     @SWG\Schema(
-     *     required={"explain_cost"},
-     *     type = "string"
      *      )
      *     ),
      *     @SWG\Response(
@@ -201,45 +157,37 @@ class CategoryController extends Controller
 
 
         $data = $request->toArray();
-        $explain = new Explain();
-        $explain->item_code = 'data_explain_item';
-        $explain->explain_cost = $data['explain_cost'];
-        $explain->save();
-        $name_text_id = $explain->explain_id;
-
-        $translate_vi = new Translate();
-        $translate_vi->name_text_id = $name_text_id;
-        $translate_vi->language_id = 'vi';
-        $translate_vi->text_value = $data['text_value(vi)'];
-        $translate_vi->describe_value = $data['desctiption(vi)'];
-        $translate_vi->save();
-        $translate_en = Translate::create(['name_text_id' => $name_text_id, 'language_id' => 'en', 'text_value' => $data['text_value(en)'], 'describe_value' => $data['desctiption(en)']]);
-
-        $categpry = Category::create(['category_code' => $data['category_code'], 'name_text_id' => $name_text_id]);
-        return response()->json(['code' => 200, 'status' => 'add success', 'metadata' => $categpry->toArray()]);
+        $explain_id = $this->addNewDataExplain('category',0);
+        $result = $this->addDataTranslate($data['translate'],$explain_id);
+        $a = \GuzzleHttp\json_decode($result->content(),true);
+        $code = $a['code'];
+        if ($code === 400)
+            return $result;
+        $data_cate = ['category_code'=>$data['category_code'], 'explain_id' => $explain_id];
+        return $this->addNewData($this->model, $data_cate);
     }
 
     /**
      * @SWG\Post(
      *     path="/admin/edit_category",
-     *     summary="add new category",
-     *     tags={"Category"},
+     *     summary="edit a category",
+     *     tags={"2.Category"},
      *     description="edit category",
      *     operationId="categoryedit",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
      *      name = "uid",
-     *      description = "uid create",
+     *      description = "uid edit",
      *     in ="formData",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
-     *     required={"category_code"},
+     *     required={"uid_id"},
      *     type = "integer"
      *      )
      *           ),
-     *     @SWG\Parameter(
+     *    @SWG\Parameter(
      *      name = "category_id",
      *      description = "category_id",
      *     in ="formData",
@@ -252,7 +200,7 @@ class CategoryController extends Controller
      *           ),
      *     @SWG\Parameter(
      *      name = "category_code",
-     *      description = "category code",
+     *      description = "category_code",
      *     in ="formData",
      *     required = true,
      *     type="string",
@@ -262,63 +210,16 @@ class CategoryController extends Controller
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "text_value(en)",
-     *     description = "english of value",
-     *      required = true,
-     *      in ="formData",
-     *     type = "string",
-     *
+     *      name = "translate",
+     *      description = "translate json",
+     *     in ="formData",
+     *     required = true,
+     *     type="string",
      *     @SWG\Schema(
-     *     required={"text_value(en)"},
-     *     type = "string",
-     *      )
-     *     ),
-     *      @SWG\Parameter(
-     *      name = "desctiption(en)",
-     *     description = "desctiption english of value",
-     *      required = true,
-     *      in ="formData",
-     *     type = "string",
-     *
-     *     @SWG\Schema(
-     *     required={"desctiption(en)"},
-     *     type = "string",
-     *      )
-     *     ),
-     *     @SWG\Parameter(
-     *      name = "text_value(vi)",
-     *     description = "vietnam of value",
-     *      required = true,
-     *      in ="formData",
-     *     type = "string",
-     *     @SWG\Schema(
-     *     required={"text_value(vi)"},
+     *     required={"category_code"},
      *     type = "string"
      *      )
-     *     ),
-     *     @SWG\Parameter(
-     *      name = "desctiption(vi)",
-     *     description = "desctiption vietnam of value",
-     *      required = true,
-     *      in ="formData",
-     *     type = "string",
-     *
-     *     @SWG\Schema(
-     *     required={"desctiption(vi)"},
-     *     type = "string",
-     *      )
-     *     ),
-     *     @SWG\Parameter(
-     *      name = "explain_cost",
-     *     description = "cost of value",
-     *      required = true,
-     *      in ="formData",
-     *     type = "string",
-     *     @SWG\Schema(
-     *     required={"explain_cost"},
-     *     type = "string"
-     *      )
-     *     ),
+     *           ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -330,38 +231,35 @@ class CategoryController extends Controller
      *     )
      * )
      */
+
+//{"translate":[{"language_code":"vi","text_value":"thu hai","describe_value":"day la thu 2"},{"language_code":"en","text_value":"monday","describe_value":"this is monday"}]}
+
     public function editCategory(Request $request)
     {
+
         $data = $request->toArray();
-        $cate = Category::find($data['category_id']);
-        if($cate == null){
-            return response()->json(['code' => 400, 'status' => 'cant not find category', 'metadata' => []]);
+        $category = Category::find($data['category_id']);
+        if ($category == null) {
+            return response()->json($this->setArrayData(400,'can find category'),400);
         }
-        $name_text_id = $cate->name_text_id;
-        if ($data['text_value(vi)'] != null)
-            Translate::where('name_text_id', $name_text_id)->where('language_id', 'vi')->update(['text_value'=>$data['text_value(vi)'],'describe_value'=>$data['desctiption(vi)']]);
-        if($data['text_value(en)'] != null)
-            Translate::where('name_text_id', $name_text_id)->where('language_id', 'en')->update(['text_value'=>$data['text_value(en)'],'describe_value'=>$data['desctiption(en)']]);
+        $explain_id = $category->explain_id;
+        $this->deleteDataTranslate($explain_id);
+        $result = $this->addDataTranslate($data['translate'],$explain_id);
+        $a = \GuzzleHttp\json_decode($result->content(),true);
+        $code = $a['code'];
+        if ($code === 400)
+            return $result;
 
-        if($data['explain_cost'] != null){
-            Explain::where('explain_id',$name_text_id)->update(['explain_cost'=>$data['explain_cost']]);
-        }
-
-        if($data['category_code'] != null){
-            Category::where('category_id',$name_text_id)->update(['category_code'=>$data['category_code']]);
-        }
-        $category = Category::find($name_text_id);
-        $category->explain_cost = $category->explain()->select('explain_cost')->get();
-        $category->translate = $category->translate()->select('language_id','text_value','describe_value')->get();
-        return response()->json(['code'=>200,'status'=>'update success','metadata'=>$category->toArray()]);
+        return $this->editData($this->model, ['category_code' => $data['category_code']], ['category_id' => $category->category_id]);
 
 
     }
+
     /**
      * @SWG\Post(
      *     path="/admin/delete_category",
      *     summary="delete category ",
-     *     tags={"Category"},
+     *     tags={"2.Category"},
      *     description="delete with category_id",
      *     operationId="categorydelete",
      *     consumes={"application/json"},
@@ -399,21 +297,16 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function deleteCategory(Request $request){
-//        $data = $request->toArray();
-//        //$cate = Category::find($data['category_id']);
-//        $queryDB = new QueryDB();
-//       $result = $queryDB->deteleDBWithID('explains','explain_id',$data['category_id']);
-//        if($result){
-//            return response()->json(['code'=>200,'status'=>'delete succesfull']);
-//        }else
-//            return response()->json(['code'=>400,'status'=>'can not find category']);
-        return $this->deleteDataById($this->model,$request->toArray());
+    public function deleteCategory(Request $request)
+    {
+        $data = $request->toArray();
+        $category = Category::find($data['category_id']);
+        if ($category == null) {
+            return response()->json($this->setArrayData(400, 'can not find to category'), 400);
+        }
+        $explain_id = $category->explain_id;
+        return $this->deleteDataExplain($explain_id);
     }
 
-    public function test(Request $request){
-        //return $this->deleteDataById('App\Explain',$request->toArray());
-        return $this->editData('App\Explain',$request->toArray(),['explain_id'=>6,'explain_cost'=>20]);
-    }
 
 }

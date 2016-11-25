@@ -19,10 +19,208 @@
         "http"
     ],
     "paths": {
-        "/get_category/{id}": {
+        "/answer/get_all/{take}/{skip}": {
             "get": {
                 "tags": [
-                    "Category"
+                    "8.Answer"
+                ],
+                "summary": "get all answer",
+                "description": "return answer with take and skip",
+                "operationId": "answer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/answer/add": {
+            "post": {
+                "tags": [
+                    "8.Answer"
+                ],
+                "summary": "add new answer",
+                "description": "add new answer",
+                "operationId": "answer_add",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "question_id",
+                        "in": "formData",
+                        "description": "question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "answer",
+                        "in": "formData",
+                        "description": "answer type json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "answer"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/answer/edit": {
+            "post": {
+                "tags": [
+                    "8.Answer"
+                ],
+                "summary": "edit answer",
+                "description": "edit answer",
+                "operationId": "question_edit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "question_id",
+                        "in": "formData",
+                        "description": "question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "answer",
+                        "in": "formData",
+                        "description": "answer type json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "answer"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/answer/delete": {
+            "post": {
+                "tags": [
+                    "8.Answer"
+                ],
+                "summary": "delete answer ",
+                "description": "delete with answer_id",
+                "operationId": "answerdelete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid delete",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "uid"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "answer_item_id",
+                        "in": "formData",
+                        "description": "answer_item_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "answer_item_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/category/get/{id}": {
+            "get": {
+                "tags": [
+                    "2.Category"
                 ],
                 "summary": "get category from id",
                 "description": "return category from id",
@@ -52,10 +250,10 @@
                 }
             }
         },
-        "/get_all_category/{take}/{skip}": {
+        "/category/get_all/{take}/{skip}": {
             "get": {
                 "tags": [
-                    "Category"
+                    "2.Category"
                 ],
                 "summary": "get all category",
                 "description": "return category with take and skip",
@@ -97,7 +295,7 @@
         "/admin/add_category": {
             "post": {
                 "tags": [
-                    "Category"
+                    "2.Category"
                 ],
                 "summary": "add new category",
                 "description": "add new category",
@@ -112,20 +310,20 @@
                     {
                         "name": "uid",
                         "in": "formData",
-                        "description": "uid create",
+                        "description": "uid edit",
                         "required": true,
                         "schema": {
                             "required": [
-                                "category_code"
+                                "uid_id"
                             ],
                             "type": "integer"
                         },
-                        "type": "string"
+                        "type": "integer"
                     },
                     {
                         "name": "category_code",
                         "in": "formData",
-                        "description": "category code",
+                        "description": "category_code",
                         "required": true,
                         "schema": {
                             "required": [
@@ -136,65 +334,13 @@
                         "type": "string"
                     },
                     {
-                        "name": "text_value(en)",
+                        "name": "translate",
                         "in": "formData",
-                        "description": "english of value",
+                        "description": "translate josn",
                         "required": true,
                         "schema": {
                             "required": [
-                                "text_value(en)"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "desctiption(en)",
-                        "in": "formData",
-                        "description": "desctiption english of value",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "desctiption(en)"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "text_value(vi)",
-                        "in": "formData",
-                        "description": "vietnam of value",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "text_value(vi)"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "desctiption(vi)",
-                        "in": "formData",
-                        "description": "desctiption vietnam of value",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "desctiption(vi)"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "explain_cost",
-                        "in": "formData",
-                        "description": "cost of value",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "explain_cost"
+                                "translate"
                             ],
                             "type": "string"
                         },
@@ -214,9 +360,9 @@
         "/admin/edit_category": {
             "post": {
                 "tags": [
-                    "Category"
+                    "2.Category"
                 ],
-                "summary": "add new category",
+                "summary": "edit a category",
                 "description": "edit category",
                 "operationId": "categoryedit",
                 "consumes": [
@@ -229,11 +375,11 @@
                     {
                         "name": "uid",
                         "in": "formData",
-                        "description": "uid create",
+                        "description": "uid edit",
                         "required": true,
                         "schema": {
                             "required": [
-                                "category_code"
+                                "uid_id"
                             ],
                             "type": "integer"
                         },
@@ -255,7 +401,7 @@
                     {
                         "name": "category_code",
                         "in": "formData",
-                        "description": "category code",
+                        "description": "category_code",
                         "required": true,
                         "schema": {
                             "required": [
@@ -266,65 +412,13 @@
                         "type": "string"
                     },
                     {
-                        "name": "text_value(en)",
+                        "name": "translate",
                         "in": "formData",
-                        "description": "english of value",
+                        "description": "translate json",
                         "required": true,
                         "schema": {
                             "required": [
-                                "text_value(en)"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "desctiption(en)",
-                        "in": "formData",
-                        "description": "desctiption english of value",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "desctiption(en)"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "text_value(vi)",
-                        "in": "formData",
-                        "description": "vietnam of value",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "text_value(vi)"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "desctiption(vi)",
-                        "in": "formData",
-                        "description": "desctiption vietnam of value",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "desctiption(vi)"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "explain_cost",
-                        "in": "formData",
-                        "description": "cost of value",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "explain_cost"
+                                "category_code"
                             ],
                             "type": "string"
                         },
@@ -344,7 +438,7 @@
         "/admin/delete_category": {
             "post": {
                 "tags": [
-                    "Category"
+                    "2.Category"
                 ],
                 "summary": "delete category ",
                 "description": "delete with category_id",
@@ -393,10 +487,877 @@
                 }
             }
         },
+        "/chapter/get/{id}": {
+            "get": {
+                "tags": [
+                    "5.Chapter"
+                ],
+                "summary": "get chapter",
+                "description": "get chapter with chapter_id",
+                "operationId": "getchapter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "chapter_id",
+                        "in": "formData",
+                        "description": "chapter_",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "grant_type"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
+        "/chapter/get_all/{take}/{skip}": {
+            "get": {
+                "tags": [
+                    "5.Chapter"
+                ],
+                "summary": "get all Chapter",
+                "description": "return chapter with take and skip",
+                "operationId": "Chapter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/chapter/add": {
+            "post": {
+                "tags": [
+                    "5.Chapter"
+                ],
+                "summary": "add new chapter",
+                "description": "add new chapter",
+                "operationId": "packageadd",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "package_id",
+                        "in": "formData",
+                        "description": "package_id ",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "package_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "translate",
+                        "in": "formData",
+                        "description": "translate json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/chapter/edit": {
+            "post": {
+                "tags": [
+                    "5.Chapter"
+                ],
+                "summary": "edit a Chapter",
+                "description": "edit Chapter",
+                "operationId": "Chapteredit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "chapter_id",
+                        "in": "formData",
+                        "description": "chapter_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "chapter_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "translate",
+                        "in": "formData",
+                        "description": "translate json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/chapter/delete": {
+            "post": {
+                "tags": [
+                    "5.Chapter"
+                ],
+                "summary": "delete chapter ",
+                "description": "delete with chapter_id",
+                "operationId": "chapterdelete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid delete",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "uid"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "chapter_id",
+                        "in": "formData",
+                        "description": "chapter_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "chapter_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/folder/get/{id}": {
+            "get": {
+                "tags": [
+                    "3.Folder"
+                ],
+                "summary": "get folder",
+                "description": "get folder with folder_id",
+                "operationId": "getfolder",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "folder_id",
+                        "in": "formData",
+                        "description": "folder_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "grant_type"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
+        "/folder/get_all/{take}/{skip}": {
+            "get": {
+                "tags": [
+                    "3.Folder"
+                ],
+                "summary": "get all folder",
+                "description": "return folder with take and skip",
+                "operationId": "folder",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/folder/add": {
+            "post": {
+                "tags": [
+                    "3.Folder"
+                ],
+                "summary": "add new folder",
+                "description": "add new folder",
+                "operationId": "folderadd",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "formData",
+                        "description": "uid create",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "type_owner",
+                        "in": "formData",
+                        "description": "type_owner select : admin/mod/user",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "formData",
+                        "description": "category id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "translate",
+                        "in": "formData",
+                        "description": "translate json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/folder/edit": {
+            "post": {
+                "tags": [
+                    "3.Folder"
+                ],
+                "summary": "edit a folder",
+                "description": "edit folder",
+                "operationId": "folderedit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "folder_id",
+                        "in": "formData",
+                        "description": "folder id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "folder_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "translate",
+                        "in": "formData",
+                        "description": "translate json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/folder/delete": {
+            "post": {
+                "tags": [
+                    "3.Folder"
+                ],
+                "summary": "delete folder ",
+                "description": "delete with folder_id",
+                "operationId": "folderdelete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid delete",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "folder_id",
+                        "in": "formData",
+                        "description": "folder_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/group_question/get/{id}": {
+            "get": {
+                "tags": [
+                    "6.GroupQuestion"
+                ],
+                "summary": "get group_question",
+                "description": "get group_question with group_question_id",
+                "operationId": "get group_question",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_question_id",
+                        "in": "formData",
+                        "description": "group_question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "grant_type"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
+        "/group_question/get_all/{take}/{skip}": {
+            "get": {
+                "tags": [
+                    "6.GroupQuestion"
+                ],
+                "summary": "get all group_question",
+                "description": "return group_question with take and skip",
+                "operationId": "group_question",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/group_question/add": {
+            "post": {
+                "tags": [
+                    "6.GroupQuestion"
+                ],
+                "summary": "add new group_question",
+                "description": "add new group_question",
+                "operationId": "group_question_add",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "chapter_id",
+                        "in": "formData",
+                        "description": "chapter_id ",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "chapter_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "group_question_content",
+                        "in": "formData",
+                        "description": "group_question_content",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_content"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "group_question_transcript",
+                        "in": "formData",
+                        "description": "group_question_transcript",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "\tgroup_question_transcript"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "group_question_image",
+                        "in": "formData",
+                        "description": "group_question_image",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_image"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "group_question_audio",
+                        "in": "formData",
+                        "description": "group_question_audio",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_audio"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "translate",
+                        "in": "formData",
+                        "description": "translate json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "explain_cost",
+                        "in": "formData",
+                        "description": "explain_cost",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "explain_cost"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/group_question/edit": {
+            "post": {
+                "tags": [
+                    "6.GroupQuestion"
+                ],
+                "summary": "edit group_question",
+                "description": "edit group_question",
+                "operationId": "group_question_edit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_question_id",
+                        "in": "formData",
+                        "description": "group_question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "group_question_content",
+                        "in": "formData",
+                        "description": "group_question_content",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_content"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "group_question_transcript",
+                        "in": "formData",
+                        "description": "group_question_transcript",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "\tgroup_question_transcript"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "group_question_image",
+                        "in": "formData",
+                        "description": "group_question_image",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_image"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "group_question_audio",
+                        "in": "formData",
+                        "description": "group_question_audio",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_audio"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "translate",
+                        "in": "formData",
+                        "description": "translate json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "explain_cost",
+                        "in": "formData",
+                        "description": "explain_cost",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "explain_cost"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/group_question/delete": {
+            "post": {
+                "tags": [
+                    "6.GroupQuestion"
+                ],
+                "summary": "delete group_question ",
+                "description": "delete with group_question",
+                "operationId": "chapterdelete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid delete",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "uid"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "group_question_id",
+                        "in": "formData",
+                        "description": "group_question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "tags": [
-                    "Auth"
+                    "0.Auth"
                 ],
                 "summary": "login",
                 "description": "user login",
@@ -472,10 +1433,877 @@
                 }
             }
         },
+        "/package/get/{id}": {
+            "get": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "get package",
+                "description": "get package with package_id",
+                "operationId": "getpackage",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "package_id",
+                        "in": "formData",
+                        "description": "package_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "grant_type"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
+        "/package/get_all/{take}/{skip}": {
+            "get": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "get all package",
+                "description": "return package with take and skip",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/package/add": {
+            "post": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "add new package",
+                "description": "add new package",
+                "operationId": "packageadd",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "folder_id",
+                        "in": "formData",
+                        "description": "folder id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "folder_id"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "translate",
+                        "in": "formData",
+                        "description": "translate json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "package_cost",
+                        "in": "formData",
+                        "description": "package_cost value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "package_cost"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/package/edit": {
+            "post": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "edit a package",
+                "description": "edit package",
+                "operationId": "packageedit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "package_id",
+                        "in": "formData",
+                        "description": "package id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "package_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "translate",
+                        "in": "formData",
+                        "description": "translate json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "package_cost",
+                        "in": "formData",
+                        "description": "package_cost value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "package_cost"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/package/delete": {
+            "post": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "delete package ",
+                "description": "delete with package_id",
+                "operationId": "packagedelete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid delete",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "package_id",
+                        "in": "formData",
+                        "description": "package_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "package_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/purchase/get_user/{id}": {
+            "get": {
+                "tags": [
+                    "Purchase"
+                ],
+                "summary": "get_user",
+                "description": "get_user purchas with user_id",
+                "operationId": "get_user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "formData",
+                        "description": "user_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "grant_type"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
+        "/purchase/getUserPurchase_package/{id}": {
+            "get": {
+                "tags": [
+                    "Purchase"
+                ],
+                "summary": "getUserPurchase_package",
+                "description": "getUserPurchase_package purchas with user_id",
+                "operationId": "get_user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "formData",
+                        "description": "user_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "grant_type"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
+        "/purchase/getUserPurchase_explain/{id}": {
+            "get": {
+                "tags": [
+                    "Purchase"
+                ],
+                "summary": "getUserPurchase_explain",
+                "description": "getUserPurchase_explain purchas with user_id",
+                "operationId": "get_user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "formData",
+                        "description": "user_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "grant_type"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
+        "/purchase/getPurchaseId/{id}": {
+            "get": {
+                "tags": [
+                    "Purchase"
+                ],
+                "summary": "getPurchaseId",
+                "description": "getPurchaseId purchas with purchase_id",
+                "operationId": "getPurchaseId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "purchase_id",
+                        "in": "formData",
+                        "description": "purchase_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "purchase_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
+        "/purchase/get_all/{take}/{skip}": {
+            "get": {
+                "tags": [
+                    "Purchase"
+                ],
+                "summary": "get all Chapter",
+                "description": "return purchase with take and skip",
+                "operationId": "purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/purchase/add_payment": {
+            "post": {
+                "tags": [
+                    "Purchase"
+                ],
+                "summary": "add new purchase",
+                "description": "add new purchase",
+                "operationId": "purchaseadd",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "formData",
+                        "description": "user_id ",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "user_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "item_id",
+                        "in": "formData",
+                        "description": "item_id of value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "item_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "item_code",
+                        "in": "formData",
+                        "description": "select package or explain",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "text_value"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/purchase/delete": {
+            "post": {
+                "tags": [
+                    "Purchase"
+                ],
+                "summary": "delete purchase ",
+                "description": "delete with purchase_id",
+                "operationId": "purchasedelete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid delete",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "uid"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "purchase_id",
+                        "in": "formData",
+                        "description": "purchase_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "purchase_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/question/get/{id}": {
+            "get": {
+                "tags": [
+                    "7.Question"
+                ],
+                "summary": "get question",
+                "description": "get group_question with question_id",
+                "operationId": "get question",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "question_id",
+                        "in": "formData",
+                        "description": "question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "grant_type"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
+        "/question/get_all/{take}/{skip}": {
+            "get": {
+                "tags": [
+                    "7.Question"
+                ],
+                "summary": "get all question",
+                "description": "return question with take and skip",
+                "operationId": "question",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/question/add": {
+            "post": {
+                "tags": [
+                    "7.Question"
+                ],
+                "summary": "add new question",
+                "description": "add new question",
+                "operationId": "question_add",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_question_id",
+                        "in": "formData",
+                        "description": "group_question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "sub_question_content",
+                        "in": "formData",
+                        "description": "sub_question_content",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "sub_question_content"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "translate",
+                        "in": "formData",
+                        "description": "translate json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "explain_cost",
+                        "in": "formData",
+                        "description": "explain_cost",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "explain_cost"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/question/edit": {
+            "post": {
+                "tags": [
+                    "7.Question"
+                ],
+                "summary": "edit group_question",
+                "description": "edit question",
+                "operationId": "question_edit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "question_id",
+                        "in": "formData",
+                        "description": "question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "sub_question_content",
+                        "in": "formData",
+                        "description": "sub_question_content",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "sub_question_content"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "translate",
+                        "in": "formData",
+                        "description": "translate json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "explain_cost",
+                        "in": "formData",
+                        "description": "explain_cost",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "explain_cost"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/question/delete": {
+            "post": {
+                "tags": [
+                    "7.Question"
+                ],
+                "summary": "delete group_question ",
+                "description": "delete with question",
+                "operationId": "questiondelete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid delete",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "uid"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "question_id",
+                        "in": "formData",
+                        "description": "question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
         "/auth/register": {
             "post": {
                 "tags": [
-                    "Auth"
+                    "0.Auth"
                 ],
                 "summary": "register",
                 "description": "user register",
@@ -554,7 +2382,7 @@
         "/restricted/profile/{id}": {
             "get": {
                 "tags": [
-                    "User"
+                    "1.User"
                 ],
                 "summary": "get user from id",
                 "description": "return user from id",

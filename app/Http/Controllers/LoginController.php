@@ -62,7 +62,7 @@ class LoginController extends Controller
      * @SWG\Post(
      *     path="/auth/login",
      *     summary="login",
-     *     tags={"Auth"},
+     *     tags={"0.Auth"},
      *     description="user login",
      *     operationId="login",
      *     consumes={"application/json"},
@@ -146,14 +146,14 @@ class LoginController extends Controller
 
                 if ($result) {
                     $user = User::select('id', 'email', 'name', 'active')->where('email', $data['email'])->get()->first();
-                    if ($user->active == 0) {
+                   // if ($user->active == 0) {
                         return response()->json(
                             [
                                 'code' => 400,
                                 'status' => 'account not active',
                             ], 400
                         );
-                    }
+                   // }
                     $jwt = ['id' => $user->id, 'email' => $user->email, 'password' => $data['password']];
                     $token = JWTAuth::fromUser((object)$jwt);
                     return response()->json(

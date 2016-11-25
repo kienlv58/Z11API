@@ -15,10 +15,10 @@ class CreateFolderTable extends Migration
     {
         Schema::create('folders', function (Blueprint $table) {
             $table->increments('folder_id')->index();
-            $table->string('item_code');
-            $table->string('category_code')->index();
-            $table->foreign('category_code')->references('category_code')->on('categories')->onDelete('cascade');
-            $table->integer('name_text_id')->index()->unsigned();
+            $table->string('item_code');//f
+            $table->integer('category_id')->index()->unsigned();
+            $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
+            $table->integer('explain_id')->index()->unsigned();
             $table->integer('owner_id')->index()->unsigned();
             $table->string('type_owner')->index();
             $table->timestamps();

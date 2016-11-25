@@ -15,11 +15,10 @@ class CreateQuestionTable extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->increments('question_id')->index()->unsigned();
-            $table->string('item_code');
+            $table->string('item_code');//question
             $table->integer('group_question_id')->index()->unsigned();
             $table->string('sub_question_content');
-            $table->integer('name_text_id')->index()->unsigned();
-            $table->integer('sub_question_number');
+            $table->integer('explain_id')->index()->unsigned();
             $table->foreign('group_question_id')->references('group_question_id')->on('group_questions')->onDelete('cascade');
             $table->timestamps();
         });
