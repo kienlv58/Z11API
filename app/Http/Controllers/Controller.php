@@ -39,6 +39,9 @@ use phpDocumentor\Reflection\Types\Object_;
  */
 class Controller extends BaseController
 {
+
+
+    //https://medium.com/@mahbubkabir/discovering-swagger-in-laravel-rest-apis-cb0271c8f2#.diepg499a
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     public function setArrayData($code, $status, $metadata = null)
@@ -110,7 +113,7 @@ class Controller extends BaseController
         }
 
         $count = count($arr_key_cond);
-        // dd($request);
+
         if ($count == 1) {
             $_model = $model::where($arr_key_cond[0], $condition[$arr_key_cond[0]])->update($request);
         } else if ($count == 2) {

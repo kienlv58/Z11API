@@ -21,8 +21,11 @@ Route::get('/user', function (Request $request) {
 Route::group(['prefix' => 'v1'], function () {
 
     //Authorization: Bearer {yourtokenhere}
-    Route::group(['prefix' => 'restricted', 'middleware' => 'jwt.auth'], function () {
+    // 'middleware' => 'jwt.auth'
+    Route::group(['prefix' => 'restricted',], function () {
         Route::get('profile/{id?}', 'RestfulController@getProfile');
+        Route::post('chargecoin', 'RestfulController@chargeCoin');
+        Route::post('profile/edit', 'RestfulController@editProfile');
     });
 
     Route::group(['prefix' => 'auth'], function () {
@@ -92,9 +95,9 @@ Route::group(['prefix' => 'v1'], function () {
     });
     //purchase
     Route::group(['prefix' => 'purchase'], function () {
-        Route::get('get_user/{id?}', 'PurchaseController@getUserPurchase');
-        Route::get('getUserPurchase_package/{id?}', 'PurchaseController@getUserPurchase_package');
-        Route::get('getUserPurchase_explain/{id?}', 'PurchaseController@getUserPurchase_explain');
+        Route::get('get_user/{user_id?}', 'PurchaseController@getUserPurchase');
+        Route::get('getUserPurchase_package/{user_id?}', 'PurchaseController@getUserPurchase_package');
+        Route::get('getUserPurchase_explain/{user_id?}', 'PurchaseController@getUserPurchase_explain');
         Route::get('getPurchaseId/{id?}', 'PurchaseController@getPurchaseId');
         Route::get('get_all/{take?}/{skip?}', 'PurchaseController@getAllPurchase');
         Route::post('add_payment', 'PurchaseController@payment');
@@ -103,11 +106,17 @@ Route::group(['prefix' => 'v1'], function () {
     });
 
 //admin + mode
-    Route::group(['prefix' => 'admin'], function () {
+    Route::group(['prefix' => 'admin',['middleware' => 'checkadmin']], function () {
 
         Route::post('add_category', 'CategoryController@addCategory');
         Route::post('edit_category', 'CategoryController@editCategory');
         Route::post('delete_category', 'CategoryController@deleteCategory');
+        Route::get('get_user/{id?}','AdminController@getUser');
+        Route::get('get_user_mod','AdminController@getuser_Mod');
+        Route::get('get_all_user/{take?}/{skip?}','AdminController@getAllUser');
+        Route::post('delete_user','AdminController@deleteUser');
+        Route::post('aprroval_package','AdminController@aprrovalPackage');
+        Route::post('create_user_mod','AdminController@createUserMod');
 
     });
 

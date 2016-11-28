@@ -51,7 +51,22 @@ class PackageController extends Controller
      * )
      */
     public  function getPackage($id){
-        return $this->getDataById($this->model,$id);
+        $pkg = Package::find($id);
+        if($pkg == null){
+            return response()->json($this->setArrayData(400, 'can not find data'), 400);
+        }
+        else{
+            $approval = $pkg->approval;
+            if($approval == 0){
+                return response()->json($this->setArrayData(300, 'package not yet approved'), 200);
+            }
+            if ($approval == 2){
+                return response()->json($this->setArrayData(400, 'package not approved'), 200);
+            }
+            if($approval == 1){
+                return response()->json($this->setArrayData(200, 'OK',$pkg), 200);
+            }
+    }
 
     }
     /**
@@ -91,6 +106,145 @@ class PackageController extends Controller
      */
     public function getAllPackage($take = 'all',$skip = 0){
         return $this->getAllData($this->model,$take,$skip);
+    }
+    /**
+     * @SWG\Get(
+     *     path="/package/get_not_yet_aprroval/{take}/{skip}",
+     *     summary="get all package",
+     *     tags={"4.Package"},
+     *     description="return package with take and skip",
+     *     operationId="package",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "take",
+     *     in ="path",
+     *     description = "take from ....",
+     *     type = "integer",
+     *     default = "all",
+     *    required = true
+     *     ),
+     *      @SWG\Parameter(
+     *      name = "skip",
+     *     in ="path",
+     *     description = "skip from",
+     *     type = "integer",
+     *     default="0",
+     *     required = true
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid value",
+     *     )
+     * )
+     */
+    public function getPackageNotYetAprroval($take = 'all',$skip = 0){
+        if ($take == 'all') {
+            $_model = Package::where('approval',0)->get();
+        } else {
+            $_model = Package::where('approval',0)->take($take)->skip($skip)->get();
+        }
+        if ($_model == null || empty($_model))
+            return response()->json($this->setArrayData(400, 'null', $_model->toArray()), 400);
+        else
+            return response()->json($this->setArrayData(200, 'OK', $_model->toArray()), 200);
+    }
+
+    /**
+     * @SWG\Get(
+     *     path="/package/get_not_aprroval/{take}/{skip}",
+     *     summary="get all package",
+     *     tags={"4.Package"},
+     *     description="return package with take and skip",
+     *     operationId="package",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "take",
+     *     in ="path",
+     *     description = "take from ....",
+     *     type = "integer",
+     *     default = "all",
+     *    required = true
+     *     ),
+     *      @SWG\Parameter(
+     *      name = "skip",
+     *     in ="path",
+     *     description = "skip from",
+     *     type = "integer",
+     *     default="0",
+     *     required = true
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid value",
+     *     )
+     * )
+     */
+    public function getPackageNotAprroval($take = 'all',$skip = 0){
+        if ($take == 'all') {
+            $_model = Package::where('approval',2)->get();
+        } else {
+            $_model = Package::where('approval',2)->take($take)->skip($skip)->get();
+        }
+        if ($_model == null || empty($_model))
+            return response()->json($this->setArrayData(400, 'null', $_model->toArray()), 400);
+        else
+            return response()->json($this->setArrayData(200, 'OK', $_model->toArray()), 200);
+    }
+    /**
+     * @SWG\Get(
+     *     path="/package/get_aprroval/{take}/{skip}",
+     *     summary="get all package",
+     *     tags={"4.Package"},
+     *     description="return package with take and skip",
+     *     operationId="package",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "take",
+     *     in ="path",
+     *     description = "take from ....",
+     *     type = "integer",
+     *     default = "all",
+     *    required = true
+     *     ),
+     *      @SWG\Parameter(
+     *      name = "skip",
+     *     in ="path",
+     *     description = "skip from",
+     *     type = "integer",
+     *     default="0",
+     *     required = true
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid value",
+     *     )
+     * )
+     */
+    public function getPackageAprroval($take = 'all',$skip = 0){
+        if ($take == 'all') {
+            $_model = Package::where('approval',1)->get();
+        } else {
+            $_model = Package::where('approval',1)->take($take)->skip($skip)->get();
+        }
+        if ($_model == null || empty($_model))
+            return response()->json($this->setArrayData(400, 'null', $_model->toArray()), 400);
+        else
+            return response()->json($this->setArrayData(200, 'OK', $_model->toArray()), 200);
     }
 
     /**
@@ -164,6 +318,7 @@ class PackageController extends Controller
         if ($code === 400)
             return $result;
         $data_package['item_code']='package';
+        $data_package['approval']=0;
         $data_package['explain_id']=$explain_id;
 
         return $this->addNewData($this->model,$data_package);

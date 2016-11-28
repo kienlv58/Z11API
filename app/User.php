@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+         'email', 'password','type','grant_type','active'
     ];
 
     /**
@@ -26,10 +26,11 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+    public $primaryKey = 'id';
     public $timestamps = true;
 
     public function profile() {
-        return $this->hasOne('App\Profile');
+        return $this->hasOne('App\Profile','user_id','id');
     }
     public function folder(){
         return $this->hasOne('App\Folder');

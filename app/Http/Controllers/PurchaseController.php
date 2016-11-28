@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Explain;
 use App\Package;
+use App\Profile;
 use App\purchase;
 use App\User;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ class PurchaseController extends Controller
      */
     /**
      * @SWG\GET(
-     *     path="/purchase/get_user/{id}",
+     *     path="/purchase/get_user/{user_id}",
      *     summary="get_user",
      *     tags={"Purchase"},
      *     description="get_user purchas with user_id",
@@ -32,11 +33,12 @@ class PurchaseController extends Controller
      *      name = "user_id",
      *     description = "user_id",
      *      required = true,
-     *      in ="formData",
+     *     default = 0,
+     *      in ="path",
      *     type = "integer",
      *
      *     @SWG\Schema(
-     *     required={"grant_type"},
+     *     required={"user_id"},
      *     type = "integer",
      *      )
      *     ),
@@ -63,7 +65,7 @@ class PurchaseController extends Controller
 
     /**
      * @SWG\GET(
-     *     path="/purchase/getUserPurchase_package/{id}",
+     *     path="/purchase/getUserPurchase_package/{user_id}",
      *     summary="getUserPurchase_package",
      *     tags={"Purchase"},
      *     description="getUserPurchase_package purchas with user_id",
@@ -75,7 +77,8 @@ class PurchaseController extends Controller
      *      name = "user_id",
      *     description = "user_id",
      *      required = true,
-     *      in ="formData",
+     *      in ="path",
+     *     default=0,
      *     type = "integer",
      *
      *     @SWG\Schema(
@@ -105,7 +108,7 @@ class PurchaseController extends Controller
 
     /**
      * @SWG\GET(
-     *     path="/purchase/getUserPurchase_explain/{id}",
+     *     path="/purchase/getUserPurchase_explain/{user_id}",
      *     summary="getUserPurchase_explain",
      *     tags={"Purchase"},
      *     description="getUserPurchase_explain purchas with user_id",
@@ -117,7 +120,8 @@ class PurchaseController extends Controller
      *      name = "user_id",
      *     description = "user_id",
      *      required = true,
-     *      in ="formData",
+     *      in ="path",
+     *      default = 0,
      *     type = "integer",
      *
      *     @SWG\Schema(
@@ -160,7 +164,8 @@ class PurchaseController extends Controller
      *      name = "purchase_id",
      *     description = "purchase_id",
      *      required = true,
-     *      in ="formData",
+     *      in ="path",
+     *     default = 0,
      *     type = "integer",
      *
      *     @SWG\Schema(
@@ -183,9 +188,11 @@ class PurchaseController extends Controller
     public function getPurchaseId($id = 0)
     {
         if ($id == 0) {
-            return response()->json($this->setArrayData(400, 'can not find user'), 400);
+            return response()->json($this->setArrayData(400, 'can not find purchase'), 400);
         }
         $purchase = purchase::find($id);
+        if($purchase == null)
+            return response()->json($this->setArrayData(400, 'can not find purchase'), 400);
         return response()->json($this->setArrayData(200, 'success fully', $purchase->toArray()), 200);
     }
 
@@ -291,11 +298,14 @@ class PurchaseController extends Controller
     {
         $data = $request->toArray();
         $user = User::find($data['user_id']);
+        if ($user == null) {
+            return response()->json($this->setArrayData(400, 'can not find user'), 400);
+        }
+        $profile = $user->profile()->get()->first();
+        $current_coin = $profile->coin;
         if ($data['item_code'] === "package" || $data['item_code'] === "explain") {
 
-            if ($user == null) {
-                return response()->json($this->setArrayData(400, 'can not find user'), 400);
-            }
+
             if ($data['item_code'] == 'explain') {
                 $find = purchase::where('user_id',$data['user_id'])->where('item_code',$data['item_code'])->where('item_id',$data['item_id'])->get()->first();
                 if($find != null)
@@ -304,16 +314,34 @@ class PurchaseController extends Controller
                 if ($explain == null) {
                     return response()->json($this->setArrayData(400, 'can not find explain item'), 400);
                 }
+                $coin_pay = $explain->explain_cost;
+                if($current_coin >= $coin_pay){
+                    $new_coin = $current_coin - $coin_pay;
+                    $profile->update(['coin'=>$new_coin]);
+                }
+                else{
+                    return response()->json($this->setArrayData(400, 'coin enought pay to explain'), 400);
+                }
             }
             if ($data['item_code'] == 'package') {
                 $find = purchase::where('user_id',$data['user_id'])->where('item_code',$data['item_code'])->where('item_id',$data['item_id'])->get()->first();
                 if($find != null)
                     return response()->json($this->setArrayData(400, 'item exists'), 400);
                 $package = Package::find($data['item_id']);
-                if ($package == null) {
-                    return response()->json($this->setArrayData(400, 'can not find explain item'), 400);
+                if($package == null){
+                    return response()->json($this->setArrayData(400, 'package not exits'), 400);
+                }
+                $coin_pay = $package->package_cost;
+                if($current_coin >= $coin_pay){
+                    $new_coin = $current_coin - $coin_pay;
+                    $profile->update(['coin'=>$new_coin]);
+                }
+                else{
+                    return response()->json($this->setArrayData(400, 'coin enought pay to package'), 400);
                 }
             }
+
+
             return $this->addNewData($this->model, $data);
         } else
             return response()->json($this->setArrayData(400, 'item_code invalid'), 400);
@@ -363,12 +391,13 @@ class PurchaseController extends Controller
      */
 
 
-    public function deletePurchase($id = 0)
+    public function deletePurchase(Request $request)
     {
-        if ($id == 0) {
+        $purchase = purchase::find($request->input('purchase_id'));
+        if ($purchase == null) {
             return response()->json($this->setArrayData(400, 'can not find purchase'), 400);
         }
-        $purchase = purchase::find($id);
+
         $purchase->delete();
         return response()->json($this->setArrayData(200, 'delete success'), 200);
 

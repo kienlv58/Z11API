@@ -99,6 +99,17 @@ class RegisterController extends Controller
      *      )
      *     ),
      *      @SWG\Parameter(
+     *      name = "gender",
+     *     description = "gender of user",
+     *     in ="formData",
+     *     required = true,
+     *     type="string",
+     *     @SWG\Schema(
+     *     required={"email"},
+     *     type = "string"
+     *      )
+     *     ),
+     *      @SWG\Parameter(
      *      name = "password",
      *     description = "password of user",
      *      required = true,
@@ -146,24 +157,19 @@ class RegisterController extends Controller
             );
         } else {
             $user = new User();
-            $user->name = $data['name'];
             $user->email = $data['email'];
             $user->password = bcrypt($data['password']);
             $user->grant_type = 'password';
             $user->token_social = null;
             $user->active = 0;
+            $user->type = 'user';
             $user->save();
-//            $user = User::create([
-//                'name' => $data['name'],
-//                'email' => $data['email'],
-//                'password' => bcrypt($data['password']),
-//                'grant_type'=>'password',
-//                'token_social'=>null,
-//                'active'=>0
-//            ]);
             $id = $user->id;
             $profile = Profile::create([
                 'user_id' => $id,
+                'coin'=>200,
+                'name'=>$data['name'],
+                'gender'=>$data['gender']
             ]);
 //                Mail::send('email.verify', ['name' => $data['name'], 'email' => $data['email'], 'link' => url('/user/activation/' . JWTAuth::attempt(['email' => $data['email'], 'password' => $data['password']]) . '/' . $user->id)], function ($message) use ($data) {
 //                    $message->from('zone11@api.com', $name = 'zone11');

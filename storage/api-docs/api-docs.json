@@ -19,6 +19,227 @@
         "http"
     ],
     "paths": {
+        "/admin/delete_user": {
+            "post": {
+                "tags": [
+                    "9.Admin"
+                ],
+                "summary": "delete user ",
+                "description": "delete with user_id",
+                "operationId": "user_delete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "current_uid",
+                        "in": "formData",
+                        "description": "current_uid",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "uid",
+                        "in": "formData",
+                        "description": "uid delete",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/admin/create_user_mod": {
+            "post": {
+                "tags": [
+                    "9.Admin"
+                ],
+                "summary": "create_user_mod ",
+                "description": "create_user_mod",
+                "operationId": "create_user_mod",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "current_uid",
+                        "in": "formData",
+                        "description": "current_uid",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "description": "email",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "description": "password",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "password"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "name",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "gender",
+                        "in": "formData",
+                        "description": "gender",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "gender"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "coin",
+                        "in": "formData",
+                        "description": "coin",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "coin"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "image",
+                        "in": "formData",
+                        "description": "image",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "image"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/admin/aprroval_package": {
+            "post": {
+                "tags": [
+                    "9.Admin"
+                ],
+                "summary": "aprroval user ",
+                "description": "aprroval package",
+                "operationId": "aprroval package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "package_id",
+                        "in": "formData",
+                        "description": "package_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "package_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "aprroval",
+                        "in": "formData",
+                        "description": "aprroval",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "aprroval"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
         "/answer/get_all/{take}/{skip}": {
             "get": {
                 "tags": [
@@ -1514,6 +1735,132 @@
                 }
             }
         },
+        "/package/get_not_yet_aprroval/{take}/{skip}": {
+            "get": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "get all package",
+                "description": "return package with take and skip",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/package/get_not_aprroval/{take}/{skip}": {
+            "get": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "get all package",
+                "description": "return package with take and skip",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/package/get_aprroval/{take}/{skip}": {
+            "get": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "get all package",
+                "description": "return package with take and skip",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "take",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "skip",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
         "/package/add": {
             "post": {
                 "tags": [
@@ -1696,7 +2043,7 @@
                 }
             }
         },
-        "/purchase/get_user/{id}": {
+        "/purchase/get_user/{user_id}": {
             "get": {
                 "tags": [
                     "Purchase"
@@ -1713,16 +2060,17 @@
                 "parameters": [
                     {
                         "name": "user_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "user_id",
                         "required": true,
                         "schema": {
                             "required": [
-                                "grant_type"
+                                "user_id"
                             ],
                             "type": "integer"
                         },
-                        "type": "integer"
+                        "type": "integer",
+                        "default": 0
                     }
                 ],
                 "responses": {
@@ -1735,7 +2083,7 @@
                 }
             }
         },
-        "/purchase/getUserPurchase_package/{id}": {
+        "/purchase/getUserPurchase_package/{user_id}": {
             "get": {
                 "tags": [
                     "Purchase"
@@ -1752,7 +2100,7 @@
                 "parameters": [
                     {
                         "name": "user_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "user_id",
                         "required": true,
                         "schema": {
@@ -1761,7 +2109,8 @@
                             ],
                             "type": "integer"
                         },
-                        "type": "integer"
+                        "type": "integer",
+                        "default": 0
                     }
                 ],
                 "responses": {
@@ -1774,7 +2123,7 @@
                 }
             }
         },
-        "/purchase/getUserPurchase_explain/{id}": {
+        "/purchase/getUserPurchase_explain/{user_id}": {
             "get": {
                 "tags": [
                     "Purchase"
@@ -1791,7 +2140,7 @@
                 "parameters": [
                     {
                         "name": "user_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "user_id",
                         "required": true,
                         "schema": {
@@ -1800,7 +2149,8 @@
                             ],
                             "type": "integer"
                         },
-                        "type": "integer"
+                        "type": "integer",
+                        "default": 0
                     }
                 ],
                 "responses": {
@@ -1830,7 +2180,7 @@
                 "parameters": [
                     {
                         "name": "purchase_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "purchase_id",
                         "required": true,
                         "schema": {
@@ -1839,7 +2189,8 @@
                             ],
                             "type": "integer"
                         },
-                        "type": "integer"
+                        "type": "integer",
+                        "default": 0
                     }
                 ],
                 "responses": {
@@ -2342,6 +2693,19 @@
                         "type": "string"
                     },
                     {
+                        "name": "gender",
+                        "in": "formData",
+                        "description": "gender of user",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "email"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
                         "name": "password",
                         "in": "formData",
                         "description": "password of user",
@@ -2416,6 +2780,122 @@
                     },
                     "400": {
                         "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/restricted/profile/edit": {
+            "post": {
+                "tags": [
+                    "1.User"
+                ],
+                "summary": "edit profile ",
+                "description": "edit with profile_id",
+                "operationId": "profileedit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "formData",
+                        "description": "user_id edit",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "user_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "name",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "image",
+                        "in": "formData",
+                        "description": "image",
+                        "schema": {
+                            "required": [
+                                "image"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/restricted/chargecoin": {
+            "post": {
+                "tags": [
+                    "1.User"
+                ],
+                "summary": "chargecoin",
+                "description": "chargecoin",
+                "operationId": "chargecoin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "formData",
+                        "description": "uid chargecoin",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "uid"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "coin",
+                        "in": "formData",
+                        "description": "coin charge",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
                     }
                 }
             }

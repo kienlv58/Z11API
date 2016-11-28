@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Category;
 use App\Folder;
 use App\Language;
+use App\User;
 use Illuminate\Http\Request;
 
 class FolderController extends Controller
@@ -162,6 +163,10 @@ class FolderController extends Controller
         $check_category = Category::find($data_folder['category_id']);
         if($check_category == null){
             return response()->json($this->setArrayData(400,'category not exists'),400);
+        }
+        $check_user = User::find($data_folder['owner_id']);
+        if($check_user == null){
+            return response()->json($this->setArrayData(400,'owner_id: user not exists'),400);
         }
 
 

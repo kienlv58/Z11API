@@ -145,14 +145,14 @@ class LoginController extends Controller
                 //return ($result) ? 1:0;
 
                 if ($result) {
-                    $user = User::select('id', 'email', 'name', 'active')->where('email', $data['email'])->get()->first();
+                    $user = User::select('id', 'email', 'active')->where('email', $data['email'])->get()->first();
                    // if ($user->active == 0) {
-                        return response()->json(
-                            [
-                                'code' => 400,
-                                'status' => 'account not active',
-                            ], 400
-                        );
+//                        return response()->json(
+//                            [
+//                                'code' => 400,
+//                                'status' => 'account not active',
+//                            ], 400
+//                        );
                    // }
                     $jwt = ['id' => $user->id, 'email' => $user->email, 'password' => $data['password']];
                     $token = JWTAuth::fromUser((object)$jwt);

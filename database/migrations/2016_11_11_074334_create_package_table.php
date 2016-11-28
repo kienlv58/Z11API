@@ -19,6 +19,7 @@ class CreatePackageTable extends Migration
             $table->integer('folder_id')->index()->unsigned();
             $table->foreign('folder_id')->references('folder_id')->on('folders')->onDelete('cascade');
             $table->integer('explain_id')->index()->unsigned();
+            $table->integer('approval')->index();//0: no, 1: yes , 2: return
             $table->integer('package_cost');
             $table->timestamps();
         });
