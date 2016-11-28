@@ -22,7 +22,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     //Authorization: Bearer {yourtokenhere}
     // 'middleware' => 'jwt.auth'
-    Route::group(['prefix' => 'restricted',], function () {
+    Route::group(['prefix' => 'restricted','middleware' => 'jwt.auth'], function () {
         Route::get('profile/{id?}', 'RestfulController@getProfile');
         Route::post('chargecoin', 'RestfulController@chargeCoin');
         Route::post('profile/edit', 'RestfulController@editProfile');
@@ -106,7 +106,7 @@ Route::group(['prefix' => 'v1'], function () {
     });
 
 //admin + mode
-    Route::group(['prefix' => 'admin',['middleware' => 'checkadmin']], function () {
+    Route::group(['prefix' => 'admin','middleware' => 'checkadmin'], function () {
 
         Route::post('add_category', 'CategoryController@addCategory');
         Route::post('edit_category', 'CategoryController@editCategory');
