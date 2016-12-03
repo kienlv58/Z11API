@@ -146,6 +146,7 @@ class LoginController extends Controller
 
                 if ($result) {
                     $user = User::select('id', 'email', 'active')->where('email', $data['email'])->get()->first();
+                    $user->profile = $user->profile()->get();
                    // if ($user->active == 0) {
 //                        return response()->json(
 //                            [

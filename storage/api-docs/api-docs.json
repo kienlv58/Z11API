@@ -555,6 +555,19 @@
                         "type": "string"
                     },
                     {
+                        "name": "image",
+                        "in": "formData",
+                        "description": "link image",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "image"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
                         "name": "translate",
                         "in": "formData",
                         "description": "translate josn",
@@ -627,6 +640,18 @@
                         "schema": {
                             "required": [
                                 "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "image",
+                        "in": "formData",
+                        "description": "link image",
+                        "schema": {
+                            "required": [
+                                "image"
                             ],
                             "type": "string"
                         },
@@ -1213,9 +1238,9 @@
                 "tags": [
                     "6.GroupQuestion"
                 ],
-                "summary": "get group_question",
-                "description": "get group_question with group_question_id",
-                "operationId": "get group_question",
+                "summary": "get category from id",
+                "description": "return category from id",
+                "operationId": "cateid",
                 "consumes": [
                     "application/json"
                 ],
@@ -1225,24 +1250,18 @@
                 "parameters": [
                     {
                         "name": "group_question_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "group_question_id",
                         "required": true,
-                        "schema": {
-                            "required": [
-                                "grant_type"
-                            ],
-                            "type": "integer"
-                        },
                         "type": "integer"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "get succes"
+                        "description": "successful operation"
                     },
                     "400": {
-                        "description": "Invalid param"
+                        "description": "cant not find category"
                     }
                 }
             }
@@ -1671,15 +1690,9 @@
                 "parameters": [
                     {
                         "name": "package_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "package_id",
                         "required": true,
-                        "schema": {
-                            "required": [
-                                "grant_type"
-                            ],
-                            "type": "integer"
-                        },
                         "type": "integer"
                     }
                 ],

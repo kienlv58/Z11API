@@ -29,15 +29,10 @@ class PackageController extends Controller
      *     produces={"application/json"},
      *     @SWG\Parameter(
      *      name = "package_id",
+     *     in ="path",
      *     description = "package_id",
-     *      required = true,
-     *      in ="formData",
      *     type = "integer",
-     *
-     *     @SWG\Schema(
-     *     required={"grant_type"},
-     *     type = "integer",
-     *      )
+     *    required = true
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -50,18 +45,23 @@ class PackageController extends Controller
      *     )
      * )
      */
-    public  function getPackage($id){
+    public  function getPackage($id = 0){
         $pkg = Package::find($id);
         if($pkg == null){
-            return response()->json($this->setArrayData(400, 'can not find data'), 400);
+            return response()->json($this->setArrayData(404, 'can not find data'), 404);
         }
         else{
             $approval = $pkg->approval;
+            $chapters = $pkg->chapter()->get();
+            foreach ($chapters as  $chapter){
+                $chapter->groupquestion = $chapter->groupquestion()->get();
+            }
+            $pkg->chapters = $chapters;
             if($approval == 0){
-                return response()->json($this->setArrayData(300, 'package not yet approved'), 200);
+                return response()->json($this->setArrayData(300, 'package not yet approved',$pkg), 300);
             }
             if ($approval == 2){
-                return response()->json($this->setArrayData(400, 'package not approved'), 200);
+                return response()->json($this->setArrayData(400, 'package not approved',$pkg), 400);
             }
             if($approval == 1){
                 return response()->json($this->setArrayData(200, 'OK',$pkg), 200);
@@ -105,7 +105,28 @@ class PackageController extends Controller
      * )
      */
     public function getAllPackage($take = 'all',$skip = 0){
-        return $this->getAllData($this->model,$take,$skip);
+        //return $this->getAllData($this->model,$take,$skip);
+        if ($take == 'all') {
+            $pkg = Package::all();
+        } else {
+            $pkg = Package::take($take)->skip($skip)->get();
+        }
+        if ($pkg == null)
+            return response()->json(['code' => 404, 'status' => 'not found', 'metadata' => $pkg->toArray()], 404);
+        else {
+            foreach ($pkg as $package) {
+                $chapters = $package->chapter()->get();
+
+                foreach ($chapters as  $chapter){
+                    $chapter->groupquestion = $chapter->groupquestion()->get();
+                }
+                $package->chapters = $chapters;
+
+            }
+            return response()->json(['code' => 200, 'status' => 'OK', 'metadata' => $pkg->toArray()], 200);
+        }
+
+
     }
     /**
      * @SWG\Get(

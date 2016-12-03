@@ -44,8 +44,13 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         if (!$category) {
-            return response()->json(['code' => 400, 'status' => 'cant not find category'], 400);
+            return response()->json(['code' => 404, 'status' => 'cant not find category'], 404);
         }
+        $folders = $category->folder()->get();
+        foreach ($folders as $folder) {
+            $folder->package = $folder->package()->get();
+        }
+        $category->folder = $folders;
         return response()->json(['code' => 200, 'status' => 'OK', 'metadata' => $category->toArray()], 200);
     }
 
@@ -92,9 +97,19 @@ class CategoryController extends Controller
             $category = Category::take($take)->skip($skip)->get();
         }
         if ($category == null)
+            return response()->json(['code' => 404, 'status' => 'not found', 'metadata' => $category->toArray()], 404);
+        else {
+            foreach ($category as $cate) {
+                $folders = $cate->folder()->get();
+                foreach ($folders as $folder) {
+                    $folder->package = $folder->package()->get();
+                }
+                $cate->folder = $folders;
+
+            }
             return response()->json(['code' => 200, 'status' => 'OK', 'metadata' => $category->toArray()], 200);
-        else
-            return response()->json(['code' => 200, 'status' => 'null', 'metadata' => $category->toArray()], 200);
+        }
+
 
     }
 
@@ -129,6 +144,18 @@ class CategoryController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *    @SWG\Parameter(
+     *      name = "image",
+     *     description = "link image",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"image"},
+     *     type = "string",
+     *      )
+     *     ),
      *     @SWG\Parameter(
      *      name = "translate",
      *     description = "translate josn",
@@ -157,13 +184,13 @@ class CategoryController extends Controller
 
 
         $data = $request->toArray();
-        $explain_id = $this->addNewDataExplain('category',0);
-        $result = $this->addDataTranslate($data['translate'],$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
+        $explain_id = $this->addNewDataExplain('category', 0);
+        $result = $this->addDataTranslate($data['translate'], $explain_id);
+        $a = \GuzzleHttp\json_decode($result->content(), true);
         $code = $a['code'];
         if ($code === 400)
             return $result;
-        $data_cate = ['category_code'=>$data['category_code'], 'explain_id' => $explain_id];
+        $data_cate = ['category_code' => $data['category_code'], 'explain_id' => $explain_id,'image'=>$data['image']];
         return $this->addNewData($this->model, $data_cate);
     }
 
@@ -209,6 +236,17 @@ class CategoryController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *   @SWG\Parameter(
+     *      name = "image",
+     *     description = "link image",
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"image"},
+     *     type = "string",
+     *      )
+     *     ),
      *     @SWG\Parameter(
      *      name = "translate",
      *      description = "translate json",
@@ -240,17 +278,17 @@ class CategoryController extends Controller
         $data = $request->toArray();
         $category = Category::find($data['category_id']);
         if ($category == null) {
-            return response()->json($this->setArrayData(400,'can find category'),400);
+            return response()->json($this->setArrayData(400, 'can find category'), 400);
         }
         $explain_id = $category->explain_id;
         $this->deleteDataTranslate($explain_id);
-        $result = $this->addDataTranslate($data['translate'],$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
+        $result = $this->addDataTranslate($data['translate'], $explain_id);
+        $a = \GuzzleHttp\json_decode($result->content(), true);
         $code = $a['code'];
         if ($code === 400)
             return $result;
 
-        return $this->editData($this->model, ['category_code' => $data['category_code']], ['category_id' => $category->category_id]);
+        return $this->editData($this->model, ['category_code' => $data['category_code'],'image'=>$data['image']], ['category_id' => $category->category_id]);
 
 
     }

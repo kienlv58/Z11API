@@ -11,4 +11,7 @@ class Chapter extends Model
     }
     public $primaryKey = 'chapter_id';
     protected $fillable = ['item_code','package_id','explain_id'];
+    public function groupquestion(){
+        return $this->hasMany('App\GroupQuestion','chapter_id');
+    }
 }

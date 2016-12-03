@@ -12,4 +12,7 @@ class GroupQuestion extends Model
 
     protected $fillable = ['chapter_id','item_code','group_question_audio','group_question_image','group_question_transcript','group_question_content','explain_id'];
     public $primaryKey = 'group_question_id';
+    public function question(){
+        return $this->hasMany('App\Question','group_question_id');
+    }
 }

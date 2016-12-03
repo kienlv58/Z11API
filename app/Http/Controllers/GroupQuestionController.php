@@ -12,46 +12,46 @@ class GroupQuestionController extends Controller
 {
     protected $model ='App\GroupQuestion';
 
+
+
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    /**
-     * @SWG\GET(
+     * @SWG\Get(
      *     path="/group_question/get/{id}",
-     *     summary="get group_question",
+     *     summary="get category from id",
      *     tags={"6.GroupQuestion"},
-     *     description="get group_question with group_question_id",
-     *     operationId="get group_question",
+     *     description="return category from id",
+     *     operationId="cateid",
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
      *      name = "group_question_id",
+     *     in ="path",
      *     description = "group_question_id",
-     *      required = true,
-     *      in ="formData",
-     *     type = "integer",
-     *
-     *     @SWG\Schema(
-     *     required={"grant_type"},
-     *     type = "integer",
-     *      )
+     *     required = true,
+     *     type = "integer"
      *     ),
      *     @SWG\Response(
      *         response=200,
-     *         description="get succes",
-     *
+     *         description="successful operation",
      *     ),
      *     @SWG\Response(
      *         response="400",
-     *         description="Invalid param",
+     *         description="cant not find category",
      *     )
      * )
      */
+
     public  function getGroupQuestion($id){
-        return $this->getDataById($this->model,$id);
+        $groups = GroupQuestion::find($id);
+        if (!$groups) {
+            return response()->json(['code' => 404, 'status' => 'cant not find groupquestion'], 404);
+        }
+        $questions = $groups->question()->get();
+        foreach ($questions as $question) {
+            $question->answers = $question->answer()->get();
+        }
+        $groups->questions = $questions;
+        return response()->json(['code' => 200, 'status' => 'OK', 'metadata' => $groups->toArray()], 200);
 
     }
     /**
@@ -90,7 +90,24 @@ class GroupQuestionController extends Controller
      * )
      */
     public function getAllGroupQuestion($take = 'all',$skip = 0){
-        return $this->getAllData($this->model,$take,$skip);
+        if ($take == 'all') {
+            $groups = GroupQuestion::all();
+        } else {
+            $groups = GroupQuestion::take($take)->skip($skip)->get();
+        }
+        if ($groups == null)
+            return response()->json(['code' => 404, 'status' => 'not found', 'metadata' => $groups->toArray()], 404);
+        else {
+            foreach ($groups as $group) {
+                $questions = $group->question()->get();
+                foreach ($questions as $question) {
+                    $question->answers = $question->answer()->get();
+                }
+                $group->questions = $questions;
+                return response()->json(['code' => 200, 'status' => 'OK', 'metadata' => $groups->toArray()], 200);
+
+            }
+        }
     }
 
     /**

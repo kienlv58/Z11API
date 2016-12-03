@@ -12,6 +12,9 @@ class Folder extends Model
     public function user(){
         return $this->belongsTo('App\User');
     }
+    public function package(){
+        return $this->hasMany('App\Package','folder_id');
+    }
     public $primaryKey = 'folder_id';
     protected $fillable = ['item_code','category_id','explain_id','owner_id','type_owner'];
 }
