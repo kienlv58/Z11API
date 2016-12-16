@@ -6,17 +6,18 @@ use App\Chapter;
 use App\Explain;
 use App\GroupQuestion;
 use App\Language;
+use App\TextId;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GroupQuestionController extends Controller
 {
-    protected $model ='App\GroupQuestion';
-
+    protected $model = 'App\GroupQuestion';
 
 
     /**
      * @SWG\Get(
-     *     path="/group_question/get/{id}",
+     *     path="/group_questions/{group_question_id}",
      *     summary="get category from id",
      *     tags={"6.GroupQuestion"},
      *     description="return category from id",
@@ -30,6 +31,15 @@ class GroupQuestionController extends Controller
      *     required = true,
      *     type = "integer"
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="successful operation",
@@ -41,8 +51,9 @@ class GroupQuestionController extends Controller
      * )
      */
 
-    public  function getGroupQuestion($id){
-        $groups = GroupQuestion::find($id);
+    public function getGroupQuestion($group_question_id)
+    {
+        $groups = GroupQuestion::find($group_question_id);
         if (!$groups) {
             return response()->json(['code' => 404, 'status' => 'cant not find groupquestion'], 404);
         }
@@ -54,9 +65,10 @@ class GroupQuestionController extends Controller
         return response()->json(['code' => 200, 'status' => 'OK', 'metadata' => $groups->toArray()], 200);
 
     }
+
     /**
      * @SWG\Get(
-     *     path="/group_question/get_all/{take}/{skip}",
+     *     path="/group_questions/{limit}/{offset}",
      *     summary="get all group_question",
      *     tags={"6.GroupQuestion"},
      *     description="return group_question with take and skip",
@@ -64,7 +76,7 @@ class GroupQuestionController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "take",
+     *      name = "limit",
      *     in ="path",
      *     description = "take from ....",
      *     type = "integer",
@@ -72,12 +84,21 @@ class GroupQuestionController extends Controller
      *    required = true
      *     ),
      *      @SWG\Parameter(
-     *      name = "skip",
+     *      name = "offset",
      *     in ="path",
      *     description = "skip from",
      *     type = "integer",
      *     default="0",
      *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -89,13 +110,14 @@ class GroupQuestionController extends Controller
      *     )
      * )
      */
-    public function getAllGroupQuestion($take = 'all',$skip = 0){
-        if ($take == 'all') {
+    public function getAllGroupQuestion($limit = 'all', $offset = 0)
+    {
+        if ($limit == 'all') {
             $groups = GroupQuestion::all();
         } else {
-            $groups = GroupQuestion::take($take)->skip($skip)->get();
+            $groups = GroupQuestion::take($limit)->skip($offset)->get();
         }
-        if ($groups == null)
+        if (count($groups) == 0)
             return response()->json(['code' => 404, 'status' => 'not found', 'metadata' => $groups->toArray()], 404);
         else {
             foreach ($groups as $group) {
@@ -112,7 +134,7 @@ class GroupQuestionController extends Controller
 
     /**
      * @SWG\Post(
-     *     path="/group_question/add",
+     *     path="/group_questions",
      *     summary="add new group_question",
      *     tags={"6.GroupQuestion"},
      *     description="add new group_question",
@@ -174,28 +196,27 @@ class GroupQuestionController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *
      *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
-     *      name = "explain_cost",
-     *     description = "explain_cost",
+     *      name = "explain",
+     *     description = "explain josn",
      *      required = true,
      *      in ="formData",
      *     type = "string",
      *
      *     @SWG\Schema(
-     *     required={"explain_cost"},
+     *     required={"text_value"},
      *     type = "string",
      *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -208,29 +229,52 @@ class GroupQuestionController extends Controller
      *     )
      * )
      */
-    public function addGroupQuestion(Request $request){
-        $data_group_qs = $request->only(['chapter_id','group_question_content','group_question_transcript','group_question_image','group_question_audio']);
 
-        $check_chapter = Chapter::find($data_group_qs['chapter_id']);
-        if($check_chapter == null){
-            return response()->json($this->setArrayData(400,'chapter not exists'),400);
+    //{“cost”: 8, “explain”: { “vi”:”la chu ngu”, “en”:” is subject” }}
+    public function addGroupQuestion(Request $request)
+    {
+
+
+        $data = $request->toArray();
+        $check_chapter = Chapter::find($data['chapter_id']);
+        if ($check_chapter == null) {
+            return response()->json($this->setArrayData(400, 'chapter not exists'), 400);
         }
-        $explain_id = $this->addNewDataExplain('group_qs',$request->input('explain_cost'));
-        $result = $this->addDataTranslate($request->input('translate'),$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
-        $code = $a['code'];
-        if ($code === 400)
-            return $result;
+        if ($data['explain']  == '{}') {
+            $data_group_qs = ['item_code' => 'groupquestion', 'chapter_id' => $data['chapter_id'], 'explain_item_id' => 0, 'group_question_content' => $data['group_question_content'], 'group_question_transcript' => $data['group_question_transcript'], 'group_question_image' => $data['group_question_image'], 'group_question_audio' => $data['group_question_audio']];
+            return $this->addNewData($this->model, $data_group_qs);
+        } else {
+            $data_explain = \GuzzleHttp\json_decode($data['explain'], true);
+            $explain_cost = $data_explain['cost'];
+            $json_text_value = \GuzzleHttp\json_encode($data_explain['explain']);
+            $result = $this->addDataTranslate($json_text_value);
+            $a = \GuzzleHttp\json_decode($result->content(), true);
+            $code = $a['code'];
+            $name_text_id = $a['metadata']['name_text_id'];
+            if ($code === 400)
+                return $result;
 
-        $data_group_qs['explain_id'] = $explain_id;
-        $data_group_qs['item_code'] = 'group_qs';
+            $explain = Explain::create(['item_code' => 'groupquestion', 'explain_cost' => $explain_cost, 'explain_text_id' => $name_text_id]);
+            if ($explain != null) {
+                $explain_item_id = $explain->explain_item_id;
 
-        return $this->addNewData($this->model,$data_group_qs);
+                $data_group_qs = ['item_code' => 'groupquestion', 'chapter_id' => $data['chapter_id'], 'explain_item_id' => $explain_item_id, 'group_question_content' => $data['group_question_content'], 'group_question_transcript' => $data['group_question_transcript'], 'group_question_image' => $data['group_question_image'], 'group_question_audio' => $data['group_question_audio']];
+                return $this->addNewData($this->model, $data_group_qs);
+            } else {
+                $this->deleteTextId($name_text_id);
+                return response()->json($this->setArrayData(400, 'create explain error'), 400);
+            }
+        }
+
+        //DB::transaction(function () use ($data,$kq){
+
+
+        //});
     }
 
     /**
-     * @SWG\Post(
-     *     path="/group_question/edit",
+     * @SWG\Put(
+     *     path="/group_questions",
      *     summary="edit group_question",
      *     tags={"6.GroupQuestion"},
      *     description="edit group_question",
@@ -293,27 +337,25 @@ class GroupQuestionController extends Controller
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
-     *      )
-     *           ),
-     *      @SWG\Parameter(
-     *      name = "explain_cost",
-     *     description = "explain_cost",
+     *      name = "explain",
+     *     description = "explain josn",
      *      required = true,
      *      in ="formData",
      *     type = "string",
      *
      *     @SWG\Schema(
-     *     required={"explain_cost"},
+     *     required={"explain"},
      *     type = "string",
      *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -326,29 +368,85 @@ class GroupQuestionController extends Controller
      *     )
      * )
      */
-    public function editGroupQuestion(Request $request){
+    public function editGroupQuestion(Request $request)
+    {
 
         $data = $request->toArray();
         $group_qs = GroupQuestion::find($data['group_question_id']);
         if ($group_qs == null) {
-            return response()->json($this->setArrayData(400,'can find group question'),400);
+            return response()->json($this->setArrayData(400, 'can find group question'), 400);
         }
-        $explain_id = $group_qs->explain_id;
-        Explain::where('explain_id',$explain_id)->update(['explain_cost'=>$data['explain_cost']]);
-        $this->deleteDataTranslate($explain_id);
-        $result = $this->addDataTranslate($data['translate'],$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
-        $code = $a['code'];
-        if ($code === 400)
-            return $result;
-        return $this->editData($this->model,$request->only(['group_question_content','group_question_transcript','group_question_image','group_question_audio']),['group_question_id'=>$data['group_question_id']]);
+        $data_group = $request->only(['group_question_content', 'group_question_transcript', 'group_question_image', 'group_question_audio']);
+
+        if ($data['explain'] == '{}') {
+            $data_group['explain_item_id'] =0;
+
+            if($group_qs->explain_item_id != 0){
+                $e = Explain::find($group_qs->explain_item_id);
+                if($e != null) {
+                    $kq = $this->deleteTextId($e->explain_text_id);
+                }
+
+                //dd($data_group);
+                return $this->editData($this->model, $data_group, ['group_question_id' => $data['group_question_id']]);
+            }else{
+                return $this->editData($this->model, $data_group, ['group_question_id' => $data['group_question_id']]);
+            }
+
+        } else {
+            $data_explain = \GuzzleHttp\json_decode($data['explain'], true);
+            $explain_cost = $data_explain['cost'];
+            $json_text_value = \GuzzleHttp\json_encode($data_explain['explain']);
+            if ($group_qs->explain_item_id == 0) {
+            //add new
+                $result = $this->addDataTranslate($json_text_value);
+                $a = \GuzzleHttp\json_decode($result->content(), true);
+                $code = $a['code'];
+                $name_text_id = $a['metadata']['name_text_id'];
+                if ($code === 400)
+                    return $result;
+
+                $explain = Explain::create(['item_code' => 'groupquestion', 'explain_cost' => $explain_cost, 'explain_text_id' => $name_text_id]);
+                if ($explain != null) {
+                    $explain_item_id = $explain->explain_item_id;
+                    $data_group['explain_item_id'] = $explain_item_id;
+                    return $this->editData($this->model, $data_group, ['group_question_id' => $data['group_question_id']]);
+                } else {
+                    $this->deleteTextId($name_text_id);
+                    return response()->json($this->setArrayData(400, 'create explain error'), 400);
+                }
+
+
+
+            } else {
+                $explain = Explain::where('explain_item_id', $group_qs->explain_item_id)->get()->first();
+
+                if ($explain != null) {
+                    //  DB::transaction(function () use ($explain,$data,$request){
+                    $explain_text_id = $explain->explain_text_id;
+                    $this->editData('App\Explain', ['explain_cost' => $explain_cost], ['explain_item_id' => $explain->explain_item_id]);
+                    $result = $this->EditDataTranslate($json_text_value, $explain_text_id);
+
+                    $a = \GuzzleHttp\json_decode($result->content(), true);
+                    $code = $a['code'];
+                    $name_text_id = $a['metadata']['name_text_id'];
+                    if ($code === 400)
+                        return $result;
+                    $data_group['explain_item_id'] = $explain->explain_item_id;
+                    return $this->editData($this->model, $data_group, ['group_question_id' => $data['group_question_id']]);
+
+                    //});
+                }
+            }
+
+        }
 
 
     }
 
     /**
-     * @SWG\Post(
-     *     path="/group_question/delete",
+     * @SWG\Delete(
+     *     path="/group_questions/{group_question_id}",
      *     summary="delete group_question ",
      *     tags={"6.GroupQuestion"},
      *     description="delete with group_question",
@@ -356,20 +454,9 @@ class GroupQuestionController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "uid",
-     *      description = "uid delete",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"uid"},
-     *     type = "integer"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
      *      name = "group_question_id",
      *      description = "group_question_id",
-     *     in ="formData",
+     *     in ="path",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
@@ -377,6 +464,15 @@ class GroupQuestionController extends Controller
      *     type = "integer"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -388,13 +484,24 @@ class GroupQuestionController extends Controller
      *     )
      * )
      */
-    public function deleteGroupQuestion(Request $request){
-        $data = $request->toArray();
-        $group_qs = GroupQuestion::find($data['group_question_id']);
+    public function deleteGroupQuestion($group_question_id)
+    {
+        $group_qs = GroupQuestion::find($group_question_id);
         if ($group_qs == null) {
             return response()->json($this->setArrayData(400, 'can not find to group question'), 400);
         }
-        $explain_id = $group_qs->explain_id;
-        return $this->deleteDataExplain($explain_id);
+        $explain_item_id = $group_qs->explain_item_id;
+        if($explain_item_id != 0 ){
+            $explain = Explain::where('explain_item_id', $explain_item_id)->get()->first();
+            if ($explain != null) {
+                TextId::destroy($explain->explain_text_id);
+                $this->deleteDataById($this->model,['group_question_id'=>$group_question_id]);
+                return response()->json($this->setArrayData(200, 'delete success'), 200);
+            } else
+                return response()->json($this->setArrayData(400, 'delete error'), 400);
+        }else{
+            return $this->deleteDataById($this->model,['group_question_id'=>$group_question_id]);
+        }
+
     }
 }

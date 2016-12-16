@@ -8,6 +8,8 @@ use App\Profile;
 use App\purchase;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use JWTAuth;
 
 class PurchaseController extends Controller
 {
@@ -21,7 +23,7 @@ class PurchaseController extends Controller
      */
     /**
      * @SWG\GET(
-     *     path="/purchase/get_user/{user_id}",
+     *     path="/purchases/users/{user_id}",
      *     summary="get_user",
      *     tags={"Purchase"},
      *     description="get_user purchas with user_id",
@@ -42,6 +44,15 @@ class PurchaseController extends Controller
      *     type = "integer",
      *      )
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="get succes",
@@ -59,13 +70,20 @@ class PurchaseController extends Controller
         if ($user_id == 0) {
             return response()->json($this->setArrayData(400, 'can not find user'), 400);
         }
+        $user = User::find($user_id);
+        if ($user == null){
+            return response()->json($this->setArrayData(400, 'user not exit'), 400);
+        }
         $arr_purchase = purchase::where('user_id', $user_id)->get();
+        if(count($arr_purchase) == 0){
+            return response()->json($this->setArrayData(404, 'user not charge'), 404);
+        }
         return response()->json($this->setArrayData(200, 'success fully', $arr_purchase->toArray()), 200);
     }
 
     /**
      * @SWG\GET(
-     *     path="/purchase/getUserPurchase_package/{user_id}",
+     *     path="/purchases/package/{user_id}",
      *     summary="getUserPurchase_package",
      *     tags={"Purchase"},
      *     description="getUserPurchase_package purchas with user_id",
@@ -86,6 +104,15 @@ class PurchaseController extends Controller
      *     type = "integer",
      *      )
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="get succes",
@@ -102,13 +129,20 @@ class PurchaseController extends Controller
         if ($user_id == 0) {
             return response()->json($this->setArrayData(400, 'can not find user'), 400);
         }
+        $user = User::find($user_id);
+        if ($user == null){
+            return response()->json($this->setArrayData(400, 'user not exit'), 400);
+        }
         $arr_purchase = purchase::where('user_id', $user_id)->where('item_code', 'package')->get();
+        if(count($arr_purchase) == 0){
+            return response()->json($this->setArrayData(404, 'user not charge'), 404);
+        }
         return response()->json($this->setArrayData(200, 'success fully', $arr_purchase->toArray()), 200);
     }
 
     /**
      * @SWG\GET(
-     *     path="/purchase/getUserPurchase_explain/{user_id}",
+     *     path="/purchases/explain/{user_id}",
      *     summary="getUserPurchase_explain",
      *     tags={"Purchase"},
      *     description="getUserPurchase_explain purchas with user_id",
@@ -129,6 +163,15 @@ class PurchaseController extends Controller
      *     type = "integer",
      *      )
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="get succes",
@@ -146,13 +189,20 @@ class PurchaseController extends Controller
         if ($user_id == 0) {
             return response()->json($this->setArrayData(400, 'can not find user'), 400);
         }
+        $user = User::find($user_id);
+        if ($user == null){
+            return response()->json($this->setArrayData(400, 'user not exit'), 400);
+        }
         $arr_purchase = purchase::where('user_id', $user_id)->where('item_code', 'explain')->get();
+        if(count($arr_purchase) == 0){
+            return response()->json($this->setArrayData(404, 'user not charge'), 404);
+        }
         return response()->json($this->setArrayData(200, 'success fully', $arr_purchase->toArray()), 200);
     }
 
     /**
      * @SWG\GET(
-     *     path="/purchase/getPurchaseId/{id}",
+     *     path="/purchases/{id}",
      *     summary="getPurchaseId",
      *     tags={"Purchase"},
      *     description="getPurchaseId purchas with purchase_id",
@@ -172,6 +222,15 @@ class PurchaseController extends Controller
      *     required={"purchase_id"},
      *     type = "integer",
      *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -198,7 +257,7 @@ class PurchaseController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/purchase/get_all/{take}/{skip}",
+     *     path="/purchases/{limit}/{offset}",
      *     summary="get all Chapter",
      *     tags={"Purchase"},
      *     description="return purchase with take and skip",
@@ -206,7 +265,7 @@ class PurchaseController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "take",
+     *      name = "limit",
      *     in ="path",
      *     description = "take from ....",
      *     type = "integer",
@@ -214,12 +273,21 @@ class PurchaseController extends Controller
      *    required = true
      *     ),
      *      @SWG\Parameter(
-     *      name = "skip",
+     *      name = "offset",
      *     in ="path",
      *     description = "skip from",
      *     type = "integer",
      *     default="0",
      *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -231,32 +299,111 @@ class PurchaseController extends Controller
      *     )
      * )
      */
-    public function getAllPurchase($take = 'all', $skip = 0)
+    public function getAllPurchase($limit = 'all', $offset = 0)
     {
-        return $this->getAllData($this->model, $take, $skip);
+        return $this->getAllData($this->model, $limit, $offset);
+    }
+
+    /**
+     * @SWG\GET(
+     *     path="/purchases",
+     *     summary="get my purchase",
+     *     tags={"Purchase"},
+     *     description="get my purchase",
+     *
+     *     operationId="get_user ",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="get succes",
+     *
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid param",
+     *     )
+     * )
+     */
+    public function getMyPurchase(){
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
+        $arr_purchase = purchase::where('user_id',$user->id)->get();
+        if(count($arr_purchase) == 0){
+            return response()->json($this->setArrayData(404, 'user not charge'), 404);
+        }
+        return response()->json($this->setArrayData(200, 'success fully', $arr_purchase->toArray()), 200);
+
+    }
+
+
+    /**
+     * @SWG\Get(
+     *     path="/purchases/status/{item_code}/{item_id}",
+     *     summary="get all Chapter",
+     *     tags={"Purchase"},
+     *     description="return purchase with take and skip",
+     *     operationId="purchase",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "item_code",
+     *     in ="path",
+     *     description = "item_code",
+     *     type = "string",
+     *    required = true
+     *     ),
+     *      @SWG\Parameter(
+     *      name = "item_id",
+     *     in ="path",
+     *     description = "item_id",
+     *     type = "integer",
+     *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid value",
+     *     )
+     * )
+     */
+    public function checkPurchase($item_code,$item_id){
+        $purchase = purchase::where('item_code',$item_code)->where('item_id',$item_id)->get()->first();
+        if($purchase == null)
+            return response()->json($this->setArrayData(400, 'can not find purchase'), 400);
+        return response()->json($this->setArrayData(200, 'success fully', $purchase->toArray()), 200);
     }
 
     //user_id,item_id,item_code
     /**
      * @SWG\Post(
-     *     path="/purchase/add_payment",
+     *     path="/purchases",
      *     summary="add new purchase",
      *     tags={"Purchase"},
      *     description="add new purchase",
      *     operationId="purchaseadd",
      *     consumes={"application/json"},
      *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *      name = "user_id",
-     *      description = "user_id ",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"user_id"},
-     *     type = "integer"
-     *      )
-     *           ),
      *     @SWG\Parameter(
      *      name = "item_id",
      *     description = "item_id of value",
@@ -281,6 +428,15 @@ class PurchaseController extends Controller
      *     type = "string",
      *      )
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -296,8 +452,11 @@ class PurchaseController extends Controller
 
     public function payment(Request $request)
     {
+
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
         $data = $request->toArray();
-        $user = User::find($data['user_id']);
+        $data['user_id'] = $user->id;
         if ($user == null) {
             return response()->json($this->setArrayData(400, 'can not find user'), 400);
         }
@@ -307,7 +466,7 @@ class PurchaseController extends Controller
 
 
             if ($data['item_code'] == 'explain') {
-                $find = purchase::where('user_id',$data['user_id'])->where('item_code',$data['item_code'])->where('item_id',$data['item_id'])->get()->first();
+                $find = purchase::where('user_id',$user->id)->where('item_code',$data['item_code'])->where('item_id',$data['item_id'])->get()->first();
                 if($find != null)
                     return response()->json($this->setArrayData(400, 'item exists'), 400);
                 $explain = Explain::find($data['item_id']);
@@ -324,7 +483,7 @@ class PurchaseController extends Controller
                 }
             }
             if ($data['item_code'] == 'package') {
-                $find = purchase::where('user_id',$data['user_id'])->where('item_code',$data['item_code'])->where('item_id',$data['item_id'])->get()->first();
+                $find = purchase::where('user_id',$user->id)->where('item_code',$data['item_code'])->where('item_id',$data['item_id'])->get()->first();
                 if($find != null)
                     return response()->json($this->setArrayData(400, 'item exists'), 400);
                 $package = Package::find($data['item_id']);
@@ -348,8 +507,8 @@ class PurchaseController extends Controller
     }
 
     /**
-     * @SWG\Post(
-     *     path="/purchase/delete",
+     * @SWG\Delete(
+     *     path="/purchases/{purchase_id}",
      *     summary="delete purchase ",
      *     tags={"Purchase"},
      *     description="delete with purchase_id",
@@ -357,20 +516,9 @@ class PurchaseController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "uid",
-     *      description = "uid delete",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"uid"},
-     *     type = "integer"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
      *      name = "purchase_id",
      *      description = "purchase_id",
-     *     in ="formData",
+     *     in ="path",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
@@ -378,6 +526,15 @@ class PurchaseController extends Controller
      *     type = "integer"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -391,9 +548,9 @@ class PurchaseController extends Controller
      */
 
 
-    public function deletePurchase(Request $request)
+    public function deletePurchase($purchase_id)
     {
-        $purchase = purchase::find($request->input('purchase_id'));
+        $purchase = purchase::find($purchase_id);
         if ($purchase == null) {
             return response()->json($this->setArrayData(400, 'can not find purchase'), 400);
         }

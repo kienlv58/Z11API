@@ -11,4 +11,7 @@ class purchase extends Model
     public function user(){
         return $this->belongsTo('App\User','user_id','id');
     }
+    public function package(){
+        return $this->belongsTo('App\Chapter','chapter_id');
+    }
 }

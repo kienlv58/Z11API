@@ -16,5 +16,5 @@ class Folder extends Model
         return $this->hasMany('App\Package','folder_id');
     }
     public $primaryKey = 'folder_id';
-    protected $fillable = ['item_code','category_id','explain_id','owner_id','type_owner'];
+    protected $fillable = ['item_code','category_id','name_text_id','describe_text_id','owner_id','type_owner'];
 }

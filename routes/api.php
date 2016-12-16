@@ -19,112 +19,133 @@ Route::get('/user', function (Request $request) {
 
 
 Route::group(['prefix' => 'v1'], function () {
+//login + register
+    Route::post('users/register', 'RegisterController@store');
+    Route::post('users/login', 'LoginController@store');
 
     //Authorization: Bearer {yourtokenhere}
     // 'middleware' => 'jwt.auth'
-    Route::group(['prefix' => 'restricted','middleware' => 'jwt.auth'], function () {
-        Route::get('profile/{id?}', 'RestfulController@getProfile');
-        Route::post('chargecoin', 'RestfulController@chargeCoin');
+    Route::group(['middleware' => 'checkuser'], function () {
+
+        //user
         Route::post('profile/edit', 'RestfulController@editProfile');
+        Route::get('users/profile', 'RestfulController@getProfile');
+        Route::put('users/chargecoin', 'RestfulController@chargeCoin');
+        Route::put('users/profile', 'RestfulController@editProfile');
+
+        //categories
+        Route::get('categories/{limit?}/{offset?}', 'CategoryController@getAllCategory');
+        Route::get('categories/{category_id}', 'CategoryController@getCategory');
+        Route::get('searchCategories/{name?}/{category_code?}/{describe?}', 'CategoryController@searchCategories');
+
+        //folder
+
+        Route::get('folders/{id}', 'FolderController@getFolder');
+        Route::get('folders/{limit?}/{offset?}', 'FolderController@getAllFolder');
+        Route::post('folders', 'FolderController@addFolder');
+        Route::put('folders', 'FolderController@editFolder');
+        Route::delete('folders/{folder_id}', 'FolderController@deleteFolder');
+
+
+        //package
+        Route::get('packages/{package_id}', 'PackageController@getPackage');
+        Route::post('packages', 'PackageController@addPackage');
+        Route::put('packages', 'PackageController@editPackage');
+        Route::delete('packages/{package_id}', 'PackageController@deletePackage');
+        Route::get('packages/get_aprroval/{take}/{skip}','PackageController@getPackageAprroval');
+
+        //Chapter
+        Route::get('chapters/{id}', 'ChapterController@getChapter');
+        Route::get('chapters/{limit?}/{offset?}', 'ChapterController@getAllChapter');
+        Route::post('chapters', 'ChapterController@addChapter');
+        Route::put('chapters', 'ChapterController@editChapter');
+        Route::delete('chapters/{chapter_id}', 'ChapterController@deleteChapter');
+
+        //GroupQuestion
+        Route::get('group_questions/{limit?}/{offset?}', 'GroupQuestionController@getAllGroupQuestion');
+        Route::post('group_questions', 'GroupQuestionController@addGroupQuestion');
+        Route::put('group_questions', 'GroupQuestionController@editGroupQuestion');
+        Route::delete('group_questions/{id}', 'GroupQuestionController@deleteGroupQuestion');
+
+        //Question
+        Route::get('questions/{limit?}/{offset?}', 'QuestionController@getAllQuestion');
+        Route::post('questions', 'QuestionController@addQuestion');
+        Route::put('questions', 'QuestionController@editQuestion');
+        Route::delete('questions/{question_id}', 'QuestionController@deleteQuestion');
+
+        //Answer
+        Route::get('answers/{id}', 'AnswerController@getAnswer');
+        Route::get('answers/{limit?}/{offset?}', 'AnswerController@getAllAnswer');
+        Route::post('answers', 'AnswerController@addAnswer');
+        Route::put('answers', 'AnswerController@editAnswer');
+        Route::delete('answers/{answer_item_id}', 'AnswerController@deleteAnswer');
+        //purchase
+        Route::get('purchases/users/{user_id}', 'PurchaseController@getUserPurchase');
+        Route::get('purchases/package/{user_id}', 'PurchaseController@getUserPurchase_package');
+        Route::get('purchases/explain/{user_id}', 'PurchaseController@getUserPurchase_explain');
+        Route::get('purchases/status/{item_code}/{item_id}', 'PurchaseController@checkPurchase');
+        Route::get('purchases', 'PurchaseController@getMyPurchase');
+        Route::post('purchases', 'PurchaseController@payment');
     });
 
-    Route::group(['prefix' => 'auth'], function () {
+    Route::group(['middleware' => 'checkpurchase'], function () {
 
-        Route::post('register', 'RegisterController@store');
-        Route::post('login', 'LoginController@store');
+        //GroupQuestion
+        Route::get('group_question/{group_question_id}', 'GroupQuestionController@getGroupQuestion');
 
-    });
-//none auth
-    Route::group(['prefix' => 'category'], function () {
-        Route::get('get/{id?}', 'CategoryController@getCategory');
-        Route::get('get_all/{take?}/{skip?}', 'CategoryController@getAllCategory');
+
+        //Question
+        Route::get('question/{question_id}', 'QuestionController@getQuestion');
 
     });
-//folder
-    Route::group(['prefix' => 'folder'], function () {
-        Route::get('get/{id?}', 'FolderController@getFolder');
-        Route::get('get_all/{take?}/{skip?}', 'FolderController@getAllFolder');
-        Route::post('add', 'FolderController@addFolder');
-        Route::post('edit', 'FolderController@editFolder');
-        Route::post('delete', 'FolderController@deleteFolder');
-    });
 
-    //package
-    Route::group(['prefix' => 'package'], function () {
-        Route::get('get/{id?}', 'PackageController@getPackage');
-        Route::get('get_all/{take?}/{skip?}', 'PackageController@getAllPackage');
-        Route::post('add', 'PackageController@addPackage');
-        Route::post('edit', 'PackageController@editPackage');
-        Route::post('delete', 'PackageController@deletePackage');
-    });
 
-    //Chapter
-    Route::group(['prefix' => 'chapter'], function () {
-        Route::get('get/{id?}', 'ChapterController@getChapter');
-        Route::get('get_all/{take?}/{skip?}', 'ChapterController@getAllChapter');
-        Route::post('add', 'ChapterController@addChapter');
-        Route::post('edit', 'ChapterController@editChapter');
-        Route::post('delete', 'ChapterController@deleteChapter');
-    });
 
-    //GroupQuestion
-    Route::group(['prefix' => 'group_question'], function () {
-        Route::get('get/{id?}', 'GroupQuestionController@getGroupQuestion');
-        Route::get('get_all/{take?}/{skip?}', 'GroupQuestionController@getAllGroupQuestion');
-        Route::post('add', 'GroupQuestionController@addGroupQuestion');
-        Route::post('edit', 'GroupQuestionController@editGroupQuestion');
-        Route::post('delete', 'GroupQuestionController@deleteGroupQuestion');
-    });
 
-    //Question
-    Route::group(['prefix' => 'question'], function () {
-        Route::get('get/{id?}', 'QuestionController@getQuestion');
-        Route::get('get_all/{take?}/{skip?}', 'QuestionController@getAllQuestion');
-        Route::post('add', 'QuestionController@addQuestion');
-        Route::post('edit', 'QuestionController@editQuestion');
-        Route::post('delete', 'QuestionController@deleteQuestion');
-    });
 
-    //Answer
-    Route::group(['prefix' => 'answer'], function () {
-        Route::get('get/{id?}', 'AnswerController@getAnswer');
-        Route::get('get_all/{take?}/{skip?}', 'AnswerController@getAllAnswer');
-        Route::post('add', 'AnswerController@addAnswer');
-        Route::post('edit', 'AnswerController@editAnswer');
-        Route::post('delete', 'AnswerController@deleteAnswer');
-    });
-    //purchase
-    Route::group(['prefix' => 'purchase'], function () {
-        Route::get('get_user/{user_id?}', 'PurchaseController@getUserPurchase');
-        Route::get('getUserPurchase_package/{user_id?}', 'PurchaseController@getUserPurchase_package');
-        Route::get('getUserPurchase_explain/{user_id?}', 'PurchaseController@getUserPurchase_explain');
-        Route::get('getPurchaseId/{id?}', 'PurchaseController@getPurchaseId');
-        Route::get('get_all/{take?}/{skip?}', 'PurchaseController@getAllPurchase');
-        Route::post('add_payment', 'PurchaseController@payment');
-       // Route::post('edit', 'PurchaseController@editAnswer');
-        Route::post('delete', 'PurchaseController@deletePurchase');
-    });
 
 //admin + mode
-    Route::group(['prefix' => 'admin','middleware' => 'checkadmin'], function () {
+    //'middleware' => 'checkadmin'
+    Route::group(['prefix' => 'admin', 'middleware' => 'checkadmin'], function () {
 
-        Route::post('add_category', 'CategoryController@addCategory');
-        Route::post('edit_category', 'CategoryController@editCategory');
-        Route::post('delete_category', 'CategoryController@deleteCategory');
-        Route::get('get_user/{id?}','AdminController@getUser');
-        Route::get('get_user_mod','AdminController@getuser_Mod');
-        Route::get('get_all_user/{take?}/{skip?}','AdminController@getAllUser');
-        Route::post('delete_user','AdminController@deleteUser');
-        Route::post('aprroval_package','AdminController@aprrovalPackage');
-        Route::post('create_user_mod','AdminController@createUserMod');
+        Route::post('categories', 'CategoryController@addCategory');
+        Route::put('categories', 'CategoryController@editCategory');
+        Route::delete('categories/{category_code}', 'CategoryController@deleteCategory');
+
+
+        Route::get('users/{id}', 'AdminController@getUser');
+        Route::get('user_mod', 'AdminController@getuser_Mod');
+        Route::get('users/{limit?}/{offset?}', 'AdminController@getAllUser');
+        Route::delete('users/{uid}', 'AdminController@deleteUser');
+        Route::put('aprroval_package', 'AdminController@aprrovalPackage');
+        Route::post('user_mod', 'AdminController@createUserMod');
+        Route::delete('purchases/{$purchase_id}', 'PurchaseController@deletePurchase');
+        Route::get('purchases/{id}', 'PurchaseController@getPurchaseId');
+        Route::get('purchases/{limit?}/{offset?}', 'PurchaseController@getAllPurchase');
+
+        //package
+        Route::get('packages/get_not_yet_aprroval/{take}/{skip}','PackageController@getPackageNotYetAprroval');
+        Route::get('packages/get_not_aprroval/{take}/{skip}','PackageController@getPackageNotAprroval');
+        Route::get('packages/{limit?}/{offset?}', 'PackageController@getAllPackage');
+
+
+
+        //role
+        Route::get('roles/{name_role}','RoleController@getRole');
+        Route::get('roles/{limit?}/{offset?}', 'RoleController@getAllRoles');
+        Route::post('roles','RoleController@addRole');
+        Route::put('roles','RoleController@editRole');
+        Route::delete('roles/{name_role}','RoleController@deleteRole');
+
+        ////user_role
+        Route::get('user_roles/{user_id}','UserRoleController@getUserRole');
+        Route::get('user_roles/{limit?}/{offset?}', 'UserRoleController@getAllUserRoles');
+        Route::post('user_roles','UserRoleController@addUserRole');
+        Route::put('user_roles','UserRoleController@editUserRole');
+        Route::delete('user_roles/{user_id}/{name_role}','UserRoleController@deleteUserRole');
 
     });
-
-
-
 
 
 });
-//test
-Route::post('test', 'CategoryController@test');
 

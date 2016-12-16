@@ -69,9 +69,9 @@ class RegisterController extends Controller
      */
     /**
      * @SWG\Post(
-     *     path="/auth/register",
+     *     path="/users/register",
      *     summary="register",
-     *     tags={"0.Auth"},
+     *     tags={"1.User"},
      *     description="user register",
      *     operationId="register",
      *     consumes={"application/json"},

@@ -29,7 +29,7 @@ class AnswerController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/answer/get_all/{take}/{skip}",
+     *     path="/answers/{limit}/{offset}",
      *     summary="get all answer",
      *     tags={"8.Answer"},
      *     description="return answer with take and skip",
@@ -37,7 +37,7 @@ class AnswerController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "take",
+     *      name = "limit",
      *     in ="path",
      *     description = "take from ....",
      *     type = "integer",
@@ -45,12 +45,21 @@ class AnswerController extends Controller
      *    required = true
      *     ),
      *      @SWG\Parameter(
-     *      name = "skip",
+     *      name = "offset",
      *     in ="path",
      *     description = "skip from",
      *     type = "integer",
      *     default="0",
      *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -62,14 +71,14 @@ class AnswerController extends Controller
      *     )
      * )
      */
-    public function getAllAnswer($take = 'all', $skip = 0)
+    public function getAllAnswer($limit = 'all', $offset = 0)
     {
-        return $this->getAllData($this->model, $take, $skip);
+        return $this->getAllData($this->model, $limit, $offset);
     }
 
     /**
      * @SWG\Post(
-     *     path="/answer/add",
+     *     path="/answers",
      *     summary="add new answer",
      *     tags={"8.Answer"},
      *     description="add new answer",
@@ -98,6 +107,15 @@ class AnswerController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -126,8 +144,8 @@ class AnswerController extends Controller
     }
 
     /**
-     * @SWG\Post(
-     *     path="/answer/edit",
+     * @SWG\Put(
+     *     path="/answers",
      *     summary="edit answer",
      *     tags={"8.Answer"},
      *     description="edit answer",
@@ -157,6 +175,15 @@ class AnswerController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -191,8 +218,8 @@ class AnswerController extends Controller
     }
 
     /**
-     * @SWG\Post(
-     *     path="/answer/delete",
+     * @SWG\Delete(
+     *     path="/answers",
      *     summary="delete answer ",
      *     tags={"8.Answer"},
      *     description="delete with answer_id",
@@ -213,7 +240,7 @@ class AnswerController extends Controller
      *     @SWG\Parameter(
      *      name = "answer_item_id",
      *      description = "answer_item_id",
-     *     in ="formData",
+     *     in ="path",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
@@ -221,6 +248,15 @@ class AnswerController extends Controller
      *     type = "integer"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -232,13 +268,12 @@ class AnswerController extends Controller
      *     )
      * )
      */
-    public function deleteAnswer(Request $request)
+    public function deleteAnswer($answer_item_id)
     {
-        $data = $request->toArray();
-        $answer = Answer::find($data['answer_item_id']);
+        $answer = Answer::find($answer_item_id);
         if ($answer == null) {
             return response()->json($this->setArrayData(400, 'can not find to answer'), 400);
         }
-        return $this->deleteDataById($this->model, ['answer_item_id' => $data['answer_item_id']]);
+        return $this->deleteDataById($this->model, ['answer_item_id' => $answer_item_id]);
     }
 }

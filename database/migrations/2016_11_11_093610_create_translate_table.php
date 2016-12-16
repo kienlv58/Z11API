@@ -14,10 +14,10 @@ class CreateTranslateTable extends Migration
     public function up()
     {
         Schema::create('translates',function (Blueprint $table){
-            $table->integer('explain_id')->unsigned()->index();
+            $table->increments('translate_id');
+           $table->integer('text_id')->index()->unsigned();
             $table->string('language_code')->index();
             $table->string('text_value');
-            $table->string('describe_value')->nullable();
             $table->timestamps();
         });
     }

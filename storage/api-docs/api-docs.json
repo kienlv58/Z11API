@@ -19,14 +19,14 @@
         "http"
     ],
     "paths": {
-        "/admin/delete_user": {
-            "post": {
+        "/admin/users/{uid}": {
+            "delete": {
                 "tags": [
                     "9.Admin"
                 ],
                 "summary": "delete user ",
                 "description": "delete with user_id",
-                "operationId": "user_delete",
+                "operationId": "uid_delete",
                 "consumes": [
                     "application/json"
                 ],
@@ -35,30 +35,25 @@
                 ],
                 "parameters": [
                     {
-                        "name": "current_uid",
-                        "in": "formData",
-                        "description": "current_uid",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
                         "name": "uid",
                         "in": "formData",
                         "description": "uid delete",
                         "required": true,
                         "schema": {
                             "required": [
-                                "category_code"
+                                "uid_delete"
                             ],
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -71,7 +66,7 @@
                 }
             }
         },
-        "/admin/create_user_mod": {
+        "/admin/user_mod": {
             "post": {
                 "tags": [
                     "9.Admin"
@@ -86,19 +81,6 @@
                     "application/json"
                 ],
                 "parameters": [
-                    {
-                        "name": "current_uid",
-                        "in": "formData",
-                        "description": "current_uid",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
                     {
                         "name": "email",
                         "in": "formData",
@@ -176,6 +158,14 @@
                             "type": "string"
                         },
                         "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -189,7 +179,7 @@
             }
         },
         "/admin/aprroval_package": {
-            "post": {
+            "put": {
                 "tags": [
                     "9.Admin"
                 ],
@@ -228,6 +218,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -240,7 +238,7 @@
                 }
             }
         },
-        "/answer/get_all/{take}/{skip}": {
+        "/answers/{limit}/{offset}": {
             "get": {
                 "tags": [
                     "8.Answer"
@@ -256,7 +254,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "take",
+                        "name": "limit",
                         "in": "path",
                         "description": "take from ....",
                         "required": true,
@@ -264,12 +262,20 @@
                         "default": "all"
                     },
                     {
-                        "name": "skip",
+                        "name": "offset",
                         "in": "path",
                         "description": "skip from",
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -282,7 +288,65 @@
                 }
             }
         },
-        "/answer/add": {
+        "/answers": {
+            "put": {
+                "tags": [
+                    "8.Answer"
+                ],
+                "summary": "edit answer",
+                "description": "edit answer",
+                "operationId": "question_edit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "question_id",
+                        "in": "formData",
+                        "description": "question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "answer",
+                        "in": "formData",
+                        "description": "answer type json",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "answer"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "8.Answer"
@@ -322,6 +386,14 @@
                             "type": "string"
                         },
                         "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -332,62 +404,8 @@
                         "description": "Invalid Value"
                     }
                 }
-            }
-        },
-        "/answer/edit": {
-            "post": {
-                "tags": [
-                    "8.Answer"
-                ],
-                "summary": "edit answer",
-                "description": "edit answer",
-                "operationId": "question_edit",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "question_id",
-                        "in": "formData",
-                        "description": "question_id",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "question_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
-                        "name": "answer",
-                        "in": "formData",
-                        "description": "answer type json",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "answer"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "add succes"
-                    },
-                    "400": {
-                        "description": "Invalid Value"
-                    }
-                }
-            }
-        },
-        "/answer/delete": {
-            "post": {
+            },
+            "delete": {
                 "tags": [
                     "8.Answer"
                 ],
@@ -416,7 +434,7 @@
                     },
                     {
                         "name": "answer_item_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "answer_item_id",
                         "required": true,
                         "schema": {
@@ -426,6 +444,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -438,7 +464,7 @@
                 }
             }
         },
-        "/category/get/{id}": {
+        "/categories/{id}": {
             "get": {
                 "tags": [
                     "2.Category"
@@ -459,6 +485,14 @@
                         "description": "category_id",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -471,7 +505,7 @@
                 }
             }
         },
-        "/category/get_all/{take}/{skip}": {
+        "/categories/{limit}/{offset}": {
             "get": {
                 "tags": [
                     "2.Category"
@@ -487,7 +521,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "take",
+                        "name": "limit",
                         "in": "path",
                         "description": "take from ....",
                         "required": true,
@@ -495,12 +529,20 @@
                         "default": "all"
                     },
                     {
-                        "name": "skip",
+                        "name": "offset",
                         "in": "path",
                         "description": "skip from",
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -513,7 +555,103 @@
                 }
             }
         },
-        "/admin/add_category": {
+        "/admin/categories": {
+            "put": {
+                "tags": [
+                    "2.Category"
+                ],
+                "summary": "edit a category",
+                "description": "edit category",
+                "operationId": "categoryedit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "formData",
+                        "description": "category_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "category_code",
+                        "in": "formData",
+                        "description": "category_code",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "category_code"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "image",
+                        "in": "formData",
+                        "description": "link image",
+                        "schema": {
+                            "required": [
+                                "image"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "text_value",
+                        "in": "formData",
+                        "description": "text_value josn",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "text_value"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "describe_value",
+                        "in": "formData",
+                        "description": "describe_value josn",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "describe_value"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "2.Category"
@@ -529,19 +667,6 @@
                 ],
                 "parameters": [
                     {
-                        "name": "uid",
-                        "in": "formData",
-                        "description": "uid edit",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "uid_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
                         "name": "category_code",
                         "in": "formData",
                         "description": "category_code",
@@ -568,17 +693,38 @@
                         "type": "string"
                     },
                     {
-                        "name": "translate",
+                        "name": "text_value",
                         "in": "formData",
-                        "description": "translate josn",
+                        "description": "text_value josn",
                         "required": true,
                         "schema": {
                             "required": [
-                                "translate"
+                                "text_value"
                             ],
                             "type": "string"
                         },
                         "type": "string"
+                    },
+                    {
+                        "name": "describe_value",
+                        "in": "formData",
+                        "description": "describe_value josn",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "describe_value"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -591,98 +737,8 @@
                 }
             }
         },
-        "/admin/edit_category": {
-            "post": {
-                "tags": [
-                    "2.Category"
-                ],
-                "summary": "edit a category",
-                "description": "edit category",
-                "operationId": "categoryedit",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "uid",
-                        "in": "formData",
-                        "description": "uid edit",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "uid_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
-                        "name": "category_id",
-                        "in": "formData",
-                        "description": "category_id",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
-                        "name": "category_code",
-                        "in": "formData",
-                        "description": "category_code",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "image",
-                        "in": "formData",
-                        "description": "link image",
-                        "schema": {
-                            "required": [
-                                "image"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "translate",
-                        "in": "formData",
-                        "description": "translate json",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "add succes"
-                    },
-                    "400": {
-                        "description": "Invalid Value"
-                    }
-                }
-            }
-        },
-        "/admin/delete_category": {
-            "post": {
+        "/admin/categories/{category_code}": {
+            "delete": {
                 "tags": [
                     "2.Category"
                 ],
@@ -697,30 +753,25 @@
                 ],
                 "parameters": [
                     {
-                        "name": "uid",
-                        "in": "formData",
-                        "description": "uid delete",
+                        "name": "category_code",
+                        "in": "path",
+                        "description": "category_code",
                         "required": true,
                         "schema": {
                             "required": [
                                 "category_code"
                             ],
-                            "type": "integer"
+                            "type": "string"
                         },
-                        "type": "integer"
+                        "type": "string"
                     },
                     {
-                        "name": "category_id",
-                        "in": "formData",
-                        "description": "category_id",
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
                         "required": true,
-                        "schema": {
-                            "required": [
-                                "category_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -733,7 +784,7 @@
                 }
             }
         },
-        "/chapter/get/{id}": {
+        "/chapters/{id}": {
             "get": {
                 "tags": [
                     "5.Chapter"
@@ -760,6 +811,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -772,7 +831,7 @@
                 }
             }
         },
-        "/chapter/get_all/{take}/{skip}": {
+        "/chapters/{limit}/{offset}": {
             "get": {
                 "tags": [
                     "5.Chapter"
@@ -788,7 +847,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "take",
+                        "name": "limit",
                         "in": "path",
                         "description": "take from ....",
                         "required": true,
@@ -796,12 +855,20 @@
                         "default": "all"
                     },
                     {
-                        "name": "skip",
+                        "name": "offset",
                         "in": "path",
                         "description": "skip from",
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -814,7 +881,78 @@
                 }
             }
         },
-        "/chapter/add": {
+        "/chapters": {
+            "put": {
+                "tags": [
+                    "5.Chapter"
+                ],
+                "summary": "edit a Chapter",
+                "description": "edit Chapter",
+                "operationId": "Chapteredit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "chapter_id",
+                        "in": "formData",
+                        "description": "chapter_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "chapter_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "name_text",
+                        "in": "formData",
+                        "description": "name_text",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name_text"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "describe_text",
+                        "in": "formData",
+                        "description": "describe_text ",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "describe_text"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "5.Chapter"
@@ -843,69 +981,38 @@
                         "type": "integer"
                     },
                     {
-                        "name": "translate",
+                        "name": "name_text",
                         "in": "formData",
-                        "description": "translate json",
+                        "description": "name_text",
                         "required": true,
                         "schema": {
                             "required": [
-                                "category_code"
+                                "name_text"
                             ],
                             "type": "string"
                         },
                         "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "add succes"
                     },
-                    "400": {
-                        "description": "Invalid Value"
-                    }
-                }
-            }
-        },
-        "/chapter/edit": {
-            "post": {
-                "tags": [
-                    "5.Chapter"
-                ],
-                "summary": "edit a Chapter",
-                "description": "edit Chapter",
-                "operationId": "Chapteredit",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
                     {
-                        "name": "chapter_id",
+                        "name": "describe_text",
                         "in": "formData",
-                        "description": "chapter_id",
+                        "description": "describe_text ",
                         "required": true,
                         "schema": {
                             "required": [
-                                "chapter_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
-                        "name": "translate",
-                        "in": "formData",
-                        "description": "translate json",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
+                                "describe_text"
                             ],
                             "type": "string"
                         },
                         "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -919,7 +1026,7 @@
             }
         },
         "/chapter/delete": {
-            "post": {
+            "delete": {
                 "tags": [
                     "5.Chapter"
                 ],
@@ -934,21 +1041,8 @@
                 ],
                 "parameters": [
                     {
-                        "name": "uid",
-                        "in": "formData",
-                        "description": "uid delete",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "uid"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
                         "name": "chapter_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "chapter_id",
                         "required": true,
                         "schema": {
@@ -958,6 +1052,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -970,7 +1072,7 @@
                 }
             }
         },
-        "/folder/get/{id}": {
+        "/folders/{id}": {
             "get": {
                 "tags": [
                     "3.Folder"
@@ -997,6 +1099,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1009,7 +1119,7 @@
                 }
             }
         },
-        "/folder/get_all/{take}/{skip}": {
+        "/folders/{limit}/{offset}": {
             "get": {
                 "tags": [
                     "3.Folder"
@@ -1025,7 +1135,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "take",
+                        "name": "limit",
                         "in": "path",
                         "description": "take from ....",
                         "required": true,
@@ -1033,12 +1143,20 @@
                         "default": "all"
                     },
                     {
-                        "name": "skip",
+                        "name": "offset",
                         "in": "path",
                         "description": "skip from",
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1051,7 +1169,78 @@
                 }
             }
         },
-        "/folder/add": {
+        "/folders": {
+            "put": {
+                "tags": [
+                    "3.Folder"
+                ],
+                "summary": "edit a folder",
+                "description": "edit folder",
+                "operationId": "folderedit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "folder_id",
+                        "in": "formData",
+                        "description": "folder id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "folder_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "text_value",
+                        "in": "formData",
+                        "description": "text_value josn",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "text_value"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "describe_value",
+                        "in": "formData",
+                        "description": "describe_value josn",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "describe_value"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "3.Folder"
@@ -1080,19 +1269,6 @@
                         "type": "integer"
                     },
                     {
-                        "name": "type_owner",
-                        "in": "formData",
-                        "description": "type_owner select : admin/mod/user",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
                         "name": "category_id",
                         "in": "formData",
                         "description": "category id",
@@ -1106,17 +1282,38 @@
                         "type": "integer"
                     },
                     {
-                        "name": "translate",
+                        "name": "text_value",
                         "in": "formData",
-                        "description": "translate json",
+                        "description": "text_value josn",
                         "required": true,
                         "schema": {
                             "required": [
-                                "category_code"
+                                "text_value"
                             ],
                             "type": "string"
                         },
                         "type": "string"
+                    },
+                    {
+                        "name": "describe_value",
+                        "in": "formData",
+                        "description": "describe_value josn",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "describe_value"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1129,60 +1326,8 @@
                 }
             }
         },
-        "/folder/edit": {
-            "post": {
-                "tags": [
-                    "3.Folder"
-                ],
-                "summary": "edit a folder",
-                "description": "edit folder",
-                "operationId": "folderedit",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "folder_id",
-                        "in": "formData",
-                        "description": "folder id",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "folder_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
-                        "name": "translate",
-                        "in": "formData",
-                        "description": "translate json",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "add succes"
-                    },
-                    "400": {
-                        "description": "Invalid Value"
-                    }
-                }
-            }
-        },
-        "/folder/delete": {
-            "post": {
+        "/folders/{folder_id}": {
+            "delete": {
                 "tags": [
                     "3.Folder"
                 ],
@@ -1197,21 +1342,8 @@
                 ],
                 "parameters": [
                     {
-                        "name": "uid",
-                        "in": "formData",
-                        "description": "uid delete",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
                         "name": "folder_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "folder_id",
                         "required": true,
                         "schema": {
@@ -1221,6 +1353,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1233,7 +1373,7 @@
                 }
             }
         },
-        "/group_question/get/{id}": {
+        "/group_questions/{group_question_id}": {
             "get": {
                 "tags": [
                     "6.GroupQuestion"
@@ -1254,6 +1394,14 @@
                         "description": "group_question_id",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1264,9 +1412,54 @@
                         "description": "cant not find category"
                     }
                 }
+            },
+            "delete": {
+                "tags": [
+                    "6.GroupQuestion"
+                ],
+                "summary": "delete group_question ",
+                "description": "delete with group_question",
+                "operationId": "chapterdelete",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_question_id",
+                        "in": "path",
+                        "description": "group_question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
             }
         },
-        "/group_question/get_all/{take}/{skip}": {
+        "/group_questions/{limit}/{offset}": {
             "get": {
                 "tags": [
                     "6.GroupQuestion"
@@ -1282,7 +1475,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "take",
+                        "name": "limit",
                         "in": "path",
                         "description": "take from ....",
                         "required": true,
@@ -1290,12 +1483,20 @@
                         "default": "all"
                     },
                     {
-                        "name": "skip",
+                        "name": "offset",
                         "in": "path",
                         "description": "skip from",
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1308,7 +1509,117 @@
                 }
             }
         },
-        "/group_question/add": {
+        "/group_questions": {
+            "put": {
+                "tags": [
+                    "6.GroupQuestion"
+                ],
+                "summary": "edit group_question",
+                "description": "edit group_question",
+                "operationId": "group_question_edit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "group_question_id",
+                        "in": "formData",
+                        "description": "group_question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "group_question_content",
+                        "in": "formData",
+                        "description": "group_question_content",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_content"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "group_question_transcript",
+                        "in": "formData",
+                        "description": "group_question_transcript",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "\tgroup_question_transcript"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "group_question_image",
+                        "in": "formData",
+                        "description": "group_question_image",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_image"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "group_question_audio",
+                        "in": "formData",
+                        "description": "group_question_audio",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "group_question_audio"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "explain",
+                        "in": "formData",
+                        "description": "explain josn",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "explain"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "6.GroupQuestion"
@@ -1389,30 +1700,25 @@
                         "type": "string"
                     },
                     {
-                        "name": "translate",
+                        "name": "explain",
                         "in": "formData",
-                        "description": "translate json",
+                        "description": "explain josn",
                         "required": true,
                         "schema": {
                             "required": [
-                                "category_code"
+                                "text_value"
                             ],
                             "type": "string"
                         },
                         "type": "string"
                     },
                     {
-                        "name": "explain_cost",
-                        "in": "formData",
-                        "description": "explain_cost",
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
                         "required": true,
-                        "schema": {
-                            "required": [
-                                "explain_cost"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1425,179 +1731,10 @@
                 }
             }
         },
-        "/group_question/edit": {
+        "/users/login": {
             "post": {
                 "tags": [
-                    "6.GroupQuestion"
-                ],
-                "summary": "edit group_question",
-                "description": "edit group_question",
-                "operationId": "group_question_edit",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "group_question_id",
-                        "in": "formData",
-                        "description": "group_question_id",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "group_question_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
-                        "name": "group_question_content",
-                        "in": "formData",
-                        "description": "group_question_content",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "group_question_content"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "group_question_transcript",
-                        "in": "formData",
-                        "description": "group_question_transcript",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "\tgroup_question_transcript"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "group_question_image",
-                        "in": "formData",
-                        "description": "group_question_image",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "group_question_image"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "group_question_audio",
-                        "in": "formData",
-                        "description": "group_question_audio",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "group_question_audio"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "translate",
-                        "in": "formData",
-                        "description": "translate json",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "explain_cost",
-                        "in": "formData",
-                        "description": "explain_cost",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "explain_cost"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "add succes"
-                    },
-                    "400": {
-                        "description": "Invalid Value"
-                    }
-                }
-            }
-        },
-        "/group_question/delete": {
-            "post": {
-                "tags": [
-                    "6.GroupQuestion"
-                ],
-                "summary": "delete group_question ",
-                "description": "delete with group_question",
-                "operationId": "chapterdelete",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "uid",
-                        "in": "formData",
-                        "description": "uid delete",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "uid"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
-                        "name": "group_question_id",
-                        "in": "formData",
-                        "description": "group_question_id",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "group_question_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "delete succes"
-                    },
-                    "400": {
-                        "description": "Invalid Value"
-                    }
-                }
-            }
-        },
-        "/auth/login": {
-            "post": {
-                "tags": [
-                    "0.Auth"
+                    "1.User"
                 ],
                 "summary": "login",
                 "description": "user login",
@@ -1648,19 +1785,6 @@
                             "format": "password"
                         },
                         "type": "string"
-                    },
-                    {
-                        "name": "token",
-                        "in": "formData",
-                        "description": "token of social network",
-                        "required": false,
-                        "schema": {
-                            "required": [
-                                "token"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -1673,7 +1797,7 @@
                 }
             }
         },
-        "/package/get/{id}": {
+        "/packages/{package_id}": {
             "get": {
                 "tags": [
                     "4.Package"
@@ -1694,6 +1818,14 @@
                         "description": "package_id",
                         "required": true,
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1706,7 +1838,57 @@
                 }
             }
         },
-        "/package/get_all/{take}/{skip}": {
+        "/packages/{limit}/{offset}": {
+            "get": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "get all package",
+                "description": "return package with take and skip",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/packages/get_not_yet_aprroval/{take}/{skip}": {
             "get": {
                 "tags": [
                     "4.Package"
@@ -1736,6 +1918,14 @@
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1748,7 +1938,7 @@
                 }
             }
         },
-        "/package/get_not_yet_aprroval/{take}/{skip}": {
+        "/packages/get_not_aprroval/{take}/{skip}": {
             "get": {
                 "tags": [
                     "4.Package"
@@ -1778,6 +1968,14 @@
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1790,7 +1988,7 @@
                 }
             }
         },
-        "/package/get_not_aprroval/{take}/{skip}": {
+        "/packages/get_aprroval/{take}/{skip}": {
             "get": {
                 "tags": [
                     "4.Package"
@@ -1820,6 +2018,14 @@
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1832,14 +2038,14 @@
                 }
             }
         },
-        "/package/get_aprroval/{take}/{skip}": {
-            "get": {
+        "/packages": {
+            "put": {
                 "tags": [
                     "4.Package"
                 ],
-                "summary": "get all package",
-                "description": "return package with take and skip",
-                "operationId": "package",
+                "summary": "edit a package",
+                "description": "edit package",
+                "operationId": "packageedit",
                 "consumes": [
                     "application/json"
                 ],
@@ -1848,33 +2054,75 @@
                 ],
                 "parameters": [
                     {
-                        "name": "take",
-                        "in": "path",
-                        "description": "take from ....",
+                        "name": "package_id",
+                        "in": "formData",
+                        "description": "package id",
                         "required": true,
-                        "type": "integer",
-                        "default": "all"
+                        "schema": {
+                            "required": [
+                                "package_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
                     },
                     {
-                        "name": "skip",
-                        "in": "path",
-                        "description": "skip from",
+                        "name": "text_value",
+                        "in": "formData",
+                        "description": "text_value josn",
                         "required": true,
-                        "type": "integer",
-                        "default": "0"
+                        "schema": {
+                            "required": [
+                                "text_value"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "describe_value",
+                        "in": "formData",
+                        "description": "describe_value josn",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "describe_value"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "package_cost",
+                        "in": "formData",
+                        "description": "package_cost value",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "package_cost"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "successful operation"
+                        "description": "add succes"
                     },
                     "400": {
-                        "description": "Invalid value"
+                        "description": "Invalid Value"
                     }
                 }
-            }
-        },
-        "/package/add": {
+            },
             "post": {
                 "tags": [
                     "4.Package"
@@ -1903,13 +2151,26 @@
                         "type": "string"
                     },
                     {
-                        "name": "translate",
+                        "name": "text_value",
                         "in": "formData",
-                        "description": "translate json",
+                        "description": "text_value josn",
                         "required": true,
                         "schema": {
                             "required": [
-                                "category_code"
+                                "text_value"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "describe_value",
+                        "in": "formData",
+                        "description": "describe_value josn",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "describe_value"
                             ],
                             "type": "string"
                         },
@@ -1927,6 +2188,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -1937,75 +2206,8 @@
                         "description": "Invalid Value"
                     }
                 }
-            }
-        },
-        "/package/edit": {
-            "post": {
-                "tags": [
-                    "4.Package"
-                ],
-                "summary": "edit a package",
-                "description": "edit package",
-                "operationId": "packageedit",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "package_id",
-                        "in": "formData",
-                        "description": "package id",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "package_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
-                        "name": "translate",
-                        "in": "formData",
-                        "description": "translate json",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "package_cost",
-                        "in": "formData",
-                        "description": "package_cost value",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "package_cost"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "add succes"
-                    },
-                    "400": {
-                        "description": "Invalid Value"
-                    }
-                }
-            }
-        },
-        "/package/delete": {
-            "post": {
+            },
+            "delete": {
                 "tags": [
                     "4.Package"
                 ],
@@ -2020,21 +2222,8 @@
                 ],
                 "parameters": [
                     {
-                        "name": "uid",
-                        "in": "formData",
-                        "description": "uid delete",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
                         "name": "package_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "package_id",
                         "required": true,
                         "schema": {
@@ -2044,6 +2233,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2056,7 +2253,7 @@
                 }
             }
         },
-        "/purchase/get_user/{user_id}": {
+        "/purchases/users/{user_id}": {
             "get": {
                 "tags": [
                     "Purchase"
@@ -2084,6 +2281,14 @@
                         },
                         "type": "integer",
                         "default": 0
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2096,7 +2301,7 @@
                 }
             }
         },
-        "/purchase/getUserPurchase_package/{user_id}": {
+        "/purchases/package/{user_id}": {
             "get": {
                 "tags": [
                     "Purchase"
@@ -2124,6 +2329,14 @@
                         },
                         "type": "integer",
                         "default": 0
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2136,7 +2349,7 @@
                 }
             }
         },
-        "/purchase/getUserPurchase_explain/{user_id}": {
+        "/purchases/explain/{user_id}": {
             "get": {
                 "tags": [
                     "Purchase"
@@ -2164,6 +2377,14 @@
                         },
                         "type": "integer",
                         "default": 0
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2176,7 +2397,7 @@
                 }
             }
         },
-        "/purchase/getPurchaseId/{id}": {
+        "/purchases/{id}": {
             "get": {
                 "tags": [
                     "Purchase"
@@ -2204,6 +2425,14 @@
                         },
                         "type": "integer",
                         "default": 0
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2216,7 +2445,7 @@
                 }
             }
         },
-        "/purchase/get_all/{take}/{skip}": {
+        "/purchases/{limit}/{offset}": {
             "get": {
                 "tags": [
                     "Purchase"
@@ -2232,7 +2461,7 @@
                 ],
                 "parameters": [
                     {
-                        "name": "take",
+                        "name": "limit",
                         "in": "path",
                         "description": "take from ....",
                         "required": true,
@@ -2240,12 +2469,20 @@
                         "default": "all"
                     },
                     {
-                        "name": "skip",
+                        "name": "offset",
                         "in": "path",
                         "description": "skip from",
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2258,7 +2495,39 @@
                 }
             }
         },
-        "/purchase/add_payment": {
+        "/purchases": {
+            "get": {
+                "tags": [
+                    "Purchase"
+                ],
+                "summary": "get my purchase",
+                "description": "get my purchase",
+                "operationId": "get_user ",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "Purchase"
@@ -2273,19 +2542,6 @@
                     "application/json"
                 ],
                 "parameters": [
-                    {
-                        "name": "user_id",
-                        "in": "formData",
-                        "description": "user_id ",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "user_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
                     {
                         "name": "item_id",
                         "in": "formData",
@@ -2311,6 +2567,14 @@
                             "type": "string"
                         },
                         "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2323,8 +2587,56 @@
                 }
             }
         },
-        "/purchase/delete": {
-            "post": {
+        "/purchases/status/{item_code}/{item_id}": {
+            "get": {
+                "tags": [
+                    "Purchase"
+                ],
+                "summary": "get all Chapter",
+                "description": "return purchase with take and skip",
+                "operationId": "purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "item_code",
+                        "in": "path",
+                        "description": "item_code",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "item_id",
+                        "in": "path",
+                        "description": "item_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/purchases/{purchase_id}": {
+            "delete": {
                 "tags": [
                     "Purchase"
                 ],
@@ -2339,21 +2651,8 @@
                 ],
                 "parameters": [
                     {
-                        "name": "uid",
-                        "in": "formData",
-                        "description": "uid delete",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "uid"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
                         "name": "purchase_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "purchase_id",
                         "required": true,
                         "schema": {
@@ -2363,6 +2662,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2402,6 +2709,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2444,6 +2759,14 @@
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2456,7 +2779,78 @@
                 }
             }
         },
-        "/question/add": {
+        "/questions": {
+            "put": {
+                "tags": [
+                    "7.Question"
+                ],
+                "summary": "edit group_question",
+                "description": "edit question",
+                "operationId": "question_edit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "question_id",
+                        "in": "formData",
+                        "description": "question_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "question_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "sub_question_content",
+                        "in": "formData",
+                        "description": "sub_question_content",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "sub_question_content"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "explain",
+                        "in": "formData",
+                        "description": "explain josn",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "explain"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "7.Question"
@@ -2498,30 +2892,25 @@
                         "type": "string"
                     },
                     {
-                        "name": "translate",
+                        "name": "explain",
                         "in": "formData",
-                        "description": "translate json",
+                        "description": "explain josn",
                         "required": true,
                         "schema": {
                             "required": [
-                                "category_code"
+                                "explain"
                             ],
                             "type": "string"
                         },
                         "type": "string"
                     },
                     {
-                        "name": "explain_cost",
-                        "in": "formData",
-                        "description": "explain_cost",
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
                         "required": true,
-                        "schema": {
-                            "required": [
-                                "explain_cost"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2534,86 +2923,8 @@
                 }
             }
         },
-        "/question/edit": {
-            "post": {
-                "tags": [
-                    "7.Question"
-                ],
-                "summary": "edit group_question",
-                "description": "edit question",
-                "operationId": "question_edit",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "question_id",
-                        "in": "formData",
-                        "description": "question_id",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "question_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
-                        "name": "sub_question_content",
-                        "in": "formData",
-                        "description": "sub_question_content",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "sub_question_content"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "translate",
-                        "in": "formData",
-                        "description": "translate json",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    },
-                    {
-                        "name": "explain_cost",
-                        "in": "formData",
-                        "description": "explain_cost",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "explain_cost"
-                            ],
-                            "type": "string"
-                        },
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "add succes"
-                    },
-                    "400": {
-                        "description": "Invalid Value"
-                    }
-                }
-            }
-        },
-        "/question/delete": {
-            "post": {
+        "/questions/{question_id}": {
+            "delete": {
                 "tags": [
                     "7.Question"
                 ],
@@ -2628,21 +2939,8 @@
                 ],
                 "parameters": [
                     {
-                        "name": "uid",
-                        "in": "formData",
-                        "description": "uid delete",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "uid"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
                         "name": "question_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "question_id",
                         "required": true,
                         "schema": {
@@ -2652,6 +2950,14 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2664,10 +2970,10 @@
                 }
             }
         },
-        "/auth/register": {
+        "/users/register": {
             "post": {
                 "tags": [
-                    "0.Auth"
+                    "1.User"
                 ],
                 "summary": "register",
                 "description": "user register",
@@ -2756,7 +3062,7 @@
                 }
             }
         },
-        "/restricted/profile/{id}": {
+        "/users/profile": {
             "get": {
                 "tags": [
                     "1.User"
@@ -2771,13 +3077,6 @@
                     "application/json"
                 ],
                 "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "user_id",
-                        "required": true,
-                        "type": "integer"
-                    },
                     {
                         "name": "Authorization",
                         "in": "header",
@@ -2795,10 +3094,8 @@
                         "description": "Invalid value"
                     }
                 }
-            }
-        },
-        "/restricted/profile/edit": {
-            "post": {
+            },
+            "put": {
                 "tags": [
                     "1.User"
                 ],
@@ -2812,19 +3109,6 @@
                     "application/json"
                 ],
                 "parameters": [
-                    {
-                        "name": "user_id",
-                        "in": "formData",
-                        "description": "user_id edit",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "user_id"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
                     {
                         "name": "name",
                         "in": "formData",
@@ -2849,6 +3133,14 @@
                             "type": "string"
                         },
                         "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {
@@ -2861,8 +3153,8 @@
                 }
             }
         },
-        "/restricted/chargecoin": {
-            "post": {
+        "/users/chargecoin": {
+            "put": {
                 "tags": [
                     "1.User"
                 ],
@@ -2877,19 +3169,6 @@
                 ],
                 "parameters": [
                     {
-                        "name": "user_id",
-                        "in": "formData",
-                        "description": "uid chargecoin",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "uid"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
-                    {
                         "name": "coin",
                         "in": "formData",
                         "description": "coin charge",
@@ -2901,6 +3180,589 @@
                             "type": "integer"
                         },
                         "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/admin/roles/{name_role}": {
+            "get": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "get roles with name_role",
+                "description": "return roles with name_role",
+                "operationId": "role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "name_role",
+                        "in": "path",
+                        "description": "name_role",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "delete roles ",
+                "description": "delete with name_role",
+                "operationId": "name_role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "name_role",
+                        "in": "path",
+                        "description": "name_role",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name_role"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/admin/roles/{limit}/{offset}": {
+            "get": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "get all roles",
+                "description": "return roles with take and skip",
+                "operationId": "role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/admin/roles": {
+            "put": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "add new roles",
+                "description": "add new roles",
+                "operationId": "addroles",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "name_role",
+                        "in": "formData",
+                        "description": "name_role",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name_role"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "role_permission",
+                        "in": "formData",
+                        "description": "role_permission",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "role_permission"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "role_description",
+                        "in": "formData",
+                        "description": "role_description",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "role_description"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Role"
+                ],
+                "summary": "add new roles",
+                "description": "add new roles",
+                "operationId": "addroles",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "name_role",
+                        "in": "formData",
+                        "description": "name_role",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name_role"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "role_permission",
+                        "in": "formData",
+                        "description": "role_permission",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "role_permission"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "role_description",
+                        "in": "formData",
+                        "description": "role_description",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "role_description"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/admin/user_roles/{user_id}": {
+            "get": {
+                "tags": [
+                    "UserRole"
+                ],
+                "summary": "get user_roles with user_id",
+                "description": "return roles with name_role",
+                "operationId": "role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "user_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/admin/user_roles/{limit}/{offset}": {
+            "get": {
+                "tags": [
+                    "UserRole"
+                ],
+                "summary": "get all user_roles",
+                "description": "return user_roles with take and skip",
+                "operationId": "role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/admin/user_roles": {
+            "put": {
+                "tags": [
+                    "UserRole"
+                ],
+                "summary": "add new user_roles",
+                "description": "add new user_roles",
+                "operationId": "aa_user_roles",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "name_role",
+                        "in": "formData",
+                        "description": "name_role",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name_role"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "formData",
+                        "description": "user_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "user_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "expired",
+                        "in": "formData",
+                        "description": "expired",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "expired"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "UserRole"
+                ],
+                "summary": "add new user_roles",
+                "description": "add new user_roles",
+                "operationId": "add_user_roles",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "name_role",
+                        "in": "formData",
+                        "description": "name_role",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name_role"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "formData",
+                        "description": "user_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "user_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "expired",
+                        "in": "formData",
+                        "description": "expired of role, forever  = -1",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "expired"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/admin/user_roles/{user_id}/{name_role}": {
+            "delete": {
+                "tags": [
+                    "UserRole"
+                ],
+                "summary": "delete roles ",
+                "description": "delete with name_role",
+                "operationId": "name_role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "user_id",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "user_id"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "name_role",
+                        "in": "path",
+                        "description": "name_role",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name_role"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
                     }
                 ],
                 "responses": {

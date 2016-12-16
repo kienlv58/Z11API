@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Package;
 use App\Profile;
 use App\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request;use Illuminate\Support\Facades\Auth;
+use JWTAuth;
 
 class AdminController extends Controller
 {
@@ -26,30 +27,19 @@ class AdminController extends Controller
 
 
 
-    public function getAllUser($take = 'all',$skip = 0){
-        return $this->getAllData('App\User',$take,$skip);
+    public function getAllUser($limit = 'all',$offset = 0){
+        return $this->getAllData('App\User',$limit,$offset);
     }
 
     /**
-     * @SWG\Post(
-     *     path="/admin/delete_user",
+     * @SWG\Delete(
+     *     path="/admin/users/{uid}",
      *     summary="delete user ",
      *     tags={"9.Admin"},
      *     description="delete with user_id",
-     *     operationId="user_delete",
+     *     operationId="uid_delete",
      *     consumes={"application/json"},
      *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *      name = "current_uid",
-     *      description = "current_uid",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "integer"
-     *      )
-     *           ),
      *     @SWG\Parameter(
      *      name = "uid",
      *      description = "uid delete",
@@ -57,10 +47,19 @@ class AdminController extends Controller
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
-     *     required={"category_code"},
+     *     required={"uid_delete"},
      *     type = "integer"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -73,35 +72,24 @@ class AdminController extends Controller
      * )
      */
 
-    public function deleteUser(Request $request){
-        $data = $request->toArray();
-        $user = User::find($data['current_uid']);
+    public function deleteUser($uid_delete){
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
         if($user == null or $user->type != 'admin') {
-            return response()->json($this->setArrayData(400, 'you not permission delete to user or user = null'));
+            return response()->json($this->setArrayData(400, 'you not permission delete to user'));
         }
-        return $this->deleteDataById('App\User',['id'=>$data['uid']]);
+        return $this->deleteDataById('App\User',['id'=>$uid_delete]);
     }
 
     /**
      * @SWG\Post(
-     *     path="/admin/create_user_mod",
+     *     path="/admin/user_mod",
      *     summary="create_user_mod ",
      *     tags={"9.Admin"},
      *     description="create_user_mod",
      *     operationId="create_user_mod",
      *     consumes={"application/json"},
      *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *      name = "current_uid",
-     *      description = "current_uid",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "integer"
-     *      )
-     *           ),
      *     @SWG\Parameter(
      *      name = "email",
      *      description = "email",
@@ -168,6 +156,15 @@ class AdminController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -182,10 +179,12 @@ class AdminController extends Controller
 
     //'email','password',name','gender','coin','image'
     public function createUserMod(Request $request){
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
         $data = $request->toArray();
-        $user = User::find($data['current_uid']);
+        $data['current_uid'] = $user->id;
         if($user == null or $user->type != 'admin') {
-            return response()->json($this->setArrayData(400, 'you not permission delete to user or user = null'));
+            return response()->json($this->setArrayData(400, 'you not permission delete to user'));
         }
 
         $user = User::create(['grant_type'=>'password','email'=>$data['email'],'type'=>'mod','password'=>bcrypt($data['password']),'active'=>0]);
@@ -203,7 +202,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @SWG\Post(
+     * @SWG\Put(
      *     path="/admin/aprroval_package",
      *     summary="aprroval user ",
      *     tags={"9.Admin"},
@@ -233,6 +232,15 @@ class AdminController extends Controller
      *     type = "integer"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",

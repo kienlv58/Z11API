@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Explain;
 use App\Folder;
 use App\Language;
+use App\TextId;
 use App\Translate;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\Types\Object_;
 
 /**
@@ -97,82 +100,109 @@ class Controller extends BaseController
         return response()->json($this->setArrayData(200, 'add new data success', $_model), 200);
 
     }
-    public function addNewDataExplain($item_code,$explain_cost){
-        $explain = Explain::create(['item_code'=>$item_code,'explain_cost'=>$explain_cost]);
+
+    public function addNewDataExplain($item_code, $explain_cost)
+    {
+        $explain = Explain::create(['item_code' => $item_code, 'explain_cost' => $explain_cost]);
         return $explain->explain_id;
     }
 
 
     public function editData($model, array $request, array $condition)
     {
-        $arr_key_cond = array_keys($condition);
-        foreach ($request as $key => $value) {
-            if ($value == null) {
-                unset($request[$key]);
+
+       // DB::transaction(function () use ($model,$request,$condition) {
+            $arr_key_cond = array_keys($condition);
+            foreach ($request as $key => $value) {
+                if ($value === null) {
+                    unset($request[$key]);
+                }
             }
-        }
 
-        $count = count($arr_key_cond);
+            $count = count($arr_key_cond);
 
-        if ($count == 1) {
-            $_model = $model::where($arr_key_cond[0], $condition[$arr_key_cond[0]])->update($request);
-        } else if ($count == 2) {
-            $_model = $model::where($arr_key_cond[0], $condition[$arr_key_cond[0]])->where($arr_key_cond[1], $condition[$arr_key_cond[1]])->update($request);
-        } else if ($count == 3) {
-            $_model = $model::where($arr_key_cond[0], $condition[$arr_key_cond[0]])->where($arr_key_cond[1], $condition[$arr_key_cond[1]])->where($arr_key_cond[2], $condition[$arr_key_cond[2]])->update($request);
-        } else {
-            return 'parram condition long';
-        }
-        if ($_model == 1)
-            return response()->json($this->setArrayData(200, 'edit successfull'), 200);
-        else
-            return response()->json($this->setArrayData(400, 'something errors'), 400);
+            if ($count == 1) {
+                $_model = $model::where($arr_key_cond[0], $condition[$arr_key_cond[0]])->update($request);
+            } else if ($count == 2) {
+                $_model = $model::where($arr_key_cond[0], $condition[$arr_key_cond[0]])->where($arr_key_cond[1], $condition[$arr_key_cond[1]])->update($request);
+            } else if ($count == 3) {
+                $_model = $model::where($arr_key_cond[0], $condition[$arr_key_cond[0]])->where($arr_key_cond[1], $condition[$arr_key_cond[1]])->where($arr_key_cond[2], $condition[$arr_key_cond[2]])->update($request);
+            } else {
+                return 'parram condition long';
+            }
+            if ($_model == 1)
+                return response()->json($this->setArrayData(200, 'edit successfull'), 200);
+            else
+                return response()->json($this->setArrayData(400, 'something errors'), 400);
+       // });
     }
     //-================================================================================================================================================
     //=================================================================================================================================================
 
-    //{"translate":[
-//{"vi":{"text_value":"vidu", "describe_value":"day la vi du"}},
-//    {"en":{"text_value":"example", "describe_value":"this is example"}}
-//]}
-    public function addDataTranslate($request,$explain_id)
+// {"vi": "Tieng anh", "en": "English", "jp":"abc"}
+//{"vi": "Hoc tieng anh", "en": "Learning english", "jp":"abc xyz"}
+    public function addDataTranslate($text_value_json, $text_id = null)
     {
-
-        $obj = \GuzzleHttp\json_decode($request,false);
-        $arr = (object)$obj->translate;
-        foreach ($arr as $key=>$value){
-            if (Language::where('language_code', $value->language_code)->get()->first() == null) {
-                return response()->json($this->setArrayData(400, 'language code not exits',['language_code'=>$value->language_code]), 400);
+        $arr_text_value = \GuzzleHttp\json_decode($text_value_json, true);
+        foreach ($arr_text_value as $key => $value) {
+            if (Language::where('language_code', $key)->get()->first() == null) {
+                return response()->json($this->setArrayData(400, 'language code not exits', ['language_code' => $key,'name_text_id'=>null]), 400);
             }
 
         }
-        foreach ($arr as $key=>$value){
-                $trans = Translate::create(['explain_id'=>$explain_id,'language_code' => $value->language_code, 'text_value' => $value->text_value, 'describe_value' => $value->describe_value]);
 
+        if ($text_id == null) {
+            $text_ids = TextId::create([]);
+            $text_id = $text_ids->text_id;
+        }
+        foreach ($arr_text_value as $key => $value) {
+            $trans = Translate::create(['text_id' => $text_id, 'language_code' => $key, 'text_value' => $value]);
         }
 
-        return response()->json($this->setArrayData(200, 'add success'), 200);
+        return response()->json($this->setArrayData(200, 'add success',['name_text_id'=>$text_id]), 200);
+
 
     }
 
 
-    public function deleteDataTranslate($explain_id)
+    public function EditDataTranslate($text_value_json,$text_id)
     {
-        $trans_arr = Translate::where('explain_id', $explain_id)->get();
-        if ($trans_arr != null){
-            foreach ($trans_arr as $trans){
-                $trans->delete();
+        $arr_text_value = \GuzzleHttp\json_decode($text_value_json, true);
+        foreach ($arr_text_value as $key => $value) {
+            if (Language::where('language_code', $key)->get()->first() == null) {
+                return response()->json($this->setArrayData(400, 'language code not exits', ['language_code' => $key,'name_text_id'=>null]), 400);
             }
-            return response()->json($this->setArrayData(200,'delete success'),400);
+
+        }
+        $trans_arr = Translate::where('text_id', $text_id)->get();
+        if ($trans_arr != null) {
+            foreach ($trans_arr as $trans) {
+                $trans->delete($trans->translate_id);
+            }
+            foreach ($arr_text_value as $key => $value) {
+                $trans = Translate::create(['text_id' => $text_id, 'language_code' => $key, 'text_value' => $value]);
+            }
+            return response()->json($this->setArrayData(200, 'edit success',['name_text_id'=>$text_id]), 200);
+
         }
     }
-    public function deleteDataExplain($explain_id){
+
+    public function deleteDataExplain($explain_id)
+    {
         $result = Explain::destroy($explain_id);
-        if($result){
-            return response()->json($this->setArrayData(200,'delete success'),400);
+        if ($result) {
+            return response()->json($this->setArrayData(200, 'delete success'), 400);
+        } else {
+            return response()->json($this->setArrayData(400, 'delete error'), 400);
         }
-        else{
-            return response()->json($this->setArrayData(400,'delete error'),400);
+    }
+
+    public function deleteTextId($text_id){
+        $result = TextId::destroy($text_id);
+        if ($result) {
+            return response()->json($this->setArrayData(200, 'delete success'), 400);
+        } else {
+            return response()->json($this->setArrayData(400, 'delete error'), 400);
         }
     }
 

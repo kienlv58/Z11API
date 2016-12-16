@@ -19,7 +19,7 @@ class ChapterController extends Controller
      */
     /**
      * @SWG\GET(
-     *     path="/chapter/get/{id}",
+     *     path="/chapters/{id}",
      *     summary="get chapter",
      *     tags={"5.Chapter"},
      *     description="get chapter with chapter_id",
@@ -38,6 +38,15 @@ class ChapterController extends Controller
      *     type = "integer",
      *      )
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="get succes",
@@ -55,7 +64,7 @@ class ChapterController extends Controller
     }
     /**
      * @SWG\Get(
-     *     path="/chapter/get_all/{take}/{skip}",
+     *     path="/chapters/{limit}/{offset}",
      *     summary="get all Chapter",
      *     tags={"5.Chapter"},
      *     description="return chapter with take and skip",
@@ -63,7 +72,7 @@ class ChapterController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "take",
+     *      name = "limit",
      *     in ="path",
      *     description = "take from ....",
      *     type = "integer",
@@ -71,12 +80,21 @@ class ChapterController extends Controller
      *    required = true
      *     ),
      *      @SWG\Parameter(
-     *      name = "skip",
+     *      name = "offset",
      *     in ="path",
      *     description = "skip from",
      *     type = "integer",
      *     default="0",
      *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -88,13 +106,13 @@ class ChapterController extends Controller
      *     )
      * )
      */
-    public function getAllChapter($take = 'all',$skip = 0){
-        return $this->getAllData($this->model,$take,$skip);
+    public function getAllChapter($limit = 'all',$offset = 0){
+        return $this->getAllData($this->model,$limit,$offset);
     }
 
     /**
      * @SWG\Post(
-     *     path="/chapter/add",
+     *     path="/chapters",
      *     summary="add new chapter",
      *     tags={"5.Chapter"},
      *     description="add new chapter",
@@ -113,16 +131,38 @@ class ChapterController extends Controller
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
+     *      name = "name_text",
+     *     description = "name_text",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
      *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
+     *     required={"name_text"},
+     *     type = "string",
      *      )
-     *           ),
+     *     ),
+     *     @SWG\Parameter(
+     *      name = "describe_text",
+     *     description = "describe_text ",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"describe_text"},
+     *     type = "string",
+     *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -135,28 +175,19 @@ class ChapterController extends Controller
      * )
      */
     public function addChapter(Request $request){
-        $data_chapter = $request->only(['package_id']);
 
-        $check_package = Package::find($data_chapter['package_id']);
+        $data = $request->toArray();
+        $check_package = Package::find($data['package_id']);
         if($check_package == null){
             return response()->json($this->setArrayData(400,'package not exists'),400);
         }
-        $explain_id = $this->addNewDataExplain('chapter',0);
-        $result = $this->addDataTranslate($request->input('translate'),$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
-        $code = $a['code'];
-        if ($code === 400)
-            return $result;
-
-        $data_chapter['explain_id'] = $explain_id;
-        $data_chapter['item_code'] = 'chapter';
-
-        return $this->addNewData($this->model,$data_chapter);
+        $data_chapter= ['item_code' => 'chapter', 'package_id'=>$data['package_id'],'name_text' =>$data['name_text'] ,'describe_text'=>$data['describe_text']];
+        return $this->addNewData($this->model, $data_chapter);
     }
 
     /**
-     * @SWG\Post(
-     *     path="/chapter/edit",
+     * @SWG\Put(
+     *     path="/chapters",
      *     summary="edit a Chapter",
      *     tags={"5.Chapter"},
      *     description="edit Chapter",
@@ -174,18 +205,39 @@ class ChapterController extends Controller
      *     type = "integer"
      *      )
      *           ),
+     *     @SWG\Parameter(
+     *      name = "name_text",
+     *     description = "name_text",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"name_text"},
+     *     type = "string",
+     *      )
+     *     ),
+     *     @SWG\Parameter(
+     *      name = "describe_text",
+     *     description = "describe_text ",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"describe_text"},
+     *     type = "string",
+     *      )
+     *     ),
      *
      *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
      *     required = true,
-     *     type="string",
-     *     @SWG\Schema(
-     *     required={"category_code"},
+     *     default = "Bearer {your_token}",
      *     type = "string"
-     *      )
-     *           ),
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -198,26 +250,19 @@ class ChapterController extends Controller
      * )
      */
     public function editChapter(Request $request){
-
         $data = $request->toArray();
         $chapter = Chapter::find($data['chapter_id']);
         if ($chapter == null) {
             return response()->json($this->setArrayData(400,'can find folder'),400);
         }
-        $explain_id = $chapter->explain_id;
-        $this->deleteDataTranslate($explain_id);
-        $result = $this->addDataTranslate($data['translate'],$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
-        $code = $a['code'];
-        if ($code === 400)
-            return $result;
-        return response()->json($this->setArrayData(200, 'edit successfull'), 200);
+        $datachapter = ['name_text'=>$data['name_text'],'describe_text'=>$data['describe_text']];
+        return $this->editData($this->model, $datachapter,['chapter_id'=>$data['chapter_id']]);
 
 
     }
 
     /**
-     * @SWG\Post(
+     * @SWG\Delete(
      *     path="/chapter/delete",
      *     summary="delete chapter ",
      *     tags={"5.Chapter"},
@@ -226,20 +271,9 @@ class ChapterController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "uid",
-     *      description = "uid delete",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"uid"},
-     *     type = "integer"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
      *      name = "chapter_id",
      *      description = "chapter_id",
-     *     in ="formData",
+     *     in ="path",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
@@ -247,6 +281,15 @@ class ChapterController extends Controller
      *     type = "integer"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -258,13 +301,11 @@ class ChapterController extends Controller
      *     )
      * )
      */
-    public function deleteChapter(Request $request){
-        $data = $request->toArray();
-        $folder = Chapter::find($data['chapter_id']);
-        if ($folder == null) {
-            return response()->json($this->setArrayData(400, 'can not find to chapter'), 400);
+    public function deleteChapter($chapter_id){
+        $chapter = Chapter::where('chapter_id',$chapter_id)->get()->first();
+        if ($chapter == null) {
+            return response()->json($this->setArrayData(400, 'can not find to chapter id'), 400);
         }
-        $explain_id = $folder->explain_id;
-        return $this->deleteDataExplain($explain_id);
+        return $this->deleteDataById($this->model,['chapter_id'=>$chapter_id]);
     }
 }

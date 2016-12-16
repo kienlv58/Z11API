@@ -14,11 +14,12 @@ class CreatePackageTable extends Migration
     public function up()
     {
         Schema::create('packages',function (Blueprint $table){
-            $table->increments('package_id')->index();
+            $table->increments('package_id');
             $table->string('item_code');
             $table->integer('folder_id')->index()->unsigned();
             $table->foreign('folder_id')->references('folder_id')->on('folders')->onDelete('cascade');
-            $table->integer('explain_id')->index()->unsigned();
+            $table->integer('name_text_id')->index()->unsigned();
+            $table->integer('describe_text_id')->index()->unsigned();
             $table->integer('approval')->index();//0: no, 1: yes , 2: return
             $table->integer('package_cost');
             $table->timestamps();

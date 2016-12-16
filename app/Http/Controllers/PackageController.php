@@ -20,7 +20,7 @@ class PackageController extends Controller
 
     /**
      * @SWG\GET(
-     *     path="/package/get/{id}",
+     *     path="/packages/{package_id}",
      *     summary="get package",
      *     tags={"4.Package"},
      *     description="get package with package_id",
@@ -34,6 +34,15 @@ class PackageController extends Controller
      *     type = "integer",
      *    required = true
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="get succes",
@@ -45,8 +54,8 @@ class PackageController extends Controller
      *     )
      * )
      */
-    public  function getPackage($id = 0){
-        $pkg = Package::find($id);
+    public  function getPackage($package_id = 0){
+        $pkg = Package::find($package_id);
         if($pkg == null){
             return response()->json($this->setArrayData(404, 'can not find data'), 404);
         }
@@ -71,7 +80,7 @@ class PackageController extends Controller
     }
     /**
      * @SWG\Get(
-     *     path="/package/get_all/{take}/{skip}",
+     *     path="/packages/{limit}/{offset}",
      *     summary="get all package",
      *     tags={"4.Package"},
      *     description="return package with take and skip",
@@ -79,7 +88,7 @@ class PackageController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "take",
+     *      name = "limit",
      *     in ="path",
      *     description = "take from ....",
      *     type = "integer",
@@ -87,12 +96,21 @@ class PackageController extends Controller
      *    required = true
      *     ),
      *      @SWG\Parameter(
-     *      name = "skip",
+     *      name = "offset",
      *     in ="path",
      *     description = "skip from",
      *     type = "integer",
      *     default="0",
      *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -104,12 +122,12 @@ class PackageController extends Controller
      *     )
      * )
      */
-    public function getAllPackage($take = 'all',$skip = 0){
+    public function getAllPackage($limit = 'all',$offset = 0){
         //return $this->getAllData($this->model,$take,$skip);
-        if ($take == 'all') {
+        if ($limit == 'all') {
             $pkg = Package::all();
         } else {
-            $pkg = Package::take($take)->skip($skip)->get();
+            $pkg = Package::take($limit)->skip($offset)->get();
         }
         if ($pkg == null)
             return response()->json(['code' => 404, 'status' => 'not found', 'metadata' => $pkg->toArray()], 404);
@@ -130,7 +148,7 @@ class PackageController extends Controller
     }
     /**
      * @SWG\Get(
-     *     path="/package/get_not_yet_aprroval/{take}/{skip}",
+     *     path="/packages/get_not_yet_aprroval/{take}/{skip}",
      *     summary="get all package",
      *     tags={"4.Package"},
      *     description="return package with take and skip",
@@ -152,6 +170,15 @@ class PackageController extends Controller
      *     type = "integer",
      *     default="0",
      *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -177,7 +204,7 @@ class PackageController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/package/get_not_aprroval/{take}/{skip}",
+     *     path="/packages/get_not_aprroval/{take}/{skip}",
      *     summary="get all package",
      *     tags={"4.Package"},
      *     description="return package with take and skip",
@@ -199,6 +226,15 @@ class PackageController extends Controller
      *     type = "integer",
      *     default="0",
      *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -223,7 +259,7 @@ class PackageController extends Controller
     }
     /**
      * @SWG\Get(
-     *     path="/package/get_aprroval/{take}/{skip}",
+     *     path="/packages/get_aprroval/{take}/{skip}",
      *     summary="get all package",
      *     tags={"4.Package"},
      *     description="return package with take and skip",
@@ -245,6 +281,15 @@ class PackageController extends Controller
      *     type = "integer",
      *     default="0",
      *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -270,7 +315,7 @@ class PackageController extends Controller
 
     /**
      * @SWG\Post(
-     *     path="/package/add",
+     *     path="/packages",
      *     summary="add new package",
      *     tags={"4.Package"},
      *     description="add new package",
@@ -289,16 +334,29 @@ class PackageController extends Controller
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
+     *      name = "text_value",
+     *     description = "text_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
      *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
+     *     required={"text_value"},
+     *     type = "string",
      *      )
-     *           ),
+     *     ),
+     *     @SWG\Parameter(
+     *      name = "describe_value",
+     *     description = "describe_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"describe_value"},
+     *     type = "string",
+     *      )
+     *     ),
      *     @SWG\Parameter(
      *      name = "package_cost",
      *     description = "package_cost value",
@@ -310,6 +368,15 @@ class PackageController extends Controller
      *     required={"package_cost"},
      *     type = "integer",
      *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -326,28 +393,34 @@ class PackageController extends Controller
 
 
     public function addPackage(Request $request){
-        $data_package = $request->only(['folder_id','package_cost']);
-
-        $check_folder = Folder::find($data_package['folder_id']);
+        $data = $request->toArray();
+        $check_folder = Folder::find($data['folder_id']);
         if($check_folder == null){
             return response()->json($this->setArrayData(400,'folder not exists'),400);
         }
-        $explain_id = $this->addNewDataExplain('package',0);
-        $result = $this->addDataTranslate($request->input('translate'),$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
+
+        $result = $this->addDataTranslate($data['text_value']);
+        $a = \GuzzleHttp\json_decode($result->content(), true);
         $code = $a['code'];
+        $name_text_id = $a['metadata']['name_text_id'];
         if ($code === 400)
             return $result;
-        $data_package['item_code']='package';
-        $data_package['approval']=0;
-        $data_package['explain_id']=$explain_id;
+        $result2 = $this->addDataTranslate($data['describe_value']);
+        $b = \GuzzleHttp\json_decode($result2->content(), true);
+        $code2 = $b['code'];
+        $describe_text_id = $b['metadata']['name_text_id'];
+        if ($code2 === 400){
+            $this->deleteTextId($name_text_id);
+            return $result2;
+        }
 
-        return $this->addNewData($this->model,$data_package);
+        $data_package = ['item_code' => 'package', 'folder_id'=>$data['folder_id'],'name_text_id' =>$name_text_id ,'describe_text_id'=>$describe_text_id,'approval'=>0,'package_cost'=>$data['package_cost']];
+        return $this->addNewData($this->model, $data_package);
     }
 
     /**
-     * @SWG\Post(
-     *     path="/package/edit",
+     * @SWG\Put(
+     *     path="/packages",
      *     summary="edit a package",
      *     tags={"4.Package"},
      *     description="edit package",
@@ -366,16 +439,29 @@ class PackageController extends Controller
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
+     *      name = "text_value",
+     *     description = "text_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
      *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
+     *     required={"text_value"},
+     *     type = "string",
      *      )
-     *           ),
+     *     ),
+     *     @SWG\Parameter(
+     *      name = "describe_value",
+     *     description = "describe_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"describe_value"},
+     *     type = "string",
+     *      )
+     *     ),
      *     @SWG\Parameter(
      *      name = "package_cost",
      *     description = "package_cost value",
@@ -387,6 +473,15 @@ class PackageController extends Controller
      *     required={"package_cost"},
      *     type = "integer",
      *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -406,19 +501,29 @@ class PackageController extends Controller
         if ($package == null) {
             return response()->json($this->setArrayData(400,'can find folder'),400);
         }
-        $explain_id = $package->explain_id;
-        $this->deleteDataTranslate($explain_id);
-        $result = $this->addDataTranslate($data['translate'],$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
-        $code = $a['code'];
-        if ($code === 400)
-            return $result;
+        $name_text_id = $package->name_text_id;
+        $describe_text_id = $package->describe_text_id;
+        if(array_key_exists('text_value',$data) == true) {
+            $result = $this->EditDataTranslate($data['text_value'], $name_text_id);
+
+            $a = \GuzzleHttp\json_decode($result->content(), true);
+            $code = $a['code'];
+            if ($code === 400)
+                return $result;
+        }
+        if(array_key_exists('describe_value',$data) == true){
+            $result = $this->EditDataTranslate($data['describe_value'], $describe_text_id);
+            $a = \GuzzleHttp\json_decode($result->content(), true);
+            $code = $a['code'];
+            if ($code === 400)
+                return $result;
+        }
         return $this->editData($this->model,['package_cost'=>$data['package_cost']],['package_id'=>$package->package_id]);
 
     }
     /**
-     * @SWG\Post(
-     *     path="/package/delete",
+     * @SWG\Delete(
+     *     path="/packages",
      *     summary="delete package ",
      *     tags={"4.Package"},
      *     description="delete with package_id",
@@ -426,20 +531,9 @@ class PackageController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "uid",
-     *      description = "uid delete",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "integer"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
      *      name = "package_id",
      *      description = "package_id",
-     *     in ="formData",
+     *     in ="path",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
@@ -447,6 +541,15 @@ class PackageController extends Controller
      *     type = "integer"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -459,13 +562,14 @@ class PackageController extends Controller
      * )
      */
 
-    public function deletePackage(Request $request){
-        $data = $request->toArray();
-        $package = Package::find($data['package_id']);
+    public function deletePackage($package_id){
+        $package = Package::where('package_id',$package_id)->get()->first();
         if ($package == null) {
-            return response()->json($this->setArrayData(400, 'can not find to package'), 400);
+            return response()->json($this->setArrayData(400, 'can not find to package id'), 400);
         }
-        $explain_id = $package->explain_id;
-        return $this->deleteDataExplain($explain_id);
+        $name_text_id = $package->name_text_id;
+        $describe_text_id = $package->describe_text_id;
+        $this->deleteTextId($describe_text_id);
+        return $this->deleteTextId($name_text_id);
     }
 }

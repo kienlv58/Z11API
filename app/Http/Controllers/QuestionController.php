@@ -6,6 +6,7 @@ use App\Explain;
 use App\GroupQuestion;
 use App\Language;
 use App\Question;
+use App\TextId;
 use Illuminate\Http\Request;
 
 class QuestionController extends Controller
@@ -39,6 +40,15 @@ class QuestionController extends Controller
      *     type = "integer",
      *      )
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="get succes",
@@ -50,8 +60,8 @@ class QuestionController extends Controller
      *     )
      * )
      */
-    public  function getQuestion($id){
-        return $this->getDataById($this->model,$id);
+    public  function getQuestion($question_id){
+        return $this->getDataById($this->model,$question_id);
 
     }
     /**
@@ -79,6 +89,15 @@ class QuestionController extends Controller
      *     default="0",
      *     required = true
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="successful operation",
@@ -95,7 +114,7 @@ class QuestionController extends Controller
 
     /**
      * @SWG\Post(
-     *     path="/question/add",
+     *     path="/questions",
      *     summary="add new question",
      *     tags={"7.Question"},
      *     description="add new question",
@@ -124,28 +143,26 @@ class QuestionController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *
      *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
-     *      name = "explain_cost",
-     *     description = "explain_cost",
+     *      name = "explain",
+     *     description = "explain josn",
      *      required = true,
      *      in ="formData",
      *     type = "string",
      *
      *     @SWG\Schema(
-     *     required={"explain_cost"},
+     *     required={"explain"},
      *     type = "string",
      *      )
+     *     ),
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -158,30 +175,44 @@ class QuestionController extends Controller
      *     )
      * )
      */
-//{"answer":[{"answer_item_value":"this is answer number 1","answer_is_correct":1},{"answer_item_value":"this is answer number 2","answer_is_correct":0}]}
     public function addQuestion(Request $request){
-        $data_qestion = $request->only(['group_question_id','sub_question_content']);
 
-        $check_group_qs = GroupQuestion::find($data_qestion['group_question_id']);
+
+        $data = $request->toArray();
+        $check_group_qs = GroupQuestion::find($data['group_question_id']);
         if($check_group_qs == null){
             return response()->json($this->setArrayData(400,'group question not exists'),400);
         }
-        $explain_id = $this->addNewDataExplain('question',$request->input('explain_cost'));
-        $result = $this->addDataTranslate($request->input('translate'),$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
-        $code = $a['code'];
-        if ($code === 400)
-            return $result;
+        if ($data['explain']=='{}') {
+            $data_qs = ['item_code' => 'question', 'group_question_id' => $data['group_question_id'], 'explain_item_id' => 0, 'sub_question_content' => $data['sub_question_content']];
+            return $this->addNewData($this->model, $data_qs);
+        } else {
+            $data_explain = \GuzzleHttp\json_decode($data['explain'], true);
+            $explain_cost = $data_explain['cost'];
+            $json_text_value = \GuzzleHttp\json_encode($data_explain['explain']);
+            $result = $this->addDataTranslate($json_text_value);
+            $a = \GuzzleHttp\json_decode($result->content(), true);
+            $code = $a['code'];
+            $name_text_id = $a['metadata']['name_text_id'];
+            if ($code === 400)
+                return $result;
 
-        $data_qestion['explain_id'] = $explain_id;
-        $data_qestion['item_code'] = 'question';
+            $explain = Explain::create(['item_code' => 'question', 'explain_cost' => $explain_cost, 'explain_text_id' => $name_text_id]);
+            if ($explain != null) {
+                $explain_item_id = $explain->explain_item_id;
 
-        return $this->addNewData($this->model,$data_qestion);
+                $data_qs = ['item_code' => 'question', 'group_question_id' => $data['group_question_id'], 'explain_item_id' => $explain_item_id, 'sub_question_content' => $data['sub_question_content']];
+                return $this->addNewData($this->model, $data_qs);
+            } else {
+                $this->deleteTextId($name_text_id);
+                return response()->json($this->setArrayData(400, 'create explain error'), 400);
+            }
+        }
     }
 
     /**
-     * @SWG\Post(
-     *     path="/question/edit",
+     * @SWG\Put(
+     *     path="/questions",
      *     summary="edit group_question",
      *     tags={"7.Question"},
      *     description="edit question",
@@ -210,28 +241,27 @@ class QuestionController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *
      *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
-     *      )
-     *           ),
-     *      @SWG\Parameter(
-     *      name = "explain_cost",
-     *     description = "explain_cost",
+     *      name = "explain",
+     *     description = "explain josn",
      *      required = true,
      *      in ="formData",
      *     type = "string",
      *
      *     @SWG\Schema(
-     *     required={"explain_cost"},
+     *     required={"explain"},
      *     type = "string",
      *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -249,24 +279,77 @@ class QuestionController extends Controller
         $data = $request->toArray();
         $question = Question::find($data['question_id']);
         if ($question == null) {
-            return response()->json($this->setArrayData(400,'can find group question'),400);
+            return response()->json($this->setArrayData(400, 'can find question'), 400);
         }
-        $explain_id = $question->explain_id;
-        Explain::where('explain_id',$explain_id)->update(['explain_cost'=>$data['explain_cost']]);
-        $this->deleteDataTranslate($explain_id);
-        $result = $this->addDataTranslate($data['translate'],$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
-        $code = $a['code'];
-        if ($code === 400)
-            return $result;
-        return $this->editData($this->model,$request->only(['sub_question_content']),['question_id'=>$data['question_id']]);
+        $data_question = $request->only(['sub_question_content']);
+        if ($data['explain'] == '{}') {
+            $data_question['explain_item_id'] = 0;
+            if($question->explain_item_id != 0) {
+
+                $e = Explain::find($question->explain_item_id);
+                if($e != null) {
+                    $kq = $this->deleteTextId($e->explain_text_id);
+                }
+                return $this->editData($this->model, $data_question, ['question_id' => $data['question_id']]);
+            }else{
+                return $this->editData($this->model, $data_question, ['question_id' => $data['question_id']]);
+            }
+
+        } else {
+            $data_explain = \GuzzleHttp\json_decode($data['explain'], true);
+            $explain_cost = $data_explain['cost'];
+            $json_text_value = \GuzzleHttp\json_encode($data_explain['explain']);
+            if ($question->explain_item_id == 0) {
+                //add new
+                $result = $this->addDataTranslate($json_text_value);
+                $a = \GuzzleHttp\json_decode($result->content(), true);
+                $code = $a['code'];
+                $name_text_id = $a['metadata']['name_text_id'];
+                if ($code === 400)
+                    return $result;
+
+                $explain = Explain::create(['item_code' => 'question', 'explain_cost' => $explain_cost, 'explain_text_id' => $name_text_id]);
+                if ($explain != null) {
+                    $explain_item_id = $explain->explain_item_id;
+                    $data_question['explain_item_id'] = $explain_item_id;
+                    return $this->editData($this->model, $data_question, ['question_id' => $data['question_id']]);
+                } else {
+                    $this->deleteTextId($name_text_id);
+                    return response()->json($this->setArrayData(400, 'create explain error'), 400);
+                }
+
+
+
+            } else {
+                $explain = Explain::where('explain_item_id', $data_question->explain_item_id)->get()->first();
+
+                if ($explain != null) {
+                    //  DB::transaction(function () use ($explain,$data,$request){
+                    $explain_text_id = $explain->explain_text_id;
+                    $this->editData('App\Explain', ['explain_cost' => $explain_cost], ['explain_item_id' => $explain->explain_item_id]);
+                    $result = $this->EditDataTranslate($json_text_value, $explain_text_id);
+
+                    $a = \GuzzleHttp\json_decode($result->content(), true);
+                    $code = $a['code'];
+                    $name_text_id = $a['metadata']['name_text_id'];
+                    if ($code === 400)
+                        return $result;
+                    $data_question['explain_item_id'] = $explain->explain_item_id;
+                    return $this->editData($this->model, $data_question, ['question_id' => $data['question_id']]);
+
+                    //});
+                }
+            }
+
+        }
+
 
 
     }
 
     /**
-     * @SWG\Post(
-     *     path="/question/delete",
+     * @SWG\Delete(
+     *     path="/questions/{question_id}",
      *     summary="delete group_question ",
      *     tags={"7.Question"},
      *     description="delete with question",
@@ -274,20 +357,9 @@ class QuestionController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "uid",
-     *      description = "uid delete",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"uid"},
-     *     type = "integer"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
      *      name = "question_id",
      *      description = "question_id",
-     *     in ="formData",
+     *     in ="path",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
@@ -295,6 +367,15 @@ class QuestionController extends Controller
      *     type = "integer"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -306,13 +387,25 @@ class QuestionController extends Controller
      *     )
      * )
      */
-    public function deleteQuestion(Request $request){
-        $data = $request->toArray();
-        $question = Question::find($data['question_id']);
+    public function deleteQuestion($question_id){
+
+
+        $question = Question::find($question_id);
         if ($question == null) {
             return response()->json($this->setArrayData(400, 'can not find to question'), 400);
         }
-        $explain_id = $question->explain_id;
-        return $this->deleteDataExplain($explain_id);
+        $explain_item_id = $question->explain_item_id;
+        if($explain_item_id != null ) {
+            $explain = Explain::where('explain_item_id', $explain_item_id)->get()->first();
+            if ($explain != null) {
+                TextId::destroy($explain->explain_text_id);
+                $this->deleteDataById($this->model,['question_id'=>$question_id]);
+                return response()->json($this->setArrayData(200, 'delete success'), 200);
+            } else
+                return response()->json($this->setArrayData(400, 'delete error'), 400);
+        }else{
+            return $this->deleteDataById($this->model,['question_id'=>$question_id]);
+        }
+
     }
 }

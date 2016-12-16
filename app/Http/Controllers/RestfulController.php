@@ -6,24 +6,20 @@ use App\Profile;
 use App\User;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+use JWTAuth;
+
 class RestfulController extends Controller
 {
     /**
      * @SWG\Get(
-     *     path="/restricted/profile/{id}",
+     *     path="/users/profile",
      *     summary="get user from id",
      *     tags={"1.User"},
      *     description="return user from id",
      *     operationId="user",
      *     consumes={"application/json"},
      *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *      name = "id",
-     *     in ="path",
-     *     description = "user_id",
-     *     required = true,
-     *     type = "integer"
-     *     ),
      *     @SWG\Parameter(
      *      name = "Authorization",
      *     in ="header",
@@ -42,8 +38,9 @@ class RestfulController extends Controller
      *     )
      * )
      */
-    public function getProfile($id = 0){
-        $user = User::find($id);
+    public function getProfile(){
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
         if($user != null) {
             $profile = $user->profile()->get()->first();
             return response()->json(['code'=>200,'status'=>'OK','metadata'=>['user'=>$user,'profile'=>$profile]]);
@@ -53,25 +50,14 @@ class RestfulController extends Controller
     }
 
     /**
-     * @SWG\Post(
-     *     path="/restricted/profile/edit",
+     * @SWG\Put(
+     *     path="/users/profile",
      *     summary="edit profile ",
      *     tags={"1.User"},
      *     description="edit with profile_id",
      *     operationId="profileedit",
      *     consumes={"application/json"},
      *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *      name = "user_id",
-     *      description = "user_id edit",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"user_id"},
-     *     type = "integer"
-     *      )
-     *           ),
      *     @SWG\Parameter(
      *      name = "name",
      *      description = "name",
@@ -93,6 +79,14 @@ class RestfulController extends Controller
      *     type = "string"
      *      )
      *           ),
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -106,33 +100,22 @@ class RestfulController extends Controller
      */
     public function editProfile(Request $request){
         $data = $request->toArray();
-        $user = User::find($data ['user_id']);
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
         if($user == null)
             return response()->json(['code'=>404,'status'=>'user not exists'],404);
-        return $this->editData('App\Profile',$data,['user_id'=>$data['user_id']]);
-        //$result = Profile::where('user_id',$request['user_id'])->update(['name'=>$request['name'],'image'=>$request['image']]);
+        return $this->editData('App\Profile',$data,['user_id'=>$user->id]);
 
     }
     /**
-     * @SWG\Post(
-     *     path="/restricted/chargecoin",
+     * @SWG\Put(
+     *     path="/users/chargecoin",
      *     summary="chargecoin",
      *     tags={"1.User"},
      *     description="chargecoin",
      *     operationId="chargecoin",
      *     consumes={"application/json"},
      *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *      name = "user_id",
-     *      description = "uid chargecoin",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"uid"},
-     *     type = "integer"
-     *      )
-     *           ),
      *     @SWG\Parameter(
      *      name = "coin",
      *      description = "coin charge",
@@ -144,6 +127,15 @@ class RestfulController extends Controller
      *     type = "integer"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -156,7 +148,10 @@ class RestfulController extends Controller
      * )
      */
     public function chargeCoin(Request $request){
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
         $data = $request->toArray();
+        $data['user_id'] = $user->id;
         $profile = Profile::where('user_id',$data['user_id'])->get()->first();
         if($profile == null)
             return response()->json(['code'=>404,'status'=>'user not exists'],404);

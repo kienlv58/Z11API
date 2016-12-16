@@ -60,9 +60,9 @@ class LoginController extends Controller
      */
     /**
      * @SWG\Post(
-     *     path="/auth/login",
+     *     path="/users/login",
      *     summary="login",
-     *     tags={"0.Auth"},
+     *     tags={"1.User"},
      *     description="user login",
      *     operationId="login",
      *     consumes={"application/json"},
@@ -101,17 +101,6 @@ class LoginController extends Controller
      *     required={"password"},
      *     type = "string",
      *     format = "password"
-     *      )
-     *     ),
-     *      @SWG\Parameter(
-     *      name = "token",
-     *     description = "token of social network",
-     *     in ="formData",
-     *     required = false,
-     *     type="string",
-     *     @SWG\Schema(
-     *     required={"token"},
-     *     type = "string"
      *      )
      *     ),
      *     @SWG\Response(

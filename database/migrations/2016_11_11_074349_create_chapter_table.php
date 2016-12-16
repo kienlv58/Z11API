@@ -14,11 +14,12 @@ class CreateChapterTable extends Migration
     public function up()
     {
         Schema::create('chapters',function (Blueprint $table){
-            $table->increments('chapter_id')->index();
+            $table->increments('chapter_id');
             $table->string('item_code');//ch
             $table->integer('package_id')->index()->unsigned();
             $table->foreign('package_id')->references('package_id')->on('packages')->onDelete('cascade');
-            $table->integer('explain_id')->index()->unsigned();
+            $table->string('name_text');
+            $table->string('describe_text');
             $table->timestamps();
         });
     }

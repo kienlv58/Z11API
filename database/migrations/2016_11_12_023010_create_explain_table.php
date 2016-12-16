@@ -14,36 +14,13 @@ class CreateExplainTable extends Migration
     public function up()
     {
         Schema::create('explains', function (Blueprint $table) {
-            $table->increments('explain_id')->index();
+            $table->increments('explain_item_id');
             $table->string('item_code');//explain
             $table->integer('explain_cost');
-//            $table->integer('name_text_id')->index();
+            $table->integer('explain_text_id')->index()->unsigned();
             $table->timestamps();
         });
 
-
-        Schema::table('categories',function ($table){
-            $table->foreign('explain_id')->references('explain_id')->on('explains')->onDelete('cascade');
-        });
-        Schema::table('folders',function ($table) {
-            $table->foreign('explain_id')->references('explain_id')->on('explains')->onDelete('cascade');
-            $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
-        });
-        Schema::table('packages',function ($table) {
-            $table->foreign('explain_id')->references('explain_id')->on('explains')->onDelete('cascade');
-        });
-        Schema::table('chapters',function ($table) {
-            $table->foreign('explain_id')->references('explain_id')->on('explains')->onDelete('cascade');
-        });
-        Schema::table('group_questions',function ($table) {
-            $table->foreign('explain_id')->references('explain_id')->on('explains')->onDelete('cascade');
-        });
-        Schema::table('questions',function ($table) {
-            $table->foreign('explain_id')->references('explain_id')->on('explains')->onDelete('cascade');
-        });
-        Schema::table('translates',function ($table) {
-            $table->foreign('explain_id')->references('explain_id')->on('explains')->onDelete('cascade');
-        });
 
     }
 

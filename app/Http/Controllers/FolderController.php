@@ -20,7 +20,7 @@ class FolderController extends Controller
      */
     /**
      * @SWG\GET(
-     *     path="/folder/get/{id}",
+     *     path="/folders/{id}",
      *     summary="get folder",
      *     tags={"3.Folder"},
      *     description="get folder with folder_id",
@@ -39,6 +39,15 @@ class FolderController extends Controller
      *     type = "integer",
      *      )
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="get succes",
@@ -56,7 +65,7 @@ class FolderController extends Controller
     }
     /**
      * @SWG\Get(
-     *     path="/folder/get_all/{take}/{skip}",
+     *     path="/folders/{limit}/{offset}",
      *     summary="get all folder",
      *     tags={"3.Folder"},
      *     description="return folder with take and skip",
@@ -64,7 +73,7 @@ class FolderController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "take",
+     *      name = "limit",
      *     in ="path",
      *     description = "take from ....",
      *     type = "integer",
@@ -72,12 +81,21 @@ class FolderController extends Controller
      *    required = true
      *     ),
      *      @SWG\Parameter(
-     *      name = "skip",
+     *      name = "offset",
      *     in ="path",
      *     description = "skip from",
      *     type = "integer",
      *     default="0",
      *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -89,13 +107,13 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public function getAllFolder($take = 'all',$skip = 0){
-        return $this->getAllData($this->model,$take,$skip);
+    public function getAllFolder($limit = 'all',$offset = 0){
+        return $this->getAllData($this->model,$limit,$offset);
     }
 
     /**
      * @SWG\Post(
-     *     path="/folder/add",
+     *     path="/folders",
      *     summary="add new folder",
      *     tags={"3.Folder"},
      *     description="add new folder",
@@ -114,17 +132,6 @@ class FolderController extends Controller
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "type_owner",
-     *      description = "type_owner select : admin/mod/user",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
      *      name = "category_id",
      *      description = "category id",
      *     in ="formData",
@@ -136,16 +143,38 @@ class FolderController extends Controller
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
+     *      name = "text_value",
+     *     description = "text_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
      *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
+     *     required={"text_value"},
+     *     type = "string",
      *      )
-     *           ),
+     *     ),
+     *     @SWG\Parameter(
+     *      name = "describe_value",
+     *     description = "describe_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"describe_value"},
+     *     type = "string",
+     *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -158,33 +187,40 @@ class FolderController extends Controller
      * )
      */
     public function addFolder(Request $request){
-        $data_folder = $request->only(['category_id','owner_id','type_owner']);
 
-        $check_category = Category::find($data_folder['category_id']);
+        $data = $request->toArray();
+        $check_category = Category::find($data['category_id']);
         if($check_category == null){
             return response()->json($this->setArrayData(400,'category not exists'),400);
         }
-        $check_user = User::find($data_folder['owner_id']);
+        $check_user = User::find($data['owner_id']);
         if($check_user == null){
             return response()->json($this->setArrayData(400,'owner_id: user not exists'),400);
         }
 
-
-        $explain_id = $this->addNewDataExplain('folder',0);
-        $result = $this->addDataTranslate($request->input('translate'),$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
+        $result = $this->addDataTranslate($data['text_value']);
+        $a = \GuzzleHttp\json_decode($result->content(), true);
         $code = $a['code'];
+        $name_text_id = $a['metadata']['name_text_id'];
         if ($code === 400)
             return $result;
-        $data_folder['item_code']='folder';
-        $data_folder['explain_id']=$explain_id;
+        $result2 = $this->addDataTranslate($data['describe_value']);
+        $b = \GuzzleHttp\json_decode($result2->content(), true);
+        $code2 = $b['code'];
+        $describe_text_id = $b['metadata']['name_text_id'];
+        if ($code2 === 400){
+            $this->deleteTextId($name_text_id);
+            return $result2;
+        }
 
-        return $this->addNewData($this->model,$data_folder);
+        $data_folder = ['item_code' => 'folder', 'category_id'=>$data['category_id'],'name_text_id' =>$name_text_id ,'describe_text_id'=>$describe_text_id,'owner_id'=>$data['owner_id'],'type_owner'=>$check_user->type];
+        return $this->addNewData($this->model, $data_folder);
+
     }
 
     /**
-     * @SWG\Post(
-     *     path="/folder/edit",
+     * @SWG\Put(
+     *     path="/folders",
      *     summary="edit a folder",
      *     tags={"3.Folder"},
      *     description="edit folder",
@@ -203,16 +239,38 @@ class FolderController extends Controller
      *      )
      *           ),
      *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
+     *      name = "text_value",
+     *     description = "text_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
      *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
+     *     required={"text_value"},
+     *     type = "string",
      *      )
-     *           ),
+     *     ),
+     *     @SWG\Parameter(
+     *      name = "describe_value",
+     *     description = "describe_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"describe_value"},
+     *     type = "string",
+     *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -231,22 +289,31 @@ class FolderController extends Controller
         if ($folder == null) {
             return response()->json($this->setArrayData(400,'can find folder'),400);
         }
-        $explain_id = $folder->explain_id;
-        $this->deleteDataTranslate($explain_id);
-        $result = $this->addDataTranslate($data['translate'],$explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(),true);
-        $code = $a['code'];
-        if ($code === 400)
-            return $result;
-        else
-            return response()->json($this->setArrayData(200,'edit success'),200);
+        $name_text_id = $folder->name_text_id;
+        $describe_text_id = $folder->describe_text_id;
+        if(array_key_exists('text_value',$data) == true) {
+            $result = $this->EditDataTranslate($data['text_value'], $name_text_id);
+
+            $a = \GuzzleHttp\json_decode($result->content(), true);
+            $code = $a['code'];
+            if ($code === 400)
+                return $result;
+        }
+        if(array_key_exists('describe_value',$data) == true){
+            $result = $this->EditDataTranslate($data['describe_value'], $describe_text_id);
+            $a = \GuzzleHttp\json_decode($result->content(), true);
+            $code = $a['code'];
+            if ($code === 400)
+                return $result;
+        }
+        return response()->json($this->setArrayData(200,'edit success'),200);
 
 
     }
 
     /**
-     * @SWG\Post(
-     *     path="/folder/delete",
+     * @SWG\Delete(
+     *     path="/folders/{folder_id}",
      *     summary="delete folder ",
      *     tags={"3.Folder"},
      *     description="delete with folder_id",
@@ -254,20 +321,9 @@ class FolderController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "uid",
-     *      description = "uid delete",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "integer"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
      *      name = "folder_id",
      *      description = "folder_id",
-     *     in ="formData",
+     *     in ="path",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
@@ -275,6 +331,15 @@ class FolderController extends Controller
      *     type = "integer"
      *      )
      *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -286,14 +351,15 @@ class FolderController extends Controller
      *     )
      * )
      */
-    public function deleteFolder(Request $request){
-        $data = $request->toArray();
-        $folder = Folder::find($data['folder_id']);
+    public function deleteFolder($folder_id){
+        $folder = Folder::where('folder_id',$folder_id)->get()->first();
         if ($folder == null) {
-            return response()->json($this->setArrayData(400, 'can not find to folder'), 400);
+            return response()->json($this->setArrayData(400, 'can not find to folder id'), 400);
         }
-        $explain_id = $folder->explain_id;
-        return $this->deleteDataExplain($explain_id);
+        $name_text_id = $folder->name_text_id;
+        $describe_text_id = $folder->describe_text_id;
+        $this->deleteTextId($describe_text_id);
+        return $this->deleteTextId($name_text_id);
     }
 
 

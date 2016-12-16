@@ -6,28 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class Translate extends Model
 {
-    protected $fillable = ['explain_id','language_code','text_value','describe_value'];
-    protected $primaryKey = 'explain_id';
+    protected $fillable = ['text_id','language_code','text_value','describe_value'];
+    public $primaryKey ='translate_id';
 
     public function category(){
-        return $this->hasOne('App\Category','explain_id');
+        return $this->hasOne('App\Category','name_text_id');
     }
     public function folder(){
-        return $this->hasOne('App\Folder','explain_id');
+        return $this->hasOne('App\Folder','name_text_id');
     }
     public function package(){
-        return $this->hasOne('App\Package','explain_id');
+        return $this->hasOne('App\Package','name_text_id');
     }
     public function chapter(){
-        return $this->hasOne('App\Chapter','explain_id');
+        return $this->hasOne('App\Chapter','name_text_id');
     }
     public function groupquestion(){
-        return $this->hasManyThrough('App\GroupQuestion','App\Explain','explain_id','explain_id','explain_id');
+        return $this->hasManyThrough('App\GroupQuestion','App\Explain','name_text_id','text_id','name_text_id');
     }
     public function question(){
-        return $this->hasManyThrough('App\Question','App\Explain','explain_id','explain_id','explain_id');
+        return $this->hasManyThrough('App\Question','App\Explain','name_text_id','text_id','name_text_id');
     }
     public function Explain(){
-        return $this->hasManyThrough('App\Explain','explain_id');
+        return $this->hasManyThrough('App\Explain','name_text_id');
     }
 }

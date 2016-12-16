@@ -7,7 +7,7 @@ use Closure;
 use Illuminate\Support\Facades\Auth;
 use JWTAuth;
 
-class CheckAdmin
+class CheckUser
 {
     /**
      * Handle an incoming request.
@@ -18,7 +18,6 @@ class CheckAdmin
      */
     public function handle($request, Closure $next)
     {
-
         try {
 
             if (! $user = JWTAuth::parseToken()->authenticate()) {
@@ -40,15 +39,6 @@ class CheckAdmin
         }
 
         $user = User::findOrFail($user->id);
-        $type =  $user->type;
-        if($type == 'admin'|| $type == 'mod'){
-            return $next($request);
-        }
-        else{
-            return response()->json(['user_not_admin_or_mod'], 400);
-        }
-
-
-
+        return $next($request);
     }
 }

@@ -16,7 +16,7 @@ class CategoryController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/category/get/{id}",
+     *     path="/categories/{id}",
      *     summary="get category from id",
      *     tags={"2.Category"},
      *     description="return category from id",
@@ -30,6 +30,15 @@ class CategoryController extends Controller
      *     required = true,
      *     type = "integer"
      *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="successful operation",
@@ -40,9 +49,10 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function getCategory($id = 0)
+    public function getCategories($category_id)
     {
-        $category = Category::find($id);
+
+        $category = Category::find($category_id);
         if (!$category) {
             return response()->json(['code' => 404, 'status' => 'cant not find category'], 404);
         }
@@ -56,7 +66,7 @@ class CategoryController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/category/get_all/{take}/{skip}",
+     *     path="/categories/{limit}/{offset}",
      *     summary="get all category",
      *     tags={"2.Category"},
      *     description="return category with take and skip",
@@ -64,7 +74,7 @@ class CategoryController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "take",
+     *      name = "limit",
      *     in ="path",
      *     description = "take from ....",
      *     type = "integer",
@@ -72,12 +82,21 @@ class CategoryController extends Controller
      *    required = true
      *     ),
      *      @SWG\Parameter(
-     *      name = "skip",
+     *      name = "offset",
      *     in ="path",
      *     description = "skip from",
      *     type = "integer",
      *     default="0",
      *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -89,12 +108,12 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function getAllCategory($take = 'all', $skip = 0)
+    public function getAllCategory($limit = 'all', $offset = 0)
     {
-        if ($take == 'all') {
+        if ($limit == 'all') {
             $category = Category::all();
         } else {
-            $category = Category::take($take)->skip($skip)->get();
+            $category = Category::take($limit)->skip($offset)->get();
         }
         if ($category == null)
             return response()->json(['code' => 404, 'status' => 'not found', 'metadata' => $category->toArray()], 404);
@@ -115,24 +134,13 @@ class CategoryController extends Controller
 
     /**
      * @SWG\Post(
-     *     path="/admin/add_category",
+     *     path="/admin/categories",
      *     summary="add new category",
      *     tags={"2.Category"},
      *     description="add new category",
      *     operationId="categoryadd",
      *     consumes={"application/json"},
      *     produces={"application/json"},
-     *    @SWG\Parameter(
-     *      name = "uid",
-     *      description = "uid edit",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"uid_id"},
-     *     type = "integer"
-     *      )
-     *           ),
      *     @SWG\Parameter(
      *      name = "category_code",
      *      description = "category_code",
@@ -157,16 +165,37 @@ class CategoryController extends Controller
      *      )
      *     ),
      *     @SWG\Parameter(
-     *      name = "translate",
-     *     description = "translate josn",
+     *      name = "text_value",
+     *     description = "text_value josn",
      *      required = true,
      *      in ="formData",
      *     type = "string",
      *
      *     @SWG\Schema(
-     *     required={"translate"},
+     *     required={"text_value"},
      *     type = "string",
      *      )
+     *     ),
+     *     @SWG\Parameter(
+     *      name = "describe_value",
+     *     description = "describe_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"describe_value"},
+     *     type = "string",
+     *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
      *     ),
      *     @SWG\Response(
      *         response=200,
@@ -184,36 +213,34 @@ class CategoryController extends Controller
 
 
         $data = $request->toArray();
-        $explain_id = $this->addNewDataExplain('category', 0);
-        $result = $this->addDataTranslate($data['translate'], $explain_id);
+        $result = $this->addDataTranslate($data['text_value']);
         $a = \GuzzleHttp\json_decode($result->content(), true);
         $code = $a['code'];
+        $name_text_id = $a['metadata']['name_text_id'];
         if ($code === 400)
             return $result;
-        $data_cate = ['category_code' => $data['category_code'], 'explain_id' => $explain_id,'image'=>$data['image']];
+        $result2 = $this->addDataTranslate($data['describe_value']);
+        $b = \GuzzleHttp\json_decode($result2->content(), true);
+        $code2 = $b['code'];
+        $describe_text_id = $b['metadata']['name_text_id'];
+        if ($code2 === 400){
+            $this->deleteTextId($name_text_id);
+            return $result2;
+        }
+
+        $data_cate = ['category_code' => $data['category_code'], 'creator_id'=>$data['uid'],'name_text_id' =>$name_text_id ,'describe_text_id'=>$describe_text_id,'image'=>$data['image']];
         return $this->addNewData($this->model, $data_cate);
     }
 
     /**
-     * @SWG\Post(
-     *     path="/admin/edit_category",
+     * @SWG\Put(
+     *     path="/admin/categories",
      *     summary="edit a category",
      *     tags={"2.Category"},
      *     description="edit category",
      *     operationId="categoryedit",
      *     consumes={"application/json"},
      *     produces={"application/json"},
-     *     @SWG\Parameter(
-     *      name = "uid",
-     *      description = "uid edit",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"uid_id"},
-     *     type = "integer"
-     *      )
-     *           ),
      *    @SWG\Parameter(
      *      name = "category_id",
      *      description = "category_id",
@@ -247,17 +274,39 @@ class CategoryController extends Controller
      *     type = "string",
      *      )
      *     ),
-     *     @SWG\Parameter(
-     *      name = "translate",
-     *      description = "translate json",
-     *     in ="formData",
-     *     required = true,
-     *     type="string",
+    *   @SWG\Parameter(
+     *      name = "text_value",
+     *     description = "text_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
      *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "string"
+     *     required={"text_value"},
+     *     type = "string",
      *      )
-     *           ),
+     *     ),
+     *     @SWG\Parameter(
+     *      name = "describe_value",
+     *     description = "describe_value josn",
+     *      required = true,
+     *      in ="formData",
+     *     type = "string",
+     *
+     *     @SWG\Schema(
+     *     required={"describe_value"},
+     *     type = "string",
+     *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="add succes",
@@ -280,22 +329,31 @@ class CategoryController extends Controller
         if ($category == null) {
             return response()->json($this->setArrayData(400, 'can find category'), 400);
         }
-        $explain_id = $category->explain_id;
-        $this->deleteDataTranslate($explain_id);
-        $result = $this->addDataTranslate($data['translate'], $explain_id);
-        $a = \GuzzleHttp\json_decode($result->content(), true);
-        $code = $a['code'];
-        if ($code === 400)
-            return $result;
+        $name_text_id = $category->name_text_id;
+        $describe_text_id = $category->describe_text_id;
+        if(array_key_exists('text_value',$data) == true) {
+            $result = $this->EditDataTranslate($data['text_value'], $name_text_id);
 
-        return $this->editData($this->model, ['category_code' => $data['category_code'],'image'=>$data['image']], ['category_id' => $category->category_id]);
+            $a = \GuzzleHttp\json_decode($result->content(), true);
+            $code = $a['code'];
+            if ($code === 400)
+                return $result;
+        }
+        if(array_key_exists('describe_value',$data) == true){
+            $result = $this->EditDataTranslate($data['describe_value'], $describe_text_id);
+            $a = \GuzzleHttp\json_decode($result->content(), true);
+            $code = $a['code'];
+            if ($code === 400)
+                return $result;
+        }
+        return $this->editData($this->model, ['category_code' => $data['category_code'],'image'=>$data['image']], ['category_id' => $data['category_id']]);
 
 
     }
 
     /**
-     * @SWG\Post(
-     *     path="/admin/delete_category",
+     * @SWG\Delete(
+     *     path="/admin/categories/{category_code}",
      *     summary="delete category ",
      *     tags={"2.Category"},
      *     description="delete with category_id",
@@ -303,27 +361,25 @@ class CategoryController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "uid",
-     *      description = "uid delete",
-     *     in ="formData",
+     *      name = "category_code",
+     *      description = "category_code",
+     *     in ="path",
      *     required = true,
-     *     type="integer",
+     *     type="string",
      *     @SWG\Schema(
      *     required={"category_code"},
-     *     type = "integer"
+     *     type = "string"
      *      )
      *           ),
+     *
      *     @SWG\Parameter(
-     *      name = "category_id",
-     *      description = "category_id",
-     *     in ="formData",
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
      *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"category_id"},
-     *     type = "integer"
-     *      )
-     *           ),
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
      *     @SWG\Response(
      *         response=200,
      *         description="delete succes",
@@ -335,15 +391,16 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function deleteCategory(Request $request)
+    public function deleteCategory($category_code )
     {
-        $data = $request->toArray();
-        $category = Category::find($data['category_id']);
+        $category = Category::where('category_code',$category_code)->get()->first();
         if ($category == null) {
-            return response()->json($this->setArrayData(400, 'can not find to category'), 400);
+            return response()->json($this->setArrayData(400, 'can not find to category code'), 400);
         }
-        $explain_id = $category->explain_id;
-        return $this->deleteDataExplain($explain_id);
+        $name_text_id = $category->name_text_id;
+        $describe_text_id = $category->describe_text_id;
+        $this->deleteTextId($describe_text_id);
+        return $this->deleteTextId($name_text_id);
     }
 
 

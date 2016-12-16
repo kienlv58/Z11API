@@ -14,11 +14,11 @@ class CreateQuestionTable extends Migration
     public function up()
     {
         Schema::create('questions', function (Blueprint $table) {
-            $table->increments('question_id')->index()->unsigned();
+            $table->increments('question_id');
             $table->string('item_code');//question
             $table->integer('group_question_id')->index()->unsigned();
             $table->string('sub_question_content');
-            $table->integer('explain_id')->index()->unsigned();
+            $table->integer('explain_item_id')->index()->unsigned();
             $table->foreign('group_question_id')->references('group_question_id')->on('group_questions')->onDelete('cascade');
             $table->timestamps();
         });
