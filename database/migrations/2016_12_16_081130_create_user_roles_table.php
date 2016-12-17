@@ -17,7 +17,7 @@ class CreateUserRolesTable extends Migration
             $table->increments('user_role_id');
             $table->integer('user_id')->index()->unsigned();
             $table->string('name_role')->index();
-            $table->string('date_start');
+            $table->string('deadline');
             $table->integer('expired')->nullable();
             $table->timestamps();
         });

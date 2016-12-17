@@ -186,7 +186,8 @@ class UserRoleController extends Controller
         if($find_user_role != null){
             return response()->json($this->setArrayData(400, "user role exist"), 400);
         }
-        $data['date_start'] = date('Y-m-d h:i');
+        $expired = $data['expired'];
+        $data['deadline'] = date('Y-m-d h:i',strtotime("+$expired days"));
         return $this->addNewData($this->model,$data);
 
     }
@@ -264,8 +265,8 @@ class UserRoleController extends Controller
         if($find_role ==  null){
             return response()->json($this->setArrayData(400, 'role not exist'), 400);
         }
-
-        $result = $user->update(['expired'=>$data['expired'],'date_start'=>date('Y-m-d h:i')]);
+        $expired = $data['expired'];
+        $result = $user->update(['expired'=>$data['expired'],'deadline'=>date('Y-m-d h:i',strtotime("+$expired days"))]);
         if($result){
             return response()->json($this->setArrayData(200, 'edit success'), 200);
         }else{

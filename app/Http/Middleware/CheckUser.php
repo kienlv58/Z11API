@@ -2,10 +2,15 @@
 
 namespace App\Http\Middleware;
 
+use App\Permission;
+use App\Role;
 use App\User;
+use App\UserRole;
 use Closure;
+use Request;
 use Illuminate\Support\Facades\Auth;
 use JWTAuth;
+
 
 class CheckUser
 {
@@ -18,6 +23,26 @@ class CheckUser
      */
     public function handle($request, Closure $next)
     {
+
+        $method = Request::method();
+        $path = $request->path();
+        $path = 'http~'.$path;
+
+        //role anonymous
+        $find_permission = Role::where('name_role','anonymous')->get()->first();
+        $arr_role_per = explode('|',$find_permission->role_permission);
+        $arr_list_per_user = [];
+        foreach ($arr_role_per as $value){
+            $per = Permission::where('permission_code',$value)->get()->first();
+            array_push($arr_list_per_user,$per);
+        }
+
+        foreach ($arr_list_per_user as $value){
+            if(strpos($path,$value->path) == true  && ($method == $value->method)){
+                return $next($request);
+            }
+        }
+
         try {
 
             if (! $user = JWTAuth::parseToken()->authenticate()) {
@@ -38,7 +63,46 @@ class CheckUser
 
         }
 
+
+
         $user = User::findOrFail($user->id);
-        return $next($request);
+        if($user != null){
+
+            //role user
+            $find_permission = Role::where('name_role','user')->get()->first();
+            $arr_role_per = explode('|',$find_permission->role_permission);
+            $arr_list_per_user = [];
+            foreach ($arr_role_per as $value){
+                $per = Permission::where('permission_code',$value)->get()->first();
+                array_push($arr_list_per_user,$per);
+            }
+
+            foreach ($arr_list_per_user as $value){
+                if(strpos($path,$value->path) == true  && ($method == $value->method)){
+                    return $next($request);
+                }
+            }
+
+            //role other
+            $arr_role = UserRole::where('user_id',$user->id)->get();
+            $arr_list_per_user2 = [];
+            foreach ($arr_role as $value){
+                $role = Role::where('name_role',$value->name_role)->get()->first();
+
+                $arr_role_per = explode('|',$role->role_permission);
+                foreach ($arr_role_per as $value){
+                    $per = Permission::where('permission_code',$value)->get()->first();
+                    array_push($arr_list_per_user2,$per);
+                }
+
+            }
+            foreach ($arr_list_per_user2 as $value){
+                if(strpos($path,$value->path) == true && ($method == $value->method)){
+                    return $next($request);
+                }
+            }
+            return response()->json([400, 'user not permission query'], 400);
+        }
+
     }
 }

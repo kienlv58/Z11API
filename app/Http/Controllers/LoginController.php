@@ -116,6 +116,7 @@ class LoginController extends Controller
      */
     public function store(Request $request)
     {
+
         $grant_type = $request->input('grant_type');
         if ($grant_type === 'facebook' || $grant_type === 'google') {
 
