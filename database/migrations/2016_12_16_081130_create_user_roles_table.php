@@ -20,6 +20,7 @@ class CreateUserRolesTable extends Migration
             $table->string('deadline');
             $table->integer('expired')->nullable();
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

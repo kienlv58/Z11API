@@ -141,7 +141,7 @@ class Controller extends BaseController
 
 // {"vi": "Tieng anh", "en": "English", "jp":"abc"}
 //{"vi": "Hoc tieng anh", "en": "Learning english", "jp":"abc xyz"}
-    public function addDataTranslate($text_value_json, $text_id = null)
+    public  function addDataTranslate($text_value_json, $text_id = null)
     {
         $arr_text_value = \GuzzleHttp\json_decode($text_value_json, true);
         foreach ($arr_text_value as $key => $value) {

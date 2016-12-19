@@ -7,6 +7,8 @@ use App\Folder;
 use App\Language;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use JWTAuth;
 
 class FolderController extends Controller
 {
@@ -121,17 +123,6 @@ class FolderController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "owner_id",
-     *      description = "uid create",
-     *     in ="formData",
-     *     required = true,
-     *     type="integer",
-     *     @SWG\Schema(
-     *     required={"category_code"},
-     *     type = "integer"
-     *      )
-     *           ),
-     *     @SWG\Parameter(
      *      name = "category_id",
      *      description = "category id",
      *     in ="formData",
@@ -188,14 +179,15 @@ class FolderController extends Controller
      */
     public function addFolder(Request $request){
 
+
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
+        $owner_id = $user->id;
+
         $data = $request->toArray();
         $check_category = Category::find($data['category_id']);
         if($check_category == null){
             return response()->json($this->setArrayData(400,'category not exists'),400);
-        }
-        $check_user = User::find($data['owner_id']);
-        if($check_user == null){
-            return response()->json($this->setArrayData(400,'owner_id: user not exists'),400);
         }
 
         $result = $this->addDataTranslate($data['text_value']);
@@ -213,7 +205,7 @@ class FolderController extends Controller
             return $result2;
         }
 
-        $data_folder = ['item_code' => 'folder', 'category_id'=>$data['category_id'],'name_text_id' =>$name_text_id ,'describe_text_id'=>$describe_text_id,'owner_id'=>$data['owner_id'],'type_owner'=>$check_user->type];
+        $data_folder = ['item_code' => 'folder', 'category_id'=>$data['category_id'],'name_text_id' =>$name_text_id ,'describe_text_id'=>$describe_text_id,'owner_id'=>$owner_id];
         return $this->addNewData($this->model, $data_folder);
 
     }

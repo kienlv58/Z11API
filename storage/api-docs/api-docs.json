@@ -555,7 +555,7 @@
                 }
             }
         },
-        "/admin/categories": {
+        "/categories": {
             "put": {
                 "tags": [
                     "2.Category"
@@ -737,7 +737,7 @@
                 }
             }
         },
-        "/admin/categories/{category_code}": {
+        "/categories/{category_code}": {
             "delete": {
                 "tags": [
                     "2.Category"
@@ -1255,19 +1255,6 @@
                     "application/json"
                 ],
                 "parameters": [
-                    {
-                        "name": "owner_id",
-                        "in": "formData",
-                        "description": "uid create",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "category_code"
-                            ],
-                            "type": "integer"
-                        },
-                        "type": "integer"
-                    },
                     {
                         "name": "category_id",
                         "in": "formData",
@@ -3615,7 +3602,7 @@
                     {
                         "name": "expired",
                         "in": "formData",
-                        "description": "expired",
+                        "description": "expired of role, forever = -1",
                         "required": true,
                         "schema": {
                             "required": [

@@ -33,10 +33,20 @@ Route::group(['prefix' => 'v1'], function () {
         Route::put('users/chargecoin', 'RestfulController@chargeCoin');
         Route::put('users/profile', 'RestfulController@editProfile');
 
+        Route::get('users/{id}', 'AdminController@getUser');
+        Route::get('user_mod', 'AdminController@getuser_Mod');
+        Route::get('users/{limit?}/{offset?}', 'AdminController@getAllUser');
+        Route::delete('users/{uid}', 'AdminController@deleteUser');
+        Route::put('aprroval_package', 'AdminController@aprrovalPackage');
+        Route::post('user_mod', 'AdminController@createUserMod');
+
         //categories
         Route::get('categories/{limit?}/{offset?}', 'CategoryController@getAllCategory');
         Route::get('categories/{category_id}', 'CategoryController@getCategory');
         Route::get('searchCategories/{name?}/{category_code?}/{describe?}', 'CategoryController@searchCategories');
+        Route::post('categories', 'CategoryController@addCategory');
+        Route::put('categories', 'CategoryController@editCategory');
+        Route::delete('categories/{category_code}', 'CategoryController@deleteCategory');
 
         //folder
 
@@ -53,6 +63,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::put('packages', 'PackageController@editPackage');
         Route::delete('packages/{package_id}', 'PackageController@deletePackage');
         Route::get('packages/get_aprroval/{take}/{skip}','PackageController@getPackageAprroval');
+        Route::get('packages/get_not_yet_aprroval/{take}/{skip}','PackageController@getPackageNotYetAprroval');
+        Route::get('packages/get_not_aprroval/{take}/{skip}','PackageController@getPackageNotAprroval');
+        Route::get('packages/{limit?}/{offset?}', 'PackageController@getAllPackage');
 
         //Chapter
         Route::get('chapters/{id}', 'ChapterController@getChapter');
@@ -86,48 +99,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('purchases/status/{item_code}/{item_id}', 'PurchaseController@checkPurchase');
         Route::get('purchases', 'PurchaseController@getMyPurchase');
         Route::post('purchases', 'PurchaseController@payment');
-    });
-
-    Route::group(['middleware' => 'checkpurchase'], function () {
-
-        //GroupQuestion
-        Route::get('group_question/{group_question_id}', 'GroupQuestionController@getGroupQuestion');
-
-
-        //Question
-        Route::get('question/{question_id}', 'QuestionController@getQuestion');
-
-    });
-
-
-
-
-
-
-//admin + mode
-    //'middleware' => 'checkadmin'
-    Route::group(['prefix' => 'admin', 'middleware' => 'checkadmin'], function () {
-
-        Route::post('categories', 'CategoryController@addCategory');
-        Route::put('categories', 'CategoryController@editCategory');
-        Route::delete('categories/{category_code}', 'CategoryController@deleteCategory');
-
-
-        Route::get('users/{id}', 'AdminController@getUser');
-        Route::get('user_mod', 'AdminController@getuser_Mod');
-        Route::get('users/{limit?}/{offset?}', 'AdminController@getAllUser');
-        Route::delete('users/{uid}', 'AdminController@deleteUser');
-        Route::put('aprroval_package', 'AdminController@aprrovalPackage');
-        Route::post('user_mod', 'AdminController@createUserMod');
         Route::delete('purchases/{$purchase_id}', 'PurchaseController@deletePurchase');
         Route::get('purchases/{id}', 'PurchaseController@getPurchaseId');
         Route::get('purchases/{limit?}/{offset?}', 'PurchaseController@getAllPurchase');
-
-        //package
-        Route::get('packages/get_not_yet_aprroval/{take}/{skip}','PackageController@getPackageNotYetAprroval');
-        Route::get('packages/get_not_aprroval/{take}/{skip}','PackageController@getPackageNotAprroval');
-        Route::get('packages/{limit?}/{offset?}', 'PackageController@getAllPackage');
-
 
 
         //role
@@ -144,8 +118,19 @@ Route::group(['prefix' => 'v1'], function () {
         Route::put('user_roles','UserRoleController@editUserRole');
         Route::delete('user_roles/{user_id}/{name_role}','UserRoleController@deleteUserRole');
 
-    });
 
+
+        Route::group(['middleware' => 'checkpurchase'], function () {
+
+            //GroupQuestion
+            Route::get('group_question/{group_question_id}', 'GroupQuestionController@getGroupQuestion');
+
+
+            //Question
+            Route::get('question/{question_id}', 'QuestionController@getQuestion');
+
+        });
+    });
 
 });
 

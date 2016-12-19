@@ -162,7 +162,6 @@ class RegisterController extends Controller
             $user->grant_type = 'password';
             $user->token_social = null;
             $user->active = 0;
-            $user->type = 'user';
             $user->save();
             $id = $user->id;
             $profile = Profile::create([

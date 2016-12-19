@@ -20,9 +20,6 @@ class CreateSessionRolesTable extends Migration
             $table->string('expired');
             $table->timestamps();
         });
-        Schema::table('user_roles',function ($table) {
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
     }
 
     /**

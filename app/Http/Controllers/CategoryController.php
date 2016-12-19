@@ -7,12 +7,19 @@ use App\Explain;
 use App\Language;
 use App\QueryDB;
 use App\Translate;
+use App\User;
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use JWTAuth;
 
 class CategoryController extends Controller
 {
 
-    protected $model = 'App\Category';
+    public $model = 'App\Category';
+
+
 
     /**
      * @SWG\Get(
@@ -134,7 +141,7 @@ class CategoryController extends Controller
 
     /**
      * @SWG\Post(
-     *     path="/admin/categories",
+     *     path="/categories",
      *     summary="add new category",
      *     tags={"2.Category"},
      *     description="add new category",
@@ -210,31 +217,46 @@ class CategoryController extends Controller
      */
     public function addCategory(Request $request)
     {
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
+        $kq = null;
 
 
-        $data = $request->toArray();
-        $result = $this->addDataTranslate($data['text_value']);
-        $a = \GuzzleHttp\json_decode($result->content(), true);
-        $code = $a['code'];
-        $name_text_id = $a['metadata']['name_text_id'];
-        if ($code === 400)
-            return $result;
-        $result2 = $this->addDataTranslate($data['describe_value']);
-        $b = \GuzzleHttp\json_decode($result2->content(), true);
-        $code2 = $b['code'];
-        $describe_text_id = $b['metadata']['name_text_id'];
-        if ($code2 === 400){
-            $this->deleteTextId($name_text_id);
-            return $result2;
-        }
+//
+        DB::transaction(function () use($request,&$kq,$user){
+            function processTransaction($request,$user) {
+                //Process Gateway Transaction
+                $data = $request->toArray();
+                $data['uid'] = $user->id;
+                $myself = new CategoryController();
+                $result = $myself->addDataTranslate($data['text_value']);
+                $a = \GuzzleHttp\json_decode($result->content(), true);
+                $code = $a['code'];
+                $name_text_id = $a['metadata']['name_text_id'];
+                if ($code === 400)
+                    return $result;
+                $result2 = $myself->addDataTranslate($data['describe_value']);
+                $b = \GuzzleHttp\json_decode($result2->content(), true);
+                $code2 = $b['code'];
+                $describe_text_id = $b['metadata']['name_text_id'];
+                if ($code2 === 400){
+                    $myself->deleteTextId($name_text_id);
+                    return $result2;
+                }
 
-        $data_cate = ['category_code' => $data['category_code'], 'creator_id'=>$data['uid'],'name_text_id' =>$name_text_id ,'describe_text_id'=>$describe_text_id,'image'=>$data['image']];
-        return $this->addNewData($this->model, $data_cate);
+                $data_cate = ['category_code' => $data['category_code'], 'creator_id'=>$data['uid'],'name_text_id' =>$name_text_id ,'describe_text_id'=>$describe_text_id,'image'=>$data['image']];
+                return $myself->addNewData($myself->model, $data_cate);
+            }
+            $kq = processTransaction($request,$user);
+
+        });
+        return $kq;
+
     }
 
     /**
      * @SWG\Put(
-     *     path="/admin/categories",
+     *     path="/categories",
      *     summary="edit a category",
      *     tags={"2.Category"},
      *     description="edit category",
@@ -353,7 +375,7 @@ class CategoryController extends Controller
 
     /**
      * @SWG\Delete(
-     *     path="/admin/categories/{category_code}",
+     *     path="/categories/{category_code}",
      *     summary="delete category ",
      *     tags={"2.Category"},
      *     description="delete with category_id",

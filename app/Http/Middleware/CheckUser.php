@@ -25,6 +25,7 @@ class CheckUser
     {
 
         $method = Request::method();
+
         $path = $request->path();
         $path = 'http~'.$path;
 
@@ -91,6 +92,8 @@ class CheckUser
 
                 $arr_role_per = explode('|',$role->role_permission);
                 foreach ($arr_role_per as $value){
+                    if($value == 'all')
+                        return $next($request);
                     $per = Permission::where('permission_code',$value)->get()->first();
                     array_push($arr_list_per_user2,$per);
                 }
@@ -102,6 +105,8 @@ class CheckUser
                 }
             }
             return response()->json([400, 'user not permission query'], 400);
+        }else{
+            return response()->json([400, 'user not exists'], 400);
         }
 
     }

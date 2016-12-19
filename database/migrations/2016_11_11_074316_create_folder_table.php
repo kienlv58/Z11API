@@ -21,7 +21,6 @@ class CreateFolderTable extends Migration
             $table->integer('name_text_id')->index()->unsigned();
             $table->integer('describe_text_id')->index()->unsigned();
             $table->integer('owner_id')->index()->unsigned();
-            $table->string('type_owner')->index();
             $table->timestamps();
         });
 
