@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Permission;
 use App\Profile;
 use App\User;
+use Doctrine\DBAL\Schema\Schema;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use JWTAuth;
 
 class RestfulController extends Controller
@@ -163,5 +166,22 @@ class RestfulController extends Controller
         }
     }
 
+    public function generateDB(){
+        DB::table('permissions')->truncate();
+        $arr_code = ['category','folder','package','chapter','group_question','question','answer','pucharse','admin'];
+        $arr_path = ['categories','folders','packages','chapters','group_questions','questions','answers','pucharses','admin'];
 
+        for($i = 0; $i < count($arr_code);$i++){
+            $path = 'api/v1/'.$arr_path[$i];
+            $code_get = 'get_'.$arr_code[$i];
+            $code_post = 'add_'.$arr_code[$i];
+            $code_put = 'edit_'.$arr_code[$i];
+            $code_delete = 'delete_'.$arr_code[$i];
+            Permission::create(['method'=>'GET','path'=>$path,'permission_code'=>$code_get,'description'=>'get '.$arr_code[$i]]);
+            Permission::create(['method'=>'POST','path'=>$path,'permission_code'=>$code_post,'description'=>'add '.$arr_code[$i]]);
+            Permission::create(['method'=>'PUT','path'=>$path,'permission_code'=>$code_put,'description'=>'edit '.$arr_code[$i]]);
+            Permission::create(['method'=>'DELETE','path'=>$path,'permission_code'=>$code_delete,'description'=>'delete '.$arr_code[$i]]);
+        }
+        return 'success';
+    }
 }

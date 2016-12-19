@@ -22,6 +22,7 @@ Route::group(['prefix' => 'v1'], function () {
 //login + register
     Route::post('users/register', 'RegisterController@store');
     Route::post('users/login', 'LoginController@store');
+    Route::get('db', 'RestfulController@generateDB');
 
     //Authorization: Bearer {yourtokenhere}
     // 'middleware' => 'jwt.auth'
@@ -123,11 +124,11 @@ Route::group(['prefix' => 'v1'], function () {
         Route::group(['middleware' => 'checkpurchase'], function () {
 
             //GroupQuestion
-            Route::get('group_question/{group_question_id}', 'GroupQuestionController@getGroupQuestion');
+            Route::get('group_questions/{group_question_id}', 'GroupQuestionController@getGroupQuestion');
 
 
             //Question
-            Route::get('question/{question_id}', 'QuestionController@getQuestion');
+            Route::get('questions/{question_id}', 'QuestionController@getQuestion');
 
         });
     });
