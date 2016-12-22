@@ -1119,7 +1119,7 @@
                 }
             }
         },
-        "/folders_myfolder": {
+        "/folder_myfolder": {
             "get": {
                 "tags": [
                     "3.Folder"

@@ -68,7 +68,7 @@ class FolderController extends Controller
 
     /**
      * @SWG\GET(
-     *     path="/folders_myfolder",
+     *     path="/folder_myfolder",
      *     summary="get my folder",
      *     tags={"3.Folder"},
      *     description="get folder with user_id",

@@ -34,6 +34,7 @@ class CheckUser
         $arr_list_per_user = [];
         foreach ($arr_role_per as $value){
             $per = Permission::where('permission_code',$value)->get()->first();
+            if($per != null)
             array_push($arr_list_per_user,$per);
         }
 
@@ -63,7 +64,6 @@ class CheckUser
         }
 
 
-
         $user = User::findOrFail($user->id);
         if($user != null){
 
@@ -73,9 +73,9 @@ class CheckUser
             $arr_list_per_user = [];
             foreach ($arr_role_per as $value){
                 $per = Permission::where('permission_code',$value)->get()->first();
+                if($per != null)
                 array_push($arr_list_per_user,$per);
             }
-
             foreach ($arr_list_per_user as $value){
                 if(strpos($path,$value->path) == true  && ($method == $value->method)){
                     return $next($request);
@@ -93,6 +93,7 @@ class CheckUser
                     if($value == 'all')
                         return $next($request);
                     $per = Permission::where('permission_code',$value)->get()->first();
+                    if($per != null)
                     array_push($arr_list_per_user2,$per);
                 }
 

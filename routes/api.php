@@ -52,7 +52,7 @@ Route::group(['prefix' => 'v1'], function () {
         //folder
 
         Route::get('folders/{id}', 'FolderController@getFolder');
-        Route::get('folders_myfolder', 'FolderController@getMyFolder');
+        Route::get('folder_myfolder', 'FolderController@getMyFolder');
         Route::get('folders/{limit?}/{offset?}', 'FolderController@getAllFolder');
         Route::post('folders', 'FolderController@addFolder');
         Route::put('folders', 'FolderController@editFolder');
