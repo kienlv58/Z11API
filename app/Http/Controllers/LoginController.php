@@ -123,6 +123,7 @@ class LoginController extends Controller
         } else if ($grant_type === 'password') {
             $data = $request->toArray();
             if ($this->validator($data)->fails()) {
+
                 return response()->json(
                     [
                         'code' => 400,
@@ -137,6 +138,7 @@ class LoginController extends Controller
                 if ($result) {
                     $user = User::select('id', 'email', 'active','grant_type')->where('email', $data['email'])->get()->first();
                     $user->profile = $user->profile()->get();
+
                    // if ($user->active == 0) {
 //                        return response()->json(
 //                            [
@@ -147,6 +149,7 @@ class LoginController extends Controller
                    // }
                     $jwt = ['id' => $user->id, 'email' => $user->email, 'password' => $data['password']];
                     $token = JWTAuth::fromUser((object)$jwt);
+                
                     return response()->json(
                         [
                             'code' => 200,
