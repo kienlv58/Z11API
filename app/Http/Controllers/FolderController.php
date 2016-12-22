@@ -65,6 +65,49 @@ class FolderController extends Controller
         return $this->getDataById($this->model,$id);
 
     }
+
+    /**
+     * @SWG\GET(
+     *     path="/folders_myfolder",
+     *     summary="get my folder",
+     *     tags={"3.Folder"},
+     *     description="get folder with user_id",
+     *     operationId="getfolder",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="get succes",
+     *
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid param",
+     *     )
+     * )
+     */
+
+    public  function getMyFolder(){
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
+        $arr_my_folder = Folder::where('owner_id',$user->id)->get();
+        if(count($arr_my_folder) == 0){
+            return response()->json($this->setArrayData(400,'you have not folder'),400);
+        }else{
+            return response()->json($this->setArrayData(200,'success',$arr_my_folder),200);
+        }
+
+    }
+
     /**
      * @SWG\Get(
      *     path="/folders/{limit}/{offset}",

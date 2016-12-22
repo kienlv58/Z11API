@@ -23,7 +23,6 @@ class CheckUser
      */
     public function handle($request, Closure $next)
     {
-
         $method = Request::method();
 
         $path = $request->path();
@@ -43,7 +42,6 @@ class CheckUser
                 return $next($request);
             }
         }
-
         try {
 
             if (! $user = JWTAuth::parseToken()->authenticate()) {

@@ -1119,6 +1119,40 @@
                 }
             }
         },
+        "/folders_myfolder": {
+            "get": {
+                "tags": [
+                    "3.Folder"
+                ],
+                "summary": "get my folder",
+                "description": "get folder with user_id",
+                "operationId": "getfolder",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
         "/folders/{limit}/{offset}": {
             "get": {
                 "tags": [
