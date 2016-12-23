@@ -27,7 +27,8 @@ class CheckUser
 
         $path = $request->path();
         $path = 'http~'.$path;
-
+        $token = JWTAuth::getToken();
+        //dd($token);
 
         //role anonymous
         $find_permission = Role::where('name_role','anonymous')->get()->first();
@@ -47,7 +48,7 @@ class CheckUser
         try {
 
             if (! $user = JWTAuth::parseToken()->authenticate()) {
-                return response()->json(['user_not_found'], 404);
+                return response()->json(['code'=>404,'status'=>'user_not_found'], 404);
             }
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {

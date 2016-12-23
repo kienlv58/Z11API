@@ -129,7 +129,7 @@ class PackageController extends Controller
         } else {
             $pkg = Package::take($limit)->skip($offset)->get();
         }
-        if ($pkg == null)
+        if (count($pkg) == 0)
             return response()->json(['code' => 404, 'status' => 'not found', 'metadata' => $pkg->toArray()], 404);
         else {
             foreach ($pkg as $package) {
@@ -196,10 +196,19 @@ class PackageController extends Controller
         } else {
             $_model = Package::where('approval',0)->take($take)->skip($skip)->get();
         }
-        if ($_model == null || empty($_model))
+        if (count($_model) == 0)
             return response()->json($this->setArrayData(400, 'null', $_model->toArray()), 400);
-        else
+        else{
+            foreach ($_model as $package) {
+                $chapters = $package->chapter()->get();
+
+                foreach ($chapters as  $chapter){
+                    $chapter->groupquestion = $chapter->groupquestion()->get();
+                }
+                $package->chapters = $chapters;
+        }
             return response()->json($this->setArrayData(200, 'OK', $_model->toArray()), 200);
+        }
     }
 
     /**
@@ -252,10 +261,20 @@ class PackageController extends Controller
         } else {
             $_model = Package::where('approval',2)->take($take)->skip($skip)->get();
         }
-        if ($_model == null || empty($_model))
+        if (count($_model) == 0)
             return response()->json($this->setArrayData(400, 'null', $_model->toArray()), 400);
         else
+        {
+            foreach ($_model as $package) {
+                $chapters = $package->chapter()->get();
+
+                foreach ($chapters as  $chapter){
+                    $chapter->groupquestion = $chapter->groupquestion()->get();
+                }
+                $package->chapters = $chapters;
+        }
             return response()->json($this->setArrayData(200, 'OK', $_model->toArray()), 200);
+        }
     }
     /**
      * @SWG\Get(
@@ -307,10 +326,20 @@ class PackageController extends Controller
         } else {
             $_model = Package::where('approval',1)->take($take)->skip($skip)->get();
         }
-        if ($_model == null || empty($_model))
+        if (count($_model) == 0)
             return response()->json($this->setArrayData(400, 'null', $_model->toArray()), 400);
         else
-            return response()->json($this->setArrayData(200, 'OK', $_model->toArray()), 200);
+            {
+                foreach ($_model as $package) {
+                $chapters = $package->chapter()->get();
+
+                foreach ($chapters as  $chapter){
+                    $chapter->groupquestion = $chapter->groupquestion()->get();
+                }
+                $package->chapters = $chapters;
+        }
+        return response()->json($this->setArrayData(200, 'OK', $_model->toArray()), 200);
+    }
     }
 
     /**
