@@ -28,6 +28,7 @@ class CheckUser
         $path = $request->path();
         $path = 'http~'.$path;
 
+
         //role anonymous
         $find_permission = Role::where('name_role','anonymous')->get()->first();
         $arr_role_per = explode('|',$find_permission->role_permission);
@@ -51,15 +52,17 @@ class CheckUser
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
 
-            return response()->json(['token_expired'], $e->getStatusCode());
+            $token = JWTAuth::getToken();
+            $token = JWTAuth::refresh($token);
+            return response()->json(['code'=>500,'status'=>'token_expired','newToken'=>$token], 500);
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
 
-            return response()->json(['token_invalid'], $e->getStatusCode());
+            return response()->json(['code'=>'400','status'=>'token_invalid'], 400);
 
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
 
-            return response()->json(['token_absent'], $e->getStatusCode());
+            return response()->json(['code'=>'400','status'=>'token_absent'], 400);
 
         }
 
