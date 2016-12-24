@@ -63,6 +63,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('packages/{package_id}', 'PackageController@getPackage');
         Route::post('packages', 'PackageController@addPackage');
         Route::put('packages', 'PackageController@editPackage');
+        Route::put('package_rate', 'PackageController@updateRate');
+        Route::put('package_edit_rate   ', 'PackageController@editRate');
         Route::delete('packages/{package_id}', 'PackageController@deletePackage');
         Route::get('packages/get_aprroval/{take}/{skip}','PackageController@getPackageAprroval');
         Route::get('packages/get_not_yet_aprroval/{take}/{skip}','PackageController@getPackageNotYetAprroval');
@@ -119,6 +121,11 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('user_roles','UserRoleController@addUserRole');
         Route::put('user_roles','UserRoleController@editUserRole');
         Route::delete('user_roles/{user_id}/{name_role}','UserRoleController@deleteUserRole');
+
+        //lession
+        Route::get('lession','MyLessionController@getMyLession');
+        Route::post('lession','MyLessionController@addLesstion');
+        Route::delete('lession/{package_id}','MyLessionController@deleteLession');
 
 
 

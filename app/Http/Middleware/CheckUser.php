@@ -55,7 +55,7 @@ class CheckUser
 
             $token = JWTAuth::getToken();
             $token = JWTAuth::refresh($token);
-            return response()->json(['code'=>500,'status'=>'token_expired','newToken'=>$token], 500);
+            return response()->json(['code'=>400,'status'=>'token_expired','newToken'=>$token], 400);
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
 

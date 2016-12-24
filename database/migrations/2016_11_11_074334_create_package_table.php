@@ -22,6 +22,8 @@ class CreatePackageTable extends Migration
             $table->integer('describe_text_id')->index()->unsigned();
             $table->integer('approval')->index();//0: no, 1: yes , 2: return
             $table->integer('package_cost');
+            $table->double('balance_rate')->default(0);
+            $table->integer('count_user_rate')->default(0);
             $table->timestamps();
         });
     }

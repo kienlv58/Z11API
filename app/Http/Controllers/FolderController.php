@@ -100,9 +100,11 @@ class FolderController extends Controller
         $user = JWTAuth::parseToken()->authenticate();
         $user = User::findOrFail($user->id);
         $arr_my_folder = Folder::where('owner_id',$user->id)->get();
+
         foreach($arr_my_folder as $value){
             $value->packages = $value->package()->get();
         }
+        
         if(count($arr_my_folder) == 0){
             return response()->json($this->setArrayData(400,'you have not folder'),400);
         }else{

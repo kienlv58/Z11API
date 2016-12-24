@@ -1818,6 +1818,120 @@
                 }
             }
         },
+        "/lession": {
+            "get": {
+                "tags": [
+                    "Lession"
+                ],
+                "summary": "my lession",
+                "description": "get my lession",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Lession"
+                ],
+                "summary": "my lession",
+                "description": "add my lession",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "package_id",
+                        "in": "formData",
+                        "description": "package_id.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/lession/{package_id}": {
+            "delete": {
+                "tags": [
+                    "Lession"
+                ],
+                "summary": "my lession",
+                "description": "add my lession",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "package_id",
+                        "in": "path",
+                        "description": "package_id.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
         "/packages/{package_id}": {
             "get": {
                 "tags": [
@@ -2039,6 +2153,102 @@
                         "required": true,
                         "type": "integer",
                         "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/package_rate": {
+            "put": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "rate package",
+                "description": "",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "package_id",
+                        "in": "formData",
+                        "description": "package_id.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "rate_star",
+                        "in": "formData",
+                        "description": "rate_star 1->5",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
+        "/package_edit_rate": {
+            "put": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "rate package",
+                "description": "",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "package_id",
+                        "in": "formData",
+                        "description": "package_id.",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "rate_star",
+                        "in": "formData",
+                        "description": "rate_star 1->5",
+                        "required": true,
+                        "type": "integer"
                     },
                     {
                         "name": "Authorization",
