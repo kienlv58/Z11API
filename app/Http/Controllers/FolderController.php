@@ -102,7 +102,14 @@ class FolderController extends Controller
         $arr_my_folder = Folder::where('owner_id',$user->id)->get();
 
         foreach($arr_my_folder as $value){
-            $value->packages = $value->package()->get();
+            $arr_package = $value->package()->get();
+            foreach($arr_package as $value){
+                $value->translate_name_text = $this->getTranslate($value->name_text_id);
+                $value->translate_describe_text = $this->getTranslate($value->describe_text_id);
+            }
+            $value->translate_name_text = $this->getTranslate($value->name_text_id);
+            $value->translate_describe_text = $this->getTranslate($value->describe_text_id);
+            $value->packages = $arr_package;
         }
         
         if(count($arr_my_folder) == 0){
