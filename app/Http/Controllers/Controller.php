@@ -206,4 +206,11 @@ class Controller extends BaseController
         }
     }
 
+    public function getTranslate($text_id){
+        $translate = Translate::where('text_id',$text_id)->get();
+        if($translate == null)
+            return null;
+        return $translate->toArray();
+    }
+
 }

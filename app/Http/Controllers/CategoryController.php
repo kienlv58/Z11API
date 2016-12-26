@@ -64,8 +64,17 @@ class CategoryController extends Controller
             return response()->json(['code' => 404, 'status' => 'cant not find category'], 404);
         }
         $folders = $category->folder()->get();
+        $category->translate_name_text = $this->getTranslate($category->name_text_id);
+        $category->translate_describe_text = $this->getTranslate($category->describe_text_id);
         foreach ($folders as $folder) {
-            $folder->package = $folder->package()->get();
+            $arr_pkgs = $folder->package()->get();
+            $folder->translate_name_text = $this->getTranslate($folder->name_text_id);
+            $folder->translate_describe_text = $this->getTranslate($folder->describe_text_id);
+            foreach ($arr_pkgs as $pkg){
+                    $pkg->translate_name_text = $this->getTranslate($pkg->name_text_id);
+                    $pkg->translate_describe_text = $this->getTranslate($pkg->describe_text_id);
+            }
+            $folder->packages =$arr_pkgs;
         }
         $category->folder = $folders;
         return response()->json(['code' => 200, 'status' => 'OK', 'metadata' => $category->toArray()], 200);
@@ -127,8 +136,18 @@ class CategoryController extends Controller
         else {
             foreach ($category as $cate) {
                 $folders = $cate->folder()->get();
+                $cate->translate_name_text = $this->getTranslate($cate->name_text_id);
+                $cate->translate_describe_text = $this->getTranslate($cate->describe_text_id);
                 foreach ($folders as $folder) {
-                    $folder->package = $folder->package()->get();
+                    $arr_pkg = $folder->package()->get();
+                   foreach ($arr_pkg as $pkg){
+                       $pkg->translate_name_text = $this->getTranslate($pkg->name_text_id);
+                       $pkg->translate_describe_text = $this->getTranslate($pkg->describe_text_id);
+                   }
+                    $folder->translate_name_text = $this->getTranslate($folder->name_text_id);
+                    $folder->translate_describe_text = $this->getTranslate($folder->describe_text_id);
+
+                    $folder->packages = $arr_pkg;
                 }
                 $cate->folder = $folders;
 

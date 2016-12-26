@@ -64,6 +64,8 @@ class PackageController extends Controller
         if ($pkg == null) {
             return response()->json($this->setArrayData(404, 'can not find data'), 404);
         } else {
+            $pkg->translate_name_text = $this->getTranslate($pkg->name_text_id);
+            $pkg->translate_describe_text = $this->getTranslate($pkg->describe_text_id);
             $approval = $pkg->approval;
             $chapters = $pkg->chapter()->get();
             foreach ($chapters as $chapter) {
@@ -140,7 +142,8 @@ class PackageController extends Controller
         else {
             foreach ($pkg as $package) {
                 $chapters = $package->chapter()->get();
-
+                $pkg->translate_name_text = $this->getTranslate($pkg->name_text_id);
+                $pkg->translate_describe_text = $this->getTranslate($pkg->describe_text_id);
                 foreach ($chapters as $chapter) {
                     $chapter->groupquestion = $chapter->groupquestion()->get();
                 }
@@ -209,7 +212,8 @@ class PackageController extends Controller
         else {
             foreach ($_model as $package) {
                 $chapters = $package->chapter()->get();
-
+                $package->translate_name_text = $this->getTranslate($package->name_text_id);
+                $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
                 foreach ($chapters as $chapter) {
                     $chapter->groupquestion = $chapter->groupquestion()->get();
                 }
@@ -275,7 +279,8 @@ class PackageController extends Controller
         else {
             foreach ($_model as $package) {
                 $chapters = $package->chapter()->get();
-
+                $package->translate_name_text = $this->getTranslate($package->name_text_id);
+                $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
                 foreach ($chapters as $chapter) {
                     $chapter->groupquestion = $chapter->groupquestion()->get();
                 }
@@ -341,7 +346,8 @@ class PackageController extends Controller
         else {
             foreach ($_model as $package) {
                 $chapters = $package->chapter()->get();
-
+                $package->translate_name_text = $this->getTranslate($package->name_text_id);
+                $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
                 foreach ($chapters as $chapter) {
                     $chapter->groupquestion = $chapter->groupquestion()->get();
                 }
