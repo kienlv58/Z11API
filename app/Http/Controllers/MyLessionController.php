@@ -52,6 +52,8 @@ class MyLessionController extends Controller
             foreach ($arr_less as $key => $value) {
                 $package = Package::find($value);
                 if ($package != null) {
+                    $package->translate_name_text = $this->getTranslate($package->name_text_id);
+                    $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
                     $chapters = $package->chapter()->get();
 
                     foreach ($chapters as $chapter) {
