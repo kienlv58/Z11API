@@ -19,7 +19,7 @@ class ChapterController extends Controller
      */
     /**
      * @SWG\GET(
-     *     path="/chapters/{id}",
+     *     path="/chapters/{chapter_id}",
      *     summary="get chapter",
      *     tags={"5.Chapter"},
      *     description="get chapter with chapter_id",
@@ -30,7 +30,7 @@ class ChapterController extends Controller
      *      name = "chapter_id",
      *     description = "chapter_",
      *      required = true,
-     *      in ="formData",
+     *      in ="path",
      *     type = "integer",
      *
      *     @SWG\Schema(
@@ -58,8 +58,26 @@ class ChapterController extends Controller
      *     )
      * )
      */
-    public  function getChapter($id){
-        return $this->getDataById($this->model,$id);
+    public  function getChapter($chapter_id){
+        $chapter = Chapter::find($chapter_id);
+        if($chapter != null){
+            $groupQS = $chapter->groupquestion()->get();
+            if(count($groupQS)!=0){
+                foreach ($groupQS as $value){
+                    $questions = $value->question()->get();
+                    if(count($questions) != 0){
+                        $value->questions = $questions;
+                        foreach ($questions as $qs){
+                            $qs->answers = $qs->answer()->get();
+                        }
+                    }
+                }
+                $chapter->groupQS = $groupQS;
+            }
+            return response()->json($this->setArrayData(200,'package not exists',$chapter),200);
+        }else{
+            return response()->json($this->setArrayData(400,'chapter not exists'),400);
+        }
 
     }
     /**

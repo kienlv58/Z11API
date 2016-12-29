@@ -784,7 +784,7 @@
                 }
             }
         },
-        "/chapters/{id}": {
+        "/chapters/{chapter_id}": {
             "get": {
                 "tags": [
                     "5.Chapter"
@@ -801,7 +801,7 @@
                 "parameters": [
                     {
                         "name": "chapter_id",
-                        "in": "formData",
+                        "in": "path",
                         "description": "chapter_",
                         "required": true,
                         "schema": {

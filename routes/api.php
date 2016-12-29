@@ -72,7 +72,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('packages/{limit?}/{offset?}', 'PackageController@getAllPackage');
 
         //Chapter
-        Route::get('chapters/{id}', 'ChapterController@getChapter');
+        Route::get('chapters/{chapter_id}', 'ChapterController@getChapter');
         Route::get('chapters/{limit?}/{offset?}', 'ChapterController@getAllChapter');
         Route::post('chapters', 'ChapterController@addChapter');
         Route::put('chapters', 'ChapterController@editChapter');
