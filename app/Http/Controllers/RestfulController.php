@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
+use App\Explain;
+use App\Folder;
+use App\Language;
+use App\Package;
 use App\Permission;
 use App\Profile;
+use App\TextId;
 use App\User;
 use Doctrine\DBAL\Schema\Schema;
 use Illuminate\Http\Request;
@@ -184,4 +190,114 @@ class RestfulController extends Controller
         }
         return 'success';
     }
+    /**
+     * @SWG\Get(
+     *     path="/language",
+     *     summary="language",
+     *     tags={"Language"},
+     *     description="language",
+     *     operationId="language",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="delete succes",
+     *
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid Value",
+     *     )
+     * )
+     */
+    public function getLanguage(){
+        $language = Language::all();
+        if(count($language)  == 0)
+            return response()->json(['code'=>400,'status'=>'no any language'],400);
+        return response()->json(['code'=>200,'status'=>'success',"listlanguage"=>$language->toArray()],200);
+    }
+    /**
+     * @SWG\Post(
+     *     path="/language",
+     *     summary="language",
+     *     tags={"Language"},
+     *     description="language",
+     *     operationId="language",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "language_code",
+     *      description = "language_code",
+     *     in ="formData",
+     *     required = true,
+     *     type="string",
+     *     @SWG\Schema(
+     *     required={"name"},
+     *     type = "string"
+     *      )
+     *           ),
+     *  @SWG\Parameter(
+     *      name = "description",
+     *      description = "description",
+     *     in ="formData",
+     *     required = true,
+     *     type="string",
+     *     @SWG\Schema(
+     *     required={"name"},
+     *     type = "string"
+     *      )
+     *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="delete succes",
+     *
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid Value",
+     *     )
+     * )
+     */
+    public function addLanguage(Request $request){
+        $data = $request->toArray();
+        $find = Language::where('language_code',$data['language_code'])->get()->first();
+        if($find != null)
+            return response()->json(['code'=>400,'status'=>'language exists'],400);
+        return $this->addNewData('App\Language',['description'=>$data['description'],'language_code'=>$data['language_code'],'item_code'=>'language']);
+    }
+    public function test(){
+        $arr_item_id = TextId::all();
+        if(count($arr_item_id) >0){
+            foreach($arr_item_id as $value){
+                if(Category::where('name_text_id',$value->text_id)->orWhere('describe_text_id',$value->text_id)->get()->first() != null)
+                    continue;
+                if(Folder::where('name_text_id',$value->text_id)->orWhere('describe_text_id',$value->text_id)->get()->first() != null)
+                    continue;
+                if(Package::where('name_text_id',$value->text_id)->orWhere('describe_text_id',$value->text_id)->get()->first() != null)
+                    continue;
+                if(Explain::where('explain_text_id',$value->text_id)->get()->first() != null)
+                    continue;
+                $status = $value->delete();
+            }
+        }
+    }
+
 }

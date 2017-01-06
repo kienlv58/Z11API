@@ -3431,6 +3431,98 @@
                 }
             }
         },
+        "/language": {
+            "get": {
+                "tags": [
+                    "Language"
+                ],
+                "summary": "language",
+                "description": "language",
+                "operationId": "language",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Language"
+                ],
+                "summary": "language",
+                "description": "language",
+                "operationId": "language",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "language_code",
+                        "in": "formData",
+                        "description": "language_code",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "description",
+                        "in": "formData",
+                        "description": "description",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "name"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "delete succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
         "/admin/roles/{name_role}": {
             "get": {
                 "tags": [

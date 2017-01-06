@@ -438,6 +438,7 @@ class CategoryController extends Controller
         if ($category == null) {
             return response()->json($this->setArrayData(400, 'can not find to category code'), 400);
         }
+
         $name_text_id = $category->name_text_id;
         $describe_text_id = $category->describe_text_id;
         $this->deleteTextId($describe_text_id);

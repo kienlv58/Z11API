@@ -24,6 +24,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::post('users/login', 'LoginController@store');
     Route::get('db', 'RestfulController@generateDB');
 
+
     //Authorization: Bearer {yourtokenhere}
     // 'middleware' => 'jwt.auth'
     Route::group(['middleware' => 'checkuser'], function () {
@@ -33,6 +34,10 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('users/profile', 'RestfulController@getProfile');
         Route::put('users/chargecoin', 'RestfulController@chargeCoin');
         Route::put('users/profile', 'RestfulController@editProfile');
+        Route::get('language', 'RestfulController@getLanguage');
+        Route::post('language', 'RestfulController@addLanguage');
+        Route::get('test', 'RestfulController@test');
+
 
         Route::get('users/{id}', 'AdminController@getUser');
         Route::get('user_mod', 'AdminController@getuser_Mod');
