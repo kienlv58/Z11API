@@ -133,6 +133,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::delete('lession/{package_id}','MyLessionController@deleteLession');
 
 
+        //useranswer
+        Route::post('useranswer','UserAnswerController@addUserAnswer');
+
 
         Route::group(['middleware' => 'checkpurchase'], function () {
 
