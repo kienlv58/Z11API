@@ -48,7 +48,7 @@ Route::group(['prefix' => 'v1'], function () {
 
         //categories
         Route::get('categories/{limit?}/{offset?}', 'CategoryController@getAllCategory');
-        Route::get('categories/{category_id}', 'CategoryController@getCategory');
+        Route::get('category/{category_id}', 'CategoryController@getCategory');
         Route::get('searchCategories/{name?}/{category_code?}/{describe?}', 'CategoryController@searchCategories');
         Route::post('categories', 'CategoryController@addCategory');
         Route::put('categories', 'CategoryController@editCategory');
@@ -56,7 +56,7 @@ Route::group(['prefix' => 'v1'], function () {
 
         //folder
 
-        Route::get('folders/{id}', 'FolderController@getFolder');
+        Route::get('folder/{id}', 'FolderController@getFolder');
         Route::get('folder_myfolder', 'FolderController@getMyFolder');
         Route::get('folders/{limit?}/{offset?}', 'FolderController@getAllFolder');
         Route::post('folders', 'FolderController@addFolder');
@@ -65,7 +65,7 @@ Route::group(['prefix' => 'v1'], function () {
 
 
         //package
-        Route::get('packages/{package_id}', 'PackageController@getPackage');
+        Route::get('package/{package_id}', 'PackageController@getPackage');
         Route::post('packages', 'PackageController@addPackage');
         Route::put('packages', 'PackageController@editPackage');
         Route::put('package_rate', 'PackageController@updateRate');
@@ -77,7 +77,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('packages/{limit?}/{offset?}', 'PackageController@getAllPackage');
 
         //Chapter
-        Route::get('chapters/{chapter_id}', 'ChapterController@getChapter');
+        Route::get('chapter/{chapter_id}', 'ChapterController@getChapter');
         Route::get('chapters/{limit?}/{offset?}', 'ChapterController@getAllChapter');
         Route::post('chapters', 'ChapterController@addChapter');
         Route::put('chapters', 'ChapterController@editChapter');
@@ -96,7 +96,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::delete('questions/{question_id}', 'QuestionController@deleteQuestion');
 
         //Answer
-        Route::get('answers/{id}', 'AnswerController@getAnswer');
+        Route::get('answer/{id}', 'AnswerController@getAnswer');
         Route::get('answers/{limit?}/{offset?}', 'AnswerController@getAllAnswer');
         Route::post('answers', 'AnswerController@addAnswer');
         Route::put('answers', 'AnswerController@editAnswer');
@@ -114,7 +114,7 @@ Route::group(['prefix' => 'v1'], function () {
 
 
         //role
-        Route::get('roles/{name_role}','RoleController@getRole');
+        Route::get('role/{name_role}','RoleController@getRole');
         Route::get('roles/{limit?}/{offset?}', 'RoleController@getAllRoles');
         Route::post('roles','RoleController@addRole');
         Route::put('roles','RoleController@editRole');
