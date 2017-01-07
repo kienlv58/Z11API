@@ -33,7 +33,7 @@ class FolderController extends Controller
      *      name = "folder_id",
      *     description = "folder_id",
      *      required = true,
-     *      in ="formData",
+     *      in ="path",
      *     type = "integer",
      *
      *     @SWG\Schema(
