@@ -464,7 +464,7 @@
                 }
             }
         },
-        "/categories/{id}": {
+        "/category/{id}": {
             "get": {
                 "tags": [
                     "2.Category"
