@@ -59,7 +59,7 @@ class CategoryController extends Controller
     public function getCategories($category_id)
     {
 
-        $category = Category::find($category_id);
+        $category = Category::findOrFail($category_id)->first();
         if (!$category) {
             return response()->json(['code' => 404, 'status' => 'cant not find category'], 404);
         }
