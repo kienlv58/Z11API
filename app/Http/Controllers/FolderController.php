@@ -37,7 +37,7 @@ class FolderController extends Controller
      *     type = "integer",
      *
      *     @SWG\Schema(
-     *     required={"grant_type"},
+     *     required={"id"},
      *     type = "integer",
      *      )
      *     ),
