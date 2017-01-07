@@ -30,7 +30,7 @@ class FolderController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "folder_id",
+     *      name = "id",
      *     description = "folder_id",
      *      required = true,
      *      in ="path",
