@@ -23,7 +23,7 @@ class CategoryController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/categories/{id}",
+     *     path="/category/{id}",
      *     summary="get category from id",
      *     tags={"2.Category"},
      *     description="return category from id",
