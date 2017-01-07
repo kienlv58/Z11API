@@ -122,11 +122,11 @@ Route::group(['prefix' => 'v1'], function () {
         Route::delete('roles/{name_role}','RoleController@deleteRole');
 
         ////user_role
-        Route::get('user_roles/{user_id}','UserRoleController@getUserRole');
-        Route::get('user_roles/{limit?}/{offset?}', 'UserRoleController@getAllUserRoles');
-        Route::post('user_roles','UserRoleController@addUserRole');
-        Route::put('user_roles','UserRoleController@editUserRole');
-        Route::delete('user_roles/{user_id}/{name_role}','UserRoleController@deleteUserRole');
+        Route::get('admin/user_role/{user_id}','UserRoleController@getUserRole');
+        Route::get('admin/user_roles/{limit?}/{offset?}', 'UserRoleController@getAllUserRoles');
+        Route::post('admin/user_roles','UserRoleController@addUserRole');
+        Route::put('admin/user_roles','UserRoleController@editUserRole');
+        Route::delete('admin/user_roles/{user_id}/{name_role}','UserRoleController@deleteUserRole');
 
         //lession
         Route::get('lession','MyLessionController@getMyLession');

@@ -22,7 +22,7 @@ class FolderController extends Controller
      */
     /**
      * @SWG\GET(
-     *     path="/folders/{id}",
+     *     path="/folder/{id}",
      *     summary="get folder",
      *     tags={"3.Folder"},
      *     description="get folder with folder_id",

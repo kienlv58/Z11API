@@ -19,7 +19,7 @@ class ChapterController extends Controller
      */
     /**
      * @SWG\GET(
-     *     path="/chapters/{chapter_id}",
+     *     path="/chapter/{chapter_id}",
      *     summary="get chapter",
      *     tags={"5.Chapter"},
      *     description="get chapter with chapter_id",

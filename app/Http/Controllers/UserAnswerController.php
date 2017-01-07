@@ -38,7 +38,6 @@ class UserAnswerController extends Controller
             if($value->status == false)
                 $count_false++;
 
-
         }
 
 

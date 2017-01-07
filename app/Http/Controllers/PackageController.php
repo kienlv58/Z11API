@@ -24,7 +24,7 @@ class PackageController extends Controller
 
     /**
      * @SWG\GET(
-     *     path="/packages/{package_id}",
+     *     path="/package/{package_id}",
      *     summary="get package",
      *     tags={"4.Package"},
      *     description="get package with package_id",

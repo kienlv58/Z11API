@@ -20,7 +20,7 @@ class UserRoleController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/admin/user_roles/{user_id}",
+     *     path="/admin/user_role/{user_id}",
      *     summary="get user_roles with user_id",
      *     tags={"UserRole"},
      *     description="return roles with name_role",
