@@ -47,8 +47,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('user_mod', 'AdminController@createUserMod');
 
         //categories
+        Route::get('category/{category_id}', 'CategoryController@getCategories');
         Route::get('categories/{limit?}/{offset?}', 'CategoryController@getAllCategory');
-        Route::get('category/{category_id}', 'CategoryController@getCategory');
+
         Route::get('searchCategories/{name?}/{category_code?}/{describe?}', 'CategoryController@searchCategories');
         Route::post('categories', 'CategoryController@addCategory');
         Route::put('categories', 'CategoryController@editCategory');
