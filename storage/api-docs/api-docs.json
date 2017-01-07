@@ -784,7 +784,7 @@
                 }
             }
         },
-        "/chapters/{chapter_id}": {
+        "/chapter/{chapter_id}": {
             "get": {
                 "tags": [
                     "5.Chapter"
@@ -1072,7 +1072,7 @@
                 }
             }
         },
-        "/folders/{id}": {
+        "/folder/{id}": {
             "get": {
                 "tags": [
                     "3.Folder"
@@ -1088,8 +1088,8 @@
                 ],
                 "parameters": [
                     {
-                        "name": "folder_id",
-                        "in": "formData",
+                        "name": "id",
+                        "in": "path",
                         "description": "folder_id",
                         "required": true,
                         "schema": {
@@ -1932,7 +1932,7 @@
                 }
             }
         },
-        "/packages/{package_id}": {
+        "/package/{package_id}": {
             "get": {
                 "tags": [
                     "4.Package"
@@ -3803,7 +3803,7 @@
                 }
             }
         },
-        "/admin/user_roles/{user_id}": {
+        "/admin/user_role/{user_id}": {
             "get": {
                 "tags": [
                     "UserRole"
