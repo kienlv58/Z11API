@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
@@ -137,7 +138,9 @@ class LoginController extends Controller
 
                 if ($result) {
                     $user = User::select('id', 'email', 'active','grant_type')->where('email', $data['email'])->get()->first();
+                    $type_user = UserRole::select('name_role','deadline')->where('user_id',$user->id)->get();
                     $user->profile = $user->profile()->get()->first();
+                    $user->type_user = $type_user;
 
                    // if ($user->active == 0) {
 //                        return response()->json(

@@ -1094,7 +1094,7 @@
                         "required": true,
                         "schema": {
                             "required": [
-                                "grant_type"
+                                "id"
                             ],
                             "type": "integer"
                         },
@@ -3781,6 +3781,53 @@
                                 "role_description"
                             ],
                             "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "add succes"
+                    },
+                    "400": {
+                        "description": "Invalid Value"
+                    }
+                }
+            }
+        },
+        "/useranswer": {
+            "post": {
+                "tags": [
+                    "Useranswer"
+                ],
+                "summary": "add new useranswer",
+                "description": "add new useranswer",
+                "operationId": "useranswer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "result",
+                        "in": "formData",
+                        "description": "result json type",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "result"
+                            ],
+                            "type": "integer"
                         },
                         "type": "string"
                     },

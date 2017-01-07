@@ -10,7 +10,46 @@ use JWTAuth;
 
 class UserAnswerController extends Controller
 {
-
+    /**
+     * @SWG\Post(
+     *     path="/useranswer",
+     *     summary="add new useranswer",
+     *     tags={"Useranswer"},
+     *     description="add new useranswer",
+     *     operationId="useranswer",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "result",
+     *      description = "result json type",
+     *     in ="formData",
+     *     required = true,
+     *     type="string",
+     *     @SWG\Schema(
+     *     required={"result"},
+     *     type = "integer"
+     *      )
+     *           ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="add succes",
+     *
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid Value",
+     *     )
+     * )
+     */
 //{"1":{"answer_result":5,"status":true},"2":{"answer_result":7,"status":false}}
     public function addUserAnswer(Request $request){
         $user = JWTAuth::parseToken()->authenticate();

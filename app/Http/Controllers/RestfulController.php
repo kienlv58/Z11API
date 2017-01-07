@@ -283,21 +283,8 @@ class RestfulController extends Controller
             return response()->json(['code'=>400,'status'=>'language exists'],400);
         return $this->addNewData('App\Language',['description'=>$data['description'],'language_code'=>$data['language_code'],'item_code'=>'language']);
     }
-    public function test(){
-        $arr_item_id = TextId::all();
-        if(count($arr_item_id) >0){
-            foreach($arr_item_id as $value){
-                if(Category::where('name_text_id',$value->text_id)->orWhere('describe_text_id',$value->text_id)->get()->first() != null)
-                    continue;
-                if(Folder::where('name_text_id',$value->text_id)->orWhere('describe_text_id',$value->text_id)->get()->first() != null)
-                    continue;
-                if(Package::where('name_text_id',$value->text_id)->orWhere('describe_text_id',$value->text_id)->get()->first() != null)
-                    continue;
-                if(Explain::where('explain_text_id',$value->text_id)->get()->first() != null)
-                    continue;
-                $status = $value->delete();
-            }
-        }
-    }
+   public function search($package_name){
+
+   }
 
 }
