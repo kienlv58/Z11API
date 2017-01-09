@@ -864,7 +864,7 @@ class PackageController extends Controller
             return response()->json($this->setArrayData(400, 'cant find data'), 400);
         else {
 
-            return response()->json($this->setArrayData(200, 'OK', $arr_packages->toArray()), 200);
+            return response()->json($this->setArrayData(200, 'OK', $arr_packages), 200);
         }
     }
 
