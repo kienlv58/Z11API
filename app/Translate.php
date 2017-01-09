@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Translate extends Model
 {
-    protected $fillable = ['text_id','language_code','text_value','describe_value'];
+    protected $fillable = ['text_id','language_code','text_value', 'translate_id'];
     public $primaryKey ='translate_id';
 
     public function category(){

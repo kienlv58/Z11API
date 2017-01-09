@@ -2484,6 +2484,54 @@
                 }
             }
         },
+        "/packages/search/{language}/{package_name}": {
+            "get": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "get search package",
+                "description": "return package search",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "language",
+                        "in": "path",
+                        "description": "language",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "package_name",
+                        "in": "path",
+                        "description": "package_name",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
         "/purchases/users/{user_id}": {
             "get": {
                 "tags": [

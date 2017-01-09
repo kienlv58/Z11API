@@ -10,6 +10,7 @@ use App\Package;
 use App\Permission;
 use App\Profile;
 use App\TextId;
+use App\Translate;
 use App\User;
 use Doctrine\DBAL\Schema\Schema;
 use Illuminate\Http\Request;
@@ -47,14 +48,15 @@ class RestfulController extends Controller
      *     )
      * )
      */
-    public function getProfile(){
+    public function getProfile()
+    {
         $user = JWTAuth::parseToken()->authenticate();
         $user = User::findOrFail($user->id);
-        if($user != null) {
+        if ($user != null) {
             $profile = $user->profile()->get()->first();
-            return response()->json(['code'=>200,'status'=>'OK','metadata'=>['user'=>$user,'profile'=>$profile]]);
-        }else{
-            return response()->json(['code'=>404,'status'=>'user not exists'],404);
+            return response()->json(['code' => 200, 'status' => 'OK', 'metadata' => ['user' => $user, 'profile' => $profile]]);
+        } else {
+            return response()->json(['code' => 404, 'status' => 'user not exists'], 404);
         }
     }
 
@@ -107,15 +109,17 @@ class RestfulController extends Controller
      *     )
      * )
      */
-    public function editProfile(Request $request){
+    public function editProfile(Request $request)
+    {
         $data = $request->toArray();
         $user = JWTAuth::parseToken()->authenticate();
         $user = User::findOrFail($user->id);
-        if($user == null)
-            return response()->json(['code'=>404,'status'=>'user not exists'],404);
-        return $this->editData('App\Profile',$data,['user_id'=>$user->id]);
+        if ($user == null)
+            return response()->json(['code' => 404, 'status' => 'user not exists'], 404);
+        return $this->editData('App\Profile', $data, ['user_id' => $user->id]);
 
     }
+
     /**
      * @SWG\Put(
      *     path="/users/chargecoin",
@@ -156,40 +160,43 @@ class RestfulController extends Controller
      *     )
      * )
      */
-    public function chargeCoin(Request $request){
+    public function chargeCoin(Request $request)
+    {
         $user = JWTAuth::parseToken()->authenticate();
         $user = User::findOrFail($user->id);
         $data = $request->toArray();
         $data['user_id'] = $user->id;
-        $profile = Profile::where('user_id',$data['user_id'])->get()->first();
-        if($profile == null)
-            return response()->json(['code'=>404,'status'=>'user not exists'],404);
-        else{
+        $profile = Profile::where('user_id', $data['user_id'])->get()->first();
+        if ($profile == null)
+            return response()->json(['code' => 404, 'status' => 'user not exists'], 404);
+        else {
             $old_coin = $profile->coin;
             $new_coin = $old_coin + $data['coin'];
-            $profile->update(['coin'=>$new_coin]);
-            return response()->json(['code'=>200,'status'=>'charge success','coin current'=>$new_coin],200);
+            $profile->update(['coin' => $new_coin]);
+            return response()->json(['code' => 200, 'status' => 'charge success', 'coin current' => $new_coin], 200);
         }
     }
 
-    public function generateDB(){
+    public function generateDB()
+    {
         DB::table('permissions')->truncate();
-        $arr_code = ['category','folder','package','chapter','group_question','question','answer','pucharse','admin'];
-        $arr_path = ['categories','folders','packages','chapters','group_questions','questions','answers','pucharses','admin'];
+        $arr_code = ['category', 'folder', 'package', 'chapter', 'group_question', 'question', 'answer', 'pucharse', 'admin'];
+        $arr_path = ['categories', 'folders', 'packages', 'chapters', 'group_questions', 'questions', 'answers', 'pucharses', 'admin'];
 
-        for($i = 0; $i < count($arr_code);$i++){
-            $path = 'api/v1/'.$arr_path[$i];
-            $code_get = 'get_'.$arr_code[$i];
-            $code_post = 'add_'.$arr_code[$i];
-            $code_put = 'edit_'.$arr_code[$i];
-            $code_delete = 'delete_'.$arr_code[$i];
-            Permission::create(['method'=>'GET','path'=>$path,'permission_code'=>$code_get,'description'=>'get '.$arr_code[$i]]);
-            Permission::create(['method'=>'POST','path'=>$path,'permission_code'=>$code_post,'description'=>'add '.$arr_code[$i]]);
-            Permission::create(['method'=>'PUT','path'=>$path,'permission_code'=>$code_put,'description'=>'edit '.$arr_code[$i]]);
-            Permission::create(['method'=>'DELETE','path'=>$path,'permission_code'=>$code_delete,'description'=>'delete '.$arr_code[$i]]);
+        for ($i = 0; $i < count($arr_code); $i++) {
+            $path = 'api/v1/' . $arr_path[$i];
+            $code_get = 'get_' . $arr_code[$i];
+            $code_post = 'add_' . $arr_code[$i];
+            $code_put = 'edit_' . $arr_code[$i];
+            $code_delete = 'delete_' . $arr_code[$i];
+            Permission::create(['method' => 'GET', 'path' => $path, 'permission_code' => $code_get, 'description' => 'get ' . $arr_code[$i]]);
+            Permission::create(['method' => 'POST', 'path' => $path, 'permission_code' => $code_post, 'description' => 'add ' . $arr_code[$i]]);
+            Permission::create(['method' => 'PUT', 'path' => $path, 'permission_code' => $code_put, 'description' => 'edit ' . $arr_code[$i]]);
+            Permission::create(['method' => 'DELETE', 'path' => $path, 'permission_code' => $code_delete, 'description' => 'delete ' . $arr_code[$i]]);
         }
         return 'success';
     }
+
     /**
      * @SWG\Get(
      *     path="/language",
@@ -219,12 +226,14 @@ class RestfulController extends Controller
      *     )
      * )
      */
-    public function getLanguage(){
+    public function getLanguage()
+    {
         $language = Language::all();
-        if(count($language)  == 0)
-            return response()->json(['code'=>400,'status'=>'no any language'],400);
-        return response()->json(['code'=>200,'status'=>'success',"listlanguage"=>$language->toArray()],200);
+        if (count($language) == 0)
+            return response()->json(['code' => 400, 'status' => 'no any language'], 400);
+        return response()->json(['code' => 200, 'status' => 'success', "listlanguage" => $language->toArray()], 200);
     }
+
     /**
      * @SWG\Post(
      *     path="/language",
@@ -276,15 +285,15 @@ class RestfulController extends Controller
      *     )
      * )
      */
-    public function addLanguage(Request $request){
+    public function addLanguage(Request $request)
+    {
         $data = $request->toArray();
-        $find = Language::where('language_code',$data['language_code'])->get()->first();
-        if($find != null)
-            return response()->json(['code'=>400,'status'=>'language exists'],400);
-        return $this->addNewData('App\Language',['description'=>$data['description'],'language_code'=>$data['language_code'],'item_code'=>'language']);
+        $find = Language::where('language_code', $data['language_code'])->get()->first();
+        if ($find != null)
+            return response()->json(['code' => 400, 'status' => 'language exists'], 400);
+        return $this->addNewData('App\Language', ['description' => $data['description'], 'language_code' => $data['language_code'], 'item_code' => 'language']);
     }
-   public function search($package_name){
 
-   }
+
 
 }

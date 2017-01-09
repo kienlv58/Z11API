@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Explain;
 use App\Folder;
 use App\Language;
 use App\Package;
+use App\Translate;
 use App\User;
 use App\UserActions;
 use Illuminate\Http\Request;
@@ -791,4 +793,80 @@ class PackageController extends Controller
         $this->deleteTextId($describe_text_id);
         return $this->deleteTextId($name_text_id);
     }
+
+    /**
+     * @SWG\Get(
+     *     path="/packages/search/{language}/{package_name}",
+     *     summary="get search package",
+     *     tags={"4.Package"},
+     *     description="return package search",
+     *     operationId="package",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "language",
+     *     in ="path",
+     *     description = "language",
+     *     type = "string",
+     *    required = true
+     *     ),
+     *      @SWG\Parameter(
+     *      name = "package_name",
+     *     in ="path",
+     *     description = "package_name",
+     *     type = "string",
+     *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid value",
+     *     )
+     * )
+     */
+    public function search($language, $package_name)
+    {
+
+        $lan = Language::where('language_code', $language)->get()->first();
+        if ($lan == null) {
+            return response()->json($this->setArrayData(400, 'cant find language'), 400);
+        }
+        $arr_packages = [];
+        $arr_name = Translate::where('language_code',$language)->where('text_value','LIKE',"%$package_name%")->get();
+        foreach ($arr_name as $value) {
+            $package = Package::where('name_text_id', $value->text_id)->where('approval', 1)->get()->first();
+            if ($package != null) {
+
+                $chapters = $package->chapter()->get();
+                $package->translate_name_text = $this->getTranslate($package->name_text_id);
+                $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
+                foreach ($chapters as $chapter) {
+                    $chapter->groupquestion = $chapter->groupquestion()->get();
+                }
+                $package->chapters = $chapters;
+                array_push($arr_packages, $package);
+            }
+
+        }
+        if (count($arr_packages) == 0)
+            return response()->json($this->setArrayData(400, 'cant find data'), 400);
+        else {
+
+            return response()->json($this->setArrayData(200, 'OK', $arr_packages->toArray()), 200);
+        }
+    }
+
+
 }
