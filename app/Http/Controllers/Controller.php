@@ -69,13 +69,24 @@ class Controller extends BaseController
     {
         if ($take == 'all') {
             $_model = $model::all();
+            $array = array();
+            foreach ($_model as $value) {
+                $profile = $value->profile()->get()->first();
+                $value->profile = $profile;
+                $type_user = $value->userrole()->get()->first();
+                $value->type_user = $type_user;
+                $array[] = $value;
+            }
+            // $_model->profile = $_model->profile()->get()->first();
+            // $_model->type_user = $_model->userrole()->get()->first();
+
         } else {
             $_model = $model::take($take)->skip($skip)->get();
         }
-        if ($_model == null || empty($_model))
-            return response()->json($this->setArrayData(400, 'null', $_model->toArray()), 400);
+        if ($array == null || empty($array))
+            return response()->json($this->setArrayData(400, 'null', $array), 400);
         else
-            return response()->json($this->setArrayData(200, 'OK', $_model->toArray()), 200);
+            return response()->json($this->setArrayData(200, 'OK', $array), 200);
     }
 
     public function deleteDataById($model, array $request)
