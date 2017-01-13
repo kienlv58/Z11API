@@ -11,7 +11,41 @@ use JWTAuth;
 class AdminController extends Controller
 {
 
-
+    /**
+     * @SWG\Get(
+     *     path="/users/{id}",
+     *     summary="get user from id",
+     *     tags={"9.Admin"},
+     *     description="return user from id",
+     *     operationId="cateid",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "id",
+     *     in ="path",
+     *     description = "user_id",
+     *     required = true,
+     *     type = "integer"
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="cant not find category",
+     *     )
+     * )
+     */
     public function getUser($id){
         return $this->getDataById('App\User',$id);
     }
@@ -25,11 +59,57 @@ class AdminController extends Controller
             return response()->json($this->setArrayData(400,'null'),400);
     }
 
-
+    /**
+     * @SWG\Get(
+     *     path="/users/{limit}/{offset}",
+     *     summary="get all users",
+     *     tags={"9.Admin"},
+     *     description="return users with take and skip",
+     *     operationId="cateid",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "limit",
+     *     in ="path",
+     *     description = "take from ....",
+     *     type = "integer",
+     *     default = "all",
+     *    required = true
+     *     ),
+     *      @SWG\Parameter(
+     *      name = "offset",
+     *     in ="path",
+     *     description = "skip from",
+     *     type = "integer",
+     *     default="0",
+     *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid value",
+     *     )
+     * )
+     */
 
     public function getAllUser($limit = 'all',$offset = 0){
         return $this->getAllData('App\User',$limit,$offset);
     }
+
+    
+    
 
     /**
      * @SWG\Delete(

@@ -145,8 +145,8 @@ class PackageController extends Controller
         else {
             foreach ($pkg as $package) {
                 $chapters = $package->chapter()->get();
-                $pkg->translate_name_text = $this->getTranslate($pkg->name_text_id);
-                $pkg->translate_describe_text = $this->getTranslate($pkg->describe_text_id);
+                $pkg->translate_name_text = $this->getTranslate($package->name_text_id);
+                $pkg->translate_describe_text = $this->getTranslate($package->describe_text_id);
                 foreach ($chapters as $chapter) {
                     $chapter->groupquestion = $chapter->groupquestion()->get();
                 }

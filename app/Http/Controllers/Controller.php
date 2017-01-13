@@ -58,6 +58,10 @@ class Controller extends BaseController
     public function getDataById($model, $id = 0)
     {
         $_model = $model::find($id);
+        if ($model == 'App\User') {
+            $_model->profile = $_model->profile()->get()->first();
+            $_model->type_user = $_model->userrole()->get()->first();
+        }
         if ($_model == null) {
             return response()->json($this->setArrayData(400, 'can not find data'), 400);
         }
@@ -69,13 +73,35 @@ class Controller extends BaseController
     {
         if ($take == 'all') {
             $_model = $model::all();
+            $array = array();
+            // $array =$_model;
+            foreach ($_model as $value) {
+                if ($model == 'App\User') {
+                    $profile = $value->profile()->get()->first();
+                    $value->profile = $profile;
+                    $type_user = $value->userrole()->get()->first();
+                    $value->type_user = $type_user;
+                }
+                if ($model == 'App\Folder') {
+                    $packages = $value->package()->get()->first();
+                    $value->package = $packages; 
+                }
+                if ($model == 'App\Chapter') {
+                    $groupquestion =  $value->groupquestion()->get()->first();
+                    $value->groupquestion = $groupquestion;
+                }
+                $array[] = $value;
+            }
+            // $_model->profile = $_model->profile()->get()->first();
+            // $_model->type_user = $_model->userrole()->get()->first();
+
         } else {
             $_model = $model::take($take)->skip($skip)->get();
         }
-        if ($_model == null || empty($_model))
-            return response()->json($this->setArrayData(400, 'null', $_model->toArray()), 400);
+        if ($array == null || empty($array))
+            return response()->json($this->setArrayData(400, 'null', $array), 400);
         else
-            return response()->json($this->setArrayData(200, 'OK', $_model->toArray()), 200);
+            return response()->json($this->setArrayData(200, 'OK', $array), 200);
     }
 
     public function deleteDataById($model, array $request)

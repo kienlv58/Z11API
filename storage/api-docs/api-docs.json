@@ -19,6 +19,97 @@
         "http"
     ],
     "paths": {
+        "/users/{id}": {
+            "get": {
+                "tags": [
+                    "9.Admin"
+                ],
+                "summary": "get user from id",
+                "description": "return user from id",
+                "operationId": "cateid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "user_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "cant not find category"
+                    }
+                }
+            }
+        },
+        "/users/{limit}/{offset}": {
+            "get": {
+                "tags": [
+                    "9.Admin"
+                ],
+                "summary": "get all users",
+                "description": "return users with take and skip",
+                "operationId": "cateid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "path",
+                        "description": "take from ....",
+                        "required": true,
+                        "type": "integer",
+                        "default": "all"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "path",
+                        "description": "skip from",
+                        "required": true,
+                        "type": "integer",
+                        "default": "0"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
         "/admin/users/{uid}": {
             "delete": {
                 "tags": [

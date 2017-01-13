@@ -35,4 +35,8 @@ class User extends Authenticatable
     public function folder(){
         return $this->hasOne('App\Folder');
     }
+    public function userrole()
+    {
+        return $this->hasMany('App\UserRole');
+    }
 }
