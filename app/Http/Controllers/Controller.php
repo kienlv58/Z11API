@@ -58,6 +58,10 @@ class Controller extends BaseController
     public function getDataById($model, $id = 0)
     {
         $_model = $model::find($id);
+        if ($model == 'App\User') {
+            $_model->profile = $_model->profile()->get()->first();
+            $_model->type_user = $_model->userrole()->get()->first();
+        }
         if ($_model == null) {
             return response()->json($this->setArrayData(400, 'can not find data'), 400);
         }

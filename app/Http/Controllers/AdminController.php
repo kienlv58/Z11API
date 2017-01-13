@@ -11,7 +11,41 @@ use JWTAuth;
 class AdminController extends Controller
 {
 
-
+    /**
+     * @SWG\Get(
+     *     path="/users/{id}",
+     *     summary="get user from id",
+     *     tags={"9.Admin"},
+     *     description="return user from id",
+     *     operationId="cateid",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "id",
+     *     in ="path",
+     *     description = "user_id",
+     *     required = true,
+     *     type = "integer"
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="cant not find category",
+     *     )
+     * )
+     */
     public function getUser($id){
         return $this->getDataById('App\User',$id);
     }
