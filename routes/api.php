@@ -77,6 +77,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('packages/get_not_aprroval/{take}/{skip}','PackageController@getPackageNotAprroval');
         Route::get('packages/{limit?}/{offset?}', 'PackageController@getAllPackage');
         Route::get('packages/search/{language}/{package_name}', 'PackageController@search');
+        Route::get('packages/ownerPackage/{folder_id}/{package_id}', 'PackageController@ownerPackage');
 
         //Chapter
         Route::get('chapter/{chapter_id}', 'ChapterController@getChapter');

@@ -6,5 +6,5 @@ use Illuminate\Http\Request;
 
 class UserActionController extends Controller
 {
-    //
+    //get myrate
 }
