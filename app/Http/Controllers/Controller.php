@@ -70,11 +70,22 @@ class Controller extends BaseController
         if ($take == 'all') {
             $_model = $model::all();
             $array = array();
+            // $array =$_model;
             foreach ($_model as $value) {
-                $profile = $value->profile()->get()->first();
-                $value->profile = $profile;
-                $type_user = $value->userrole()->get()->first();
-                $value->type_user = $type_user;
+                if ($model == 'App\User') {
+                    $profile = $value->profile()->get()->first();
+                    $value->profile = $profile;
+                    $type_user = $value->userrole()->get()->first();
+                    $value->type_user = $type_user;
+                }
+                if ($model == 'App\Folder') {
+                    $packages = $value->package()->get()->first();
+                    $value->package = $packages; 
+                }
+                if ($model == 'App\Chapter') {
+                    $groupquestion =  $value->groupquestion()->get()->first();
+                    $value->groupquestion = $groupquestion;
+                }
                 $array[] = $value;
             }
             // $_model->profile = $_model->profile()->get()->first();
