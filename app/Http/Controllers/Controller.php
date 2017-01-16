@@ -62,6 +62,26 @@ class Controller extends BaseController
             $_model->profile = $_model->profile()->get()->first();
             $_model->type_user = $_model->userrole()->get()->first();
         }
+        if ($model = 'App\Folder') {
+            $category = $_model->category()->get()->first();
+            $category->translate_name_text = $this->getTranslate($category->name_text_id);
+            $category->translate_describe_text = $this->getTranslate($category->describe_text_id);
+            $packages = $_model->package()->get();
+            if($packages != null){
+                foreach ($packages as $package) {
+                    $package->translate_name_text = $this->getTranslate($package->name_text_id);
+                    $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
+                }
+            }
+            
+            $translate_name_text = $this->getTranslate($_model->name_text_id);
+            $translate_describe_text = $this->getTranslate($_model->describe_text_id);
+            $_model->translate_name_text = $translate_name_text;
+            $_model->translate_describe_text = $translate_describe_text;
+            $_model->category = $category;
+            $_model->package = $packages;
+
+        }
         if ($_model == null) {
             return response()->json($this->setArrayData(400, 'can not find data'), 400);
         }
