@@ -58,11 +58,12 @@ class Controller extends BaseController
     public function getDataById($model, $id = 0)
     {
         $_model = $model::find($id);
+        // dd($model);
         if ($model == 'App\User') {
             $_model->profile = $_model->profile()->get()->first();
             $_model->type_user = $_model->userrole()->get()->first();
         }
-        if ($model = 'App\Folder') {
+        if ($model == "App\Folder") {
             $category = $_model->category()->get()->first();
             $category->translate_name_text = $this->getTranslate($category->name_text_id);
             $category->translate_describe_text = $this->getTranslate($category->describe_text_id);
