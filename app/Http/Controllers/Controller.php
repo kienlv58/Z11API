@@ -92,7 +92,7 @@ class Controller extends BaseController
     public function getAllData($model, $take = 'all', $skip = 0)
     {
         if ($take == 'all') {
-            $_model = $model::all();
+            $_model = $model::orderBy('created_at','desc')->get();
             $array = array();
             // $array =$_model;
             foreach ($_model as $value) {
