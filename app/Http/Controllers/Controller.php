@@ -83,11 +83,15 @@ class Controller extends BaseController
                     $value->type_user = $type_user;
                 }
                 if ($model == 'App\Folder') {
+                    $category = $value->category()->get()->first();
                     $packages = $value->package()->get()->first();
+                    $value->category = $category;
                     $value->package = $packages; 
                 }
                 if ($model == 'App\Chapter') {
+                    $package = $value->package()->get()->first();
                     $groupquestion =  $value->groupquestion()->get()->first();
+                    $value->package = $package;
                     $value->groupquestion = $groupquestion;
                 }
                 $array[] = $value;
