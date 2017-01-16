@@ -84,13 +84,23 @@ class Controller extends BaseController
                 }
                 if ($model == 'App\Folder') {
                     $category = $value->category()->get()->first();
-                    $packages = $value->package()->get()->first();
+                    $category->translate_name_text = $this->getTranslate($category->name_text_id);
+                    $category->translate_describe_text = $this->getTranslate($category->describe_text_id);
+                    $packages = $value->package()->get();
+                    foreach ($packages as $package) {
+                        $package->translate_name_text = $this->getTranslate($package->name_text_id);
+                        $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
+                    }
+                    $translate_name_text = $this->getTranslate($value->name_text_id);
+                    $translate_describe_text = $this->getTranslate($value->describe_text_id);
+                    $value->translate_name_text = $translate_name_text;
+                    $value->translate_describe_text = $translate_describe_text;
                     $value->category = $category;
-                    $value->package = $packages; 
+                    $value->package = $packages;
                 }
                 if ($model == 'App\Chapter') {
                     $package = $value->package()->get()->first();
-                    $groupquestion =  $value->groupquestion()->get()->first();
+                    $groupquestion =  $value->groupquestion()->get();
                     $value->package = $package;
                     $value->groupquestion = $groupquestion;
                 }
