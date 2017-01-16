@@ -6,6 +6,7 @@ use App\Explain;
 use App\Folder;
 use App\Language;
 use App\Package;
+use App\Profile;
 use App\Translate;
 use App\User;
 use App\UserActions;
@@ -866,6 +867,79 @@ class PackageController extends Controller
 
             return response()->json($this->setArrayData(200, 'OK', $arr_packages), 200);
         }
+    }
+    /**
+     * @SWG\Get(
+     *     path="/packages/ownerPackage/{folder_id}/{package_id}",
+     *     summary="get my rate package",
+     *     tags={"4.Package"},
+     *     description="return package my rate",
+     *     operationId="package",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "folder_id",
+     *     in ="path",
+     *     description = "folder_id",
+     *     type = "integer",
+     *    required = true
+     *     ),
+     *      @SWG\Parameter(
+     *      name = "package_id",
+     *     in ="path",
+     *     description = "package_id",
+     *     type = "integer",
+     *     required = true
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid value",
+     *     )
+     * )
+     */
+    public function ownerPackage($folder_id,$package_id){
+        $user = JWTAuth::parseToken()->authenticate();
+        $user = User::findOrFail($user->id);
+
+        $uid_owner = Folder::select(['owner_id'])->where('folder_id',$folder_id)->get()->first();
+        if($uid_owner != null) {
+
+            $myrate = 0;
+            $profile = Profile::where('user_id',$uid_owner->owner_id)->get()->first();
+
+                //find myrate with this package
+                $user_rate = UserActions::select('rate_item')->where('user_id', $user->id)->get()->first();
+
+                if ($user_rate == null)
+                    $myrate = 0;
+                else {
+                    $list_rate = \GuzzleHttp\json_decode($user_rate->rate_item, true);
+
+                    foreach ($list_rate as $key => $value) {
+                        if ($key == $package_id) {
+                            $myrate = $value;
+                            break;
+                        }
+                    }
+                }
+                return response()->json(['code' => 200, 'status' => 'OK', 'name' => $profile->name, 'email' => $user->email, 'avatar' => $profile->image, 'my_rate' => $myrate], 200);
+            }else{
+                return response()->json(['code'=>400,'status'=>"cant find user owner"],400);
+            }
+
     }
 
 

@@ -2623,6 +2623,54 @@
                 }
             }
         },
+        "/packages/ownerPackage/{folder_id}/{package_id}": {
+            "get": {
+                "tags": [
+                    "4.Package"
+                ],
+                "summary": "get my rate package",
+                "description": "return package my rate",
+                "operationId": "package",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "folder_id",
+                        "in": "path",
+                        "description": "folder_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "package_id",
+                        "in": "path",
+                        "description": "package_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Invalid value"
+                    }
+                }
+            }
+        },
         "/purchases/users/{user_id}": {
             "get": {
                 "tags": [
