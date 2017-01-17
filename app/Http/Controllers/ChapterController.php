@@ -60,21 +60,15 @@ class ChapterController extends Controller
      */
     public  function getChapter($chapter_id){
         $chapter = Chapter::find($chapter_id);
+        // dd($chapter);
         if($chapter != null){
             $groupQS = $chapter->groupquestion()->get();
-            if(count($groupQS)!=0){
-                foreach ($groupQS as $value){
-                    $questions = $value->question()->get();
-                    if(count($questions) != 0){
-                        $value->questions = $questions;
-                        foreach ($questions as $qs){
-                            $qs->answers = $qs->answer()->get();
-                        }
-                    }
-                }
-                $chapter->groupQS = $groupQS;
-            }
-            return response()->json($this->setArrayData(200,'package not exists',$chapter),200);
+            $package = $chapter->package()->get()->first();
+            $folder = $chapter->folder()->get()->first();
+            $chapter->groupQuestion = $groupQS;
+            $chapter->package = $package;
+            $chapter->folder = $folder;
+            return response()->json($this->setArrayData(200,'OK',$chapter),200);
         }else{
             return response()->json($this->setArrayData(400,'chapter not exists'),400);
         }
