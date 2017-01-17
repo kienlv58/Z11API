@@ -229,7 +229,7 @@ class AdminController extends Controller
      *      name = "image",
      *      description = "image",
      *     in ="formData",
-     *     required = true,
+     *     required = false,
      *     type="string",
      *     @SWG\Schema(
      *     required={"image"},

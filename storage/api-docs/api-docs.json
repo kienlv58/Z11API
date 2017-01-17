@@ -241,7 +241,7 @@
                         "name": "image",
                         "in": "formData",
                         "description": "image",
-                        "required": true,
+                        "required": false,
                         "schema": {
                             "required": [
                                 "image"
