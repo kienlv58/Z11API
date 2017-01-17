@@ -132,6 +132,7 @@ class Controller extends BaseController
 
         } else {
             $_model = $model::take($take)->skip($skip)->get();
+            $array = $_model;
         }
         if ($array == null || empty($array))
             return response()->json($this->setArrayData(400, 'null', $array), 400);
