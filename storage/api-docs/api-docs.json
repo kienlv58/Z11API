@@ -238,6 +238,19 @@
                         "type": "string"
                     },
                     {
+                        "name": "deadline",
+                        "in": "formData",
+                        "description": "deadline",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "deadline"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
                         "name": "image",
                         "in": "formData",
                         "description": "image",
