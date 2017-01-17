@@ -39,12 +39,12 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('test', 'RestfulController@test');
 
 
-        Route::get('users/{id}', 'AdminController@getUser');
-        Route::get('user_mod', 'AdminController@getuser_Mod');
-        Route::get('users/{limit?}/{offset?}', 'AdminController@getAllUser');
-        Route::delete('users/{uid}', 'AdminController@deleteUser');
-        Route::put('aprroval_package', 'AdminController@aprrovalPackage');
-        Route::post('user_mod', 'AdminController@createUserMod');
+        Route::get('admin/users/{id}', 'AdminController@getUser');
+        Route::get('admin/user_mod', 'AdminController@getuser_Mod');
+        Route::get('/admin/users/{limit?}/{offset?}', 'AdminController@getAllUser');
+        Route::delete('admin/users/{uid}', 'AdminController@deleteUser');
+        Route::put('admin/aprroval_package', 'AdminController@aprrovalPackage');
+        Route::post('admin/user_mod', 'AdminController@createUserMod');
 
         //categories
         Route::get('category/{category_id}', 'CategoryController@getCategories');

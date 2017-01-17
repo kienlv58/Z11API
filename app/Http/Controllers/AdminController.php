@@ -13,7 +13,7 @@ class AdminController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/users/{id}",
+     *     path="/admin/users/{id}",
      *     summary="get user from id",
      *     tags={"9.Admin"},
      *     description="return user from id",
@@ -61,7 +61,7 @@ class AdminController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/users/{limit}/{offset}",
+     *     path="/admin/users/{limit}/{offset}",
      *     summary="get all users",
      *     tags={"9.Admin"},
      *     description="return users with take and skip",
@@ -260,6 +260,7 @@ class AdminController extends Controller
     //'email','password',name','gender','coin','image'
     public function createUserMod(Request $request){
         $user = JWTAuth::parseToken()->authenticate();
+        dd($user);
         $user = User::findOrFail($user->id);
         $data = $request->toArray();
         $data['current_uid'] = $user->id;

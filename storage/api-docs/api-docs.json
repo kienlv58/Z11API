@@ -19,7 +19,7 @@
         "http"
     ],
     "paths": {
-        "/users/{id}": {
+        "/admin/users/{id}": {
             "get": {
                 "tags": [
                     "9.Admin"
@@ -60,7 +60,7 @@
                 }
             }
         },
-        "/users/{limit}/{offset}": {
+        "/admin/users/{limit}/{offset}": {
             "get": {
                 "tags": [
                     "9.Admin"
