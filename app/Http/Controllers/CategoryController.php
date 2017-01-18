@@ -436,7 +436,7 @@ class CategoryController extends Controller
     {
         $category = Category::find($category_id);
         if ($category == null) {
-            return response()->json($this->setArrayData(400, 'can not find to category code'), 400);
+            return response()->json($this->setArrayData(400, 'can not find to category id'), 400);
         }
         $result = $category->delete();
          if ($result) {
