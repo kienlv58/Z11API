@@ -110,7 +110,7 @@
                 }
             }
         },
-        "/admin/users/{uid}": {
+        "/admin/users/delete/{uid}": {
             "delete": {
                 "tags": [
                     "9.Admin"
@@ -127,8 +127,8 @@
                 "parameters": [
                     {
                         "name": "uid",
-                        "in": "formData",
-                        "description": "uid delete",
+                        "in": "path",
+                        "description": "uid",
                         "required": true,
                         "schema": {
                             "required": [

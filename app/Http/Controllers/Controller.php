@@ -175,9 +175,10 @@ class Controller extends BaseController
 
     public function deleteDataById($model, array $request)
     {
-        $m = new $model;
-        $primaryKey = $m->primaryKey;
-        $_model = $model::find($request[$primaryKey]);
+        // dd($request['id']);
+        // $m = new $model;
+        // $primaryKey = $m->primaryKey;
+        $_model = $model::find($request['id']);
         if ($_model == null) {
             return response()->json($this->setArrayData(400, 'can not find data'), 400);
         } else {

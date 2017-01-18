@@ -42,7 +42,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('admin/users/{id}', 'AdminController@getUser');
         Route::get('admin/user_mod', 'AdminController@getuser_Mod');
         Route::get('/admin/users/{limit?}/{offset?}', 'AdminController@getAllUser');
-        Route::delete('admin/users/{uid}', 'AdminController@deleteUser');
+        Route::delete('/admin/users/delete/{uid?}', 'AdminController@deleteUser');
         Route::put('admin/aprroval_package', 'AdminController@aprrovalPackage');
         Route::post('admin/user_mod', 'AdminController@createUserMod');
 

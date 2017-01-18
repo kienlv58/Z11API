@@ -138,7 +138,7 @@ class AdminController extends Controller
 
     /**
      * @SWG\Delete(
-     *     path="/admin/users/{uid}",
+     *     path="/admin/users/delete/{uid}",
      *     summary="delete user ",
      *     tags={"9.Admin"},
      *     description="delete with user_id",
@@ -147,8 +147,8 @@ class AdminController extends Controller
      *     produces={"application/json"},
      *     @SWG\Parameter(
      *      name = "uid",
-     *      description = "uid delete",
-     *     in ="formData",
+     *      description = "uid",
+     *     in ="path",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
@@ -180,7 +180,8 @@ class AdminController extends Controller
     public function deleteUser($uid_delete){
         $user = JWTAuth::parseToken()->authenticate();
         $user = User::findOrFail($user->id);
-        if($user == null or $user->type != 'admin') {
+        $user->role = $user->userrole()->get()->first();
+        if($user == null or $user->role->name_role != 'admin') {
             return response()->json($this->setArrayData(400, 'you not permission delete to user'));
         }
         return $this->deleteDataById('App\User',['id'=>$uid_delete]);
