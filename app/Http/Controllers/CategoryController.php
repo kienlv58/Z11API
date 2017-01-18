@@ -394,7 +394,7 @@ class CategoryController extends Controller
 
     /**
      * @SWG\Delete(
-     *     path="/categories/{category_code}",
+     *     path="/categories/{category_id}",
      *     summary="delete category ",
      *     tags={"2.Category"},
      *     description="delete with category_id",
@@ -402,8 +402,8 @@ class CategoryController extends Controller
      *     consumes={"application/json"},
      *     produces={"application/json"},
      *     @SWG\Parameter(
-     *      name = "category_code",
-     *      description = "category_code",
+     *      name = "category_id",
+     *      description = "category_id",
      *     in ="path",
      *     required = true,
      *     type="string",
@@ -432,17 +432,18 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function deleteCategory($category_code )
+    public function deleteCategory($category_id )
     {
-        $category = Category::where('category_code',$category_code)->get()->first();
+        $category = Category::find($category_id);
         if ($category == null) {
             return response()->json($this->setArrayData(400, 'can not find to category code'), 400);
         }
-
-        $name_text_id = $category->name_text_id;
-        $describe_text_id = $category->describe_text_id;
-        $this->deleteTextId($describe_text_id);
-        return $this->deleteTextId($name_text_id);
+        $result = $category->delete();
+         if ($result) {
+            return response()->json($this->setArrayData(200, 'delete success'), 400);
+        } else {
+            return response()->json($this->setArrayData(400, 'delete error'), 400);
+        }
     }
 
 

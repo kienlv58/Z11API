@@ -841,7 +841,7 @@
                 }
             }
         },
-        "/categories/{category_code}": {
+        "/categories/{category_id}": {
             "delete": {
                 "tags": [
                     "2.Category"

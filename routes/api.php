@@ -53,7 +53,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('searchCategories/{name?}/{category_code?}/{describe?}', 'CategoryController@searchCategories');
         Route::post('categories', 'CategoryController@addCategory');
         Route::put('categories', 'CategoryController@editCategory');
-        Route::delete('categories/{category_code}', 'CategoryController@deleteCategory');
+        Route::delete('categories/{category_id}', 'CategoryController@deleteCategory');
 
         //folder
 
