@@ -60,13 +60,12 @@ class ChapterController extends Controller
      */
     public  function getChapter($chapter_id){
         $chapter = Chapter::find($chapter_id);
-        // dd($chapter);
         if($chapter != null){
             $groupQS = $chapter->groupquestion()->get();
             $package = $chapter->package()->get()->first();
             $package->translate_name_text = $this->getTranslate($package->name_text_id);
             $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
-            $folder = $chapter->folder()->get()->first();
+            $folder = $package->folder()->get()->first();
             $folder->translate_name_text = $this->getTranslate($folder->name_text_id);
             $folder->translate_describe_text = $this->getTranslate($folder->describe_text_id);
             $chapter->groupQuestion = $groupQS;

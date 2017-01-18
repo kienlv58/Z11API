@@ -80,7 +80,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('packages/ownerPackage/{folder_id}/{package_id}', 'PackageController@ownerPackage');
 
         //Chapter
-        Route::get('chapter/{chapter_id}', 'ChapterController@getChapter');
+        Route::get('chapter/{chapter_id?}', 'ChapterController@getChapter');
         Route::get('chapters/{limit?}/{offset?}', 'ChapterController@getAllChapter');
         Route::post('chapters', 'ChapterController@addChapter');
         Route::put('chapters', 'ChapterController@editChapter');
