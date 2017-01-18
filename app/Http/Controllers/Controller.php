@@ -140,6 +140,8 @@ class Controller extends BaseController
                     $value->type_user = $type_user;
                 }
                 if ($model == 'App\Folder') {
+                    $allFolder = Folder::all();
+                    $count = count($allFolder);
                     $category = $value->category()->get()->first();
                     $category->translate_name_text = $this->getTranslate($category->name_text_id);
                     $category->translate_describe_text = $this->getTranslate($category->describe_text_id);
@@ -154,6 +156,7 @@ class Controller extends BaseController
                     $value->translate_describe_text = $translate_describe_text;
                     $value->category = $category;
                     $value->package = $packages;
+                    $value->count = $count;
                 }
                 if ($model == 'App\Chapter') {
                     $package = $value->package()->get()->first();
