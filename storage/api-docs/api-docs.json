@@ -857,9 +857,9 @@
                 ],
                 "parameters": [
                     {
-                        "name": "category_code",
+                        "name": "category_id",
                         "in": "path",
-                        "description": "category_code",
+                        "description": "category_id",
                         "required": true,
                         "schema": {
                             "required": [
