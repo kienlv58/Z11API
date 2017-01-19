@@ -138,6 +138,7 @@ Route::group(['prefix' => 'v1'], function () {
 
         //useranswer
         Route::post('useranswer','UserAnswerController@addUserAnswer');
+        Route::get('getTranslateFromExplain/{groupQS_id}','ExplainController@getTranslateFromExplain');
 
 
         Route::group(['middleware' => 'checkpurchase'], function () {
