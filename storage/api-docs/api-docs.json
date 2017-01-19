@@ -935,6 +935,53 @@
                 }
             }
         },
+        "/getChapterToAnswer/{chapter_id}": {
+            "get": {
+                "tags": [
+                    "5.Chapter"
+                ],
+                "summary": "get chapter to answer",
+                "description": "get chapter with chapter_id",
+                "operationId": "getchapter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "chapter_id",
+                        "in": "path",
+                        "description": "chapter_",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "grant_type"
+                            ],
+                            "type": "integer"
+                        },
+                        "type": "integer"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "token",
+                        "required": true,
+                        "type": "string",
+                        "default": "Bearer {your_token}"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "get succes"
+                    },
+                    "400": {
+                        "description": "Invalid param"
+                    }
+                }
+            }
+        },
         "/chapters/{limit}/{offset}": {
             "get": {
                 "tags": [

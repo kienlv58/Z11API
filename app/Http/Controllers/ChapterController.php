@@ -78,6 +78,73 @@ class ChapterController extends Controller
 
     }
     /**
+     * @SWG\GET(
+     *     path="/getChapterToAnswer/{chapter_id}",
+     *     summary="get chapter to answer",
+     *     tags={"5.Chapter"},
+     *     description="get chapter with chapter_id",
+     *     operationId="getchapter",
+     *     consumes={"application/json"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *      name = "chapter_id",
+     *     description = "chapter_",
+     *      required = true,
+     *      in ="path",
+     *     type = "integer",
+     *
+     *     @SWG\Schema(
+     *     required={"grant_type"},
+     *     type = "integer",
+     *      )
+     *     ),
+     *
+     *     @SWG\Parameter(
+     *      name = "Authorization",
+     *     in ="header",
+     *     description = "token",
+     *     required = true,
+     *     default = "Bearer {your_token}",
+     *     type = "string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="get succes",
+     *
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid param",
+     *     )
+     * )
+     */
+
+    public function getChapterToAnswer($chapter_id){
+        $chapter = Chapter::find($chapter_id);
+        if($chapter != null){
+            $arr_groupQS = $chapter->groupquestion()->get();
+            if(count($arr_groupQS) > 0){
+                foreach ($arr_groupQS as $value){
+                    $arr_question = $value->question()->get();
+                    $value->questions = $arr_question;
+                    if(count($arr_question) > 0){
+                        foreach($arr_question as $value){
+                            $arr_answer = $value->answer()->get();
+                            $value->answers = $arr_answer;
+
+                        }
+                    }
+                }
+
+            }
+            $chapter->groupQS = $arr_groupQS;
+
+            return response()->json($this->setArrayData(200,'OK',$chapter),200);
+        }else{
+            return response()->json($this->setArrayData(400,'chapter not exists'),400);
+        }
+    }
+    /**
      * @SWG\Get(
      *     path="/chapters/{limit}/{offset}",
      *     summary="get all Chapter",
