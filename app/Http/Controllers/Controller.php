@@ -58,9 +58,30 @@ class Controller extends BaseController
     public function getDataById($model, $id = 0)
     {
         $_model = $model::find($id);
+        // dd($model);
         if ($model == 'App\User') {
             $_model->profile = $_model->profile()->get()->first();
             $_model->type_user = $_model->userrole()->get()->first();
+        }
+        if ($model == "App\Folder") {
+            $category = $_model->category()->get()->first();
+            $category->translate_name_text = $this->getTranslate($category->name_text_id);
+            $category->translate_describe_text = $this->getTranslate($category->describe_text_id);
+            $packages = $_model->package()->get();
+            if($packages != null){
+                foreach ($packages as $package) {
+                    $package->translate_name_text = $this->getTranslate($package->name_text_id);
+                    $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
+                }
+            }
+            
+            $translate_name_text = $this->getTranslate($_model->name_text_id);
+            $translate_describe_text = $this->getTranslate($_model->describe_text_id);
+            $_model->translate_name_text = $translate_name_text;
+            $_model->translate_describe_text = $translate_describe_text;
+            $_model->category = $category;
+            $_model->package = $packages;
+
         }
         if ($_model == null) {
             return response()->json($this->setArrayData(400, 'can not find data'), 400);
@@ -72,7 +93,7 @@ class Controller extends BaseController
     public function getAllData($model, $take = 'all', $skip = 0)
     {
         if ($take == 'all') {
-            $_model = $model::all();
+            $_model = $model::orderBy('created_at','desc')->get();
             $array = array();
             // $array =$_model;
             foreach ($_model as $value) {
@@ -83,11 +104,25 @@ class Controller extends BaseController
                     $value->type_user = $type_user;
                 }
                 if ($model == 'App\Folder') {
-                    $packages = $value->package()->get()->first();
-                    $value->package = $packages; 
+                    $category = $value->category()->get()->first();
+                    $category->translate_name_text = $this->getTranslate($category->name_text_id);
+                    $category->translate_describe_text = $this->getTranslate($category->describe_text_id);
+                    $packages = $value->package()->get();
+                    foreach ($packages as $package) {
+                        $package->translate_name_text = $this->getTranslate($package->name_text_id);
+                        $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
+                    }
+                    $translate_name_text = $this->getTranslate($value->name_text_id);
+                    $translate_describe_text = $this->getTranslate($value->describe_text_id);
+                    $value->translate_name_text = $translate_name_text;
+                    $value->translate_describe_text = $translate_describe_text;
+                    $value->category = $category;
+                    $value->package = $packages;
                 }
                 if ($model == 'App\Chapter') {
-                    $groupquestion =  $value->groupquestion()->get()->first();
+                    $package = $value->package()->get()->first();
+                    $groupquestion =  $value->groupquestion()->get();
+                    $value->package = $package;
                     $value->groupquestion = $groupquestion;
                 }
                 $array[] = $value;
@@ -97,6 +132,40 @@ class Controller extends BaseController
 
         } else {
             $_model = $model::take($take)->skip($skip)->get();
+            foreach ($_model as $value) {
+                if ($model == 'App\User') {
+                    $profile = $value->profile()->get()->first();
+                    $value->profile = $profile;
+                    $type_user = $value->userrole()->get()->first();
+                    $value->type_user = $type_user;
+                }
+                if ($model == 'App\Folder') {
+                    $allFolder = Folder::all();
+                    $count = count($allFolder);
+                    $category = $value->category()->get()->first();
+                    $category->translate_name_text = $this->getTranslate($category->name_text_id);
+                    $category->translate_describe_text = $this->getTranslate($category->describe_text_id);
+                    $packages = $value->package()->get();
+                    foreach ($packages as $package) {
+                        $package->translate_name_text = $this->getTranslate($package->name_text_id);
+                        $package->translate_describe_text = $this->getTranslate($package->describe_text_id);
+                    }
+                    $translate_name_text = $this->getTranslate($value->name_text_id);
+                    $translate_describe_text = $this->getTranslate($value->describe_text_id);
+                    $value->translate_name_text = $translate_name_text;
+                    $value->translate_describe_text = $translate_describe_text;
+                    $value->category = $category;
+                    $value->package = $packages;
+                    $value->count = $count;
+                }
+                if ($model == 'App\Chapter') {
+                    $package = $value->package()->get()->first();
+                    $groupquestion =  $value->groupquestion()->get();
+                    $value->package = $package;
+                    $value->groupquestion = $groupquestion;
+                }
+                $array[] = $value;
+            }
         }
         if ($array == null || empty($array))
             return response()->json($this->setArrayData(400, 'null', $array), 400);
@@ -106,9 +175,10 @@ class Controller extends BaseController
 
     public function deleteDataById($model, array $request)
     {
-        $m = new $model;
-        $primaryKey = $m->primaryKey;
-        $_model = $model::find($request[$primaryKey]);
+        // dd($request['id']);
+        // $m = new $model;
+        // $primaryKey = $m->primaryKey;
+        $_model = $model::find($request['id']);
         if ($_model == null) {
             return response()->json($this->setArrayData(400, 'can not find data'), 400);
         } else {

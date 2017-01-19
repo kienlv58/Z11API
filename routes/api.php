@@ -39,12 +39,12 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('test', 'RestfulController@test');
 
 
-        Route::get('users/{id}', 'AdminController@getUser');
-        Route::get('user_mod', 'AdminController@getuser_Mod');
-        Route::get('users/{limit?}/{offset?}', 'AdminController@getAllUser');
-        Route::delete('users/{uid}', 'AdminController@deleteUser');
-        Route::put('aprroval_package', 'AdminController@aprrovalPackage');
-        Route::post('user_mod', 'AdminController@createUserMod');
+        Route::get('admin/users/{id}', 'AdminController@getUser');
+        Route::get('admin/user_mod', 'AdminController@getuser_Mod');
+        Route::get('/admin/users/{limit?}/{offset?}', 'AdminController@getAllUser');
+        Route::delete('/admin/users/delete/{uid?}', 'AdminController@deleteUser');
+        Route::put('admin/aprroval_package', 'AdminController@aprrovalPackage');
+        Route::post('admin/user_mod', 'AdminController@createUserMod');
 
         //categories
         Route::get('category/{category_id}', 'CategoryController@getCategories');
@@ -53,7 +53,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('searchCategories/{name?}/{category_code?}/{describe?}', 'CategoryController@searchCategories');
         Route::post('categories', 'CategoryController@addCategory');
         Route::put('categories', 'CategoryController@editCategory');
-        Route::delete('categories/{category_code}', 'CategoryController@deleteCategory');
+        Route::delete('categories/{category_id}', 'CategoryController@deleteCategory');
 
         //folder
 
@@ -80,7 +80,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('packages/ownerPackage/{folder_id}/{package_id}', 'PackageController@ownerPackage');
 
         //Chapter
-        Route::get('chapter/{chapter_id}', 'ChapterController@getChapter');
+        Route::get('chapter/{chapter_id?}', 'ChapterController@getChapter');
         Route::get('chapters/{limit?}/{offset?}', 'ChapterController@getAllChapter');
         Route::post('chapters', 'ChapterController@addChapter');
         Route::put('chapters', 'ChapterController@editChapter');

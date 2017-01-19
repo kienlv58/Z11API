@@ -12,4 +12,9 @@ class Package extends Model
     public function chapter(){
         return $this->hasMany('App\Chapter','package_id');
     }
+
+    public function folder()
+    {
+    	return $this->belongsTo('App\Folder','folder_id');
+    }
 }

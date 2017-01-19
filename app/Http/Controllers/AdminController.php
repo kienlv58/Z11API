@@ -5,15 +5,40 @@ namespace App\Http\Controllers;
 use App\Package;
 use App\Profile;
 use App\User;
+use App\UserRole;
+use Validator;
+use Carbon\Carbon as Carbon;
 use Illuminate\Http\Request;use Illuminate\Support\Facades\Auth;
 use JWTAuth;
 
 class AdminController extends Controller
 {
+    protected function validator(array $data)
+    {
+        return Validator::make(
+            $data,
+            [
+                'name' => 'required|max:255',
+                'email' => 'required|email|max:255|unique:users',
+                'password' => 'required|min:6',
+                //password_confirmation
+            ],
+            [
+                'name.required' => 'Please enter your name',
+                'name.max' => 'Name long',
+                'email.required' => 'Please enter your email',
+                'email.email' => 'Email invalid',
+                'email.max' => 'Email long',
+                'email.unique' => 'Email has exits. Check email if you not active',
+                'password.required' => 'Please enter your password',
+                'password.min' => 'Password so short',
+            ]
+        );
+    }
 
     /**
      * @SWG\Get(
-     *     path="/users/{id}",
+     *     path="/admin/users/{id}",
      *     summary="get user from id",
      *     tags={"9.Admin"},
      *     description="return user from id",
@@ -61,7 +86,7 @@ class AdminController extends Controller
 
     /**
      * @SWG\Get(
-     *     path="/users/{limit}/{offset}",
+     *     path="/admin/users/{limit}/{offset}",
      *     summary="get all users",
      *     tags={"9.Admin"},
      *     description="return users with take and skip",
@@ -113,7 +138,7 @@ class AdminController extends Controller
 
     /**
      * @SWG\Delete(
-     *     path="/admin/users/{uid}",
+     *     path="/admin/users/delete/{uid}",
      *     summary="delete user ",
      *     tags={"9.Admin"},
      *     description="delete with user_id",
@@ -122,8 +147,8 @@ class AdminController extends Controller
      *     produces={"application/json"},
      *     @SWG\Parameter(
      *      name = "uid",
-     *      description = "uid delete",
-     *     in ="formData",
+     *      description = "uid",
+     *     in ="path",
      *     required = true,
      *     type="integer",
      *     @SWG\Schema(
@@ -155,7 +180,8 @@ class AdminController extends Controller
     public function deleteUser($uid_delete){
         $user = JWTAuth::parseToken()->authenticate();
         $user = User::findOrFail($user->id);
-        if($user == null or $user->type != 'admin') {
+        $user->role = $user->userrole()->get()->first();
+        if($user == null or $user->role->name_role != 'admin') {
             return response()->json($this->setArrayData(400, 'you not permission delete to user'));
         }
         return $this->deleteDataById('App\User',['id'=>$uid_delete]);
@@ -223,13 +249,24 @@ class AdminController extends Controller
      *     @SWG\Schema(
      *     required={"coin"},
      *     type = "string"
-     *      )
+     *      ),
+     *          ),
+     *    @SWG\Parameter(
+     *      name = "deadline",
+     *      description = "deadline",
+     *     in ="formData",
+     *     required = true,
+     *     type="string",
+     *     @SWG\Schema(
+     *     required={"deadline"},
+     *     type = "string"
+     *      ),
      *           ),
      *     *  @SWG\Parameter(
      *      name = "image",
      *      description = "image",
      *     in ="formData",
-     *     required = true,
+     *     required = false,
      *     type="string",
      *     @SWG\Schema(
      *     required={"image"},
@@ -260,24 +297,66 @@ class AdminController extends Controller
     //'email','password',name','gender','coin','image'
     public function createUserMod(Request $request){
         $user = JWTAuth::parseToken()->authenticate();
+        // dd($user);
         $user = User::findOrFail($user->id);
+        $user->role = $user->userrole()->get()->first();
+        // dd($user->role->name_role);
         $data = $request->toArray();
+        // dd($data);
         $data['current_uid'] = $user->id;
-        if($user == null or $user->type != 'admin') {
+        if($user == null or $user->role->name_role != 'admin') {
             return response()->json($this->setArrayData(400, 'you not permission delete to user'));
         }
+        $data = $request->toArray();
+        if ($this->validator($data)->fails()) {
+            return response()->json(
+                [
+                    'code' => 400,
+                    'status' => $this->validator($data)->errors(),
+                ],400
+            );
+        } else {
+            $mod = new User();
+            $mod->email = $data['email'];
+            $mod->password = bcrypt($data['password']);
+            $mod->grant_type = 'password';
+            $mod->token_social = null;
+            $mod->active = 0;
+            $mod->save();
+            $id = $mod->id;
+            $profile = Profile::create([
+                'user_id' => $id,
+                'coin'=>200,
+                'name'=>$data['name'],
+                'gender'=>$data['gender']
+            ]);
+            // dd($data['deadline']);
+            $today = date('Y-m-d');
+            $date = strtotime($data['deadline']);
+            $deadline =  date('Y-m-d', $date);
+            $expired = (strtotime($deadline) - strtotime($today)) / (60 * 60 * 24);
+            $user_role = UserRole::create([
+                    'user_id' => $id,
+                    'name_role' => 'mod',
+                    'deadline' => $data['deadline'],
+                    'expired' => $expired
+                ]);
+//                Mail::send('email.verify', ['name' => $data['name'], 'email' => $data['email'], 'link' => url('/user/activation/' . JWTAuth::attempt(['email' => $data['email'], 'password' => $data['password']]) . '/' . $user->id)], function ($message) use ($data) {
+//                    $message->from('zone11@api.com', $name = 'zone11');
+//                    $message->to($data['email'], $name = null);
+//                    $message->subject('Verify Account');
+//                });
 
-        $user = User::create(['grant_type'=>'password','email'=>$data['email'],'type'=>'mod','password'=>bcrypt($data['password']),'active'=>0]);
-        if($user == null){
-            return response()->json($this->setArrayData(400, 'create user mod fail'));
+
+            return response()->json(
+                [
+                    'code' => 200,
+                    'status' => 'create mod user success. check email to Verify Account',
+                    'metadata'=>[
+                    'user' => ['name' => $data['name'], 'email' => $data['email']]],
+                ],200
+            );
         }
-        $uid = $user->id;
-        $profile = Profile::create(['user_id'=>$uid,'image'=>$data['image'],'name'=>$data['name'],'gender'=>$data['gender'],'coin'=>$data['coin']]);
-        if($profile == null){
-            return response()->json($this->setArrayData(400, 'create user mod fail'));
-            $this->deleteDataById('App\User',['id'=>$uid]);
-        }
-        return response()->json($this->setArrayData(400, 'create mod user success'));
 
     }
 

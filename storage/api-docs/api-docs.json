@@ -19,7 +19,7 @@
         "http"
     ],
     "paths": {
-        "/users/{id}": {
+        "/admin/users/{id}": {
             "get": {
                 "tags": [
                     "9.Admin"
@@ -60,7 +60,7 @@
                 }
             }
         },
-        "/users/{limit}/{offset}": {
+        "/admin/users/{limit}/{offset}": {
             "get": {
                 "tags": [
                     "9.Admin"
@@ -110,7 +110,7 @@
                 }
             }
         },
-        "/admin/users/{uid}": {
+        "/admin/users/delete/{uid}": {
             "delete": {
                 "tags": [
                     "9.Admin"
@@ -127,8 +127,8 @@
                 "parameters": [
                     {
                         "name": "uid",
-                        "in": "formData",
-                        "description": "uid delete",
+                        "in": "path",
+                        "description": "uid",
                         "required": true,
                         "schema": {
                             "required": [
@@ -238,10 +238,23 @@
                         "type": "string"
                     },
                     {
+                        "name": "deadline",
+                        "in": "formData",
+                        "description": "deadline",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "deadline"
+                            ],
+                            "type": "string"
+                        },
+                        "type": "string"
+                    },
+                    {
                         "name": "image",
                         "in": "formData",
                         "description": "image",
-                        "required": true,
+                        "required": false,
                         "schema": {
                             "required": [
                                 "image"
@@ -828,7 +841,7 @@
                 }
             }
         },
-        "/categories/{category_code}": {
+        "/categories/{category_id}": {
             "delete": {
                 "tags": [
                     "2.Category"
@@ -844,9 +857,9 @@
                 ],
                 "parameters": [
                     {
-                        "name": "category_code",
+                        "name": "category_id",
                         "in": "path",
-                        "description": "category_code",
+                        "description": "category_id",
                         "required": true,
                         "schema": {
                             "required": [
