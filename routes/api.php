@@ -81,6 +81,7 @@ Route::group(['prefix' => 'v1'], function () {
 
         //Chapter
         Route::get('chapter/{chapter_id?}', 'ChapterController@getChapter');
+        Route::get('getChapterToAnswer/{chapter_id?}', 'ChapterController@getChapterToAnswer');
         Route::get('chapters/{limit?}/{offset?}', 'ChapterController@getAllChapter');
         Route::post('chapters', 'ChapterController@addChapter');
         Route::put('chapters', 'ChapterController@editChapter');
@@ -138,6 +139,7 @@ Route::group(['prefix' => 'v1'], function () {
 
         //useranswer
         Route::post('useranswer','UserAnswerController@addUserAnswer');
+        Route::get('getTranslateFromExplain/{groupQS_id}','ExplainController@getTranslateFromExplain');
 
 
         Route::group(['middleware' => 'checkpurchase'], function () {
