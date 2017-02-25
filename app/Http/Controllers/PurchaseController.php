@@ -76,7 +76,7 @@ class PurchaseController extends Controller
         }
         $arr_purchase = purchase::where('user_id', $user_id)->get();
         if(count($arr_purchase) == 0){
-            return response()->json($this->setArrayData(200, 'user not charge'), 200);
+            return response()->json($this->setArrayData(404, 'user not charge'), 200);
         }
         return response()->json($this->setArrayData(200, 'success fully', $arr_purchase->toArray()), 200);
     }
