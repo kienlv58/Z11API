@@ -167,7 +167,7 @@ class LoginController extends Controller
                         [
                             'code' => 400,
                             'status' => 'username or password incorrect',
-                        ], 400
+                        ], 200
                     );
                 }
 
