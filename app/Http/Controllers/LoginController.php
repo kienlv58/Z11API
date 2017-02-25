@@ -130,7 +130,7 @@ class LoginController extends Controller
                         'code' => 400,
                         'status' => $this->validator($data)->errors(),
                         'user' => ''
-                    ], 400
+                    ], 200
                 );
             } else {
                 $result = JWTAuth::attempt(['email' => $data['email'], 'password' => $data['password']]);
