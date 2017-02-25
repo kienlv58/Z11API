@@ -130,7 +130,7 @@ class LoginController extends Controller
                         'code' => 400,
                         'status' => $this->validator($data)->errors(),
                         'user' => ''
-                    ], 200
+                    ],200
                 );
             } else {
                 $result = JWTAuth::attempt(['email' => $data['email'], 'password' => $data['password']]);
@@ -160,14 +160,14 @@ class LoginController extends Controller
                             'metadata' => [
                                 'user' => $user->toArray(),
                                 'token' => $token]
-                        ], 200
+                        ],200
                     );
                 } else {
                     return response()->json(
                         [
                             'code' => 400,
                             'status' => 'username or password incorrect',
-                        ], 200
+                        ],200
                     );
                 }
 
