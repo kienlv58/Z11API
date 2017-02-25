@@ -177,7 +177,7 @@ class LoginController extends Controller
                 [
                     'code' => 400,
                     'status' => 'grant_type invalid. please choose: password/facebook/google',
-                ], 400
+                ], 200
             );
         }
 
